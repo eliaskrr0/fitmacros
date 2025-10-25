@@ -51,10 +51,10 @@ import com.eliaskrr.fitmacros.ui.alimento.AddEditAlimentoScreen
 import com.eliaskrr.fitmacros.ui.alimento.AddEditAlimentoViewModel
 import com.eliaskrr.fitmacros.ui.alimento.AlimentoViewModel
 import com.eliaskrr.fitmacros.ui.alimento.AlimentoViewModelFactory
-import com.eliaskrr.fitmacros.ui.home.HomeScreen
 import com.eliaskrr.fitmacros.ui.navigation.AppScreen
 import com.eliaskrr.fitmacros.ui.navigation.NavItem
 import com.eliaskrr.fitmacros.ui.opciones.OptionsScreen
+import com.eliaskrr.fitmacros.ui.profile.ProfileScreen
 
 class MainActivity : ComponentActivity() {
 
@@ -77,7 +77,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun MainScreen(alimentoViewModel: AlimentoViewModel) {
     val navController = rememberNavController()
-    val navItems = listOf(NavItem.Home, NavItem.Alimentos, NavItem.Opciones)
+    val navItems = listOf(NavItem.Profile, NavItem.Alimentos, NavItem.Opciones)
 
     Scaffold(
         bottomBar = {
@@ -106,10 +106,10 @@ fun MainScreen(alimentoViewModel: AlimentoViewModel) {
     ) { innerPadding ->
         NavHost(
             navController = navController,
-            startDestination = AppScreen.Home.route,
+            startDestination = AppScreen.Profile.route,
             modifier = Modifier.padding(innerPadding)
         ) {
-            composable(AppScreen.Home.route) { HomeScreen() }
+            composable(AppScreen.Profile.route) { ProfileScreen() }
             composable(AppScreen.Alimentos.route) { 
                 AlimentosScreen(
                     viewModel = alimentoViewModel,
