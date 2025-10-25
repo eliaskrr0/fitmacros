@@ -59,6 +59,7 @@ dependencies {
 	ksp(libs.androidx.room.compiler)
 	implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.lifecycle.runtime.compose)
+    implementation(libs.androidx.lifecycle.viewmodel.savedstate)
 
     // Navigation
     implementation(libs.androidx.navigation.compose)

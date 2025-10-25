@@ -8,6 +8,10 @@ class AlimentoRepository(private val alimentoDao: AlimentoDao) {
 
     val allAlimentos: Flow<List<Alimento>> = alimentoDao.getAll()
 
+    fun getById(id: Int): Flow<Alimento?> {
+        return alimentoDao.getById(id)
+    }
+
     suspend fun insert(alimento: Alimento) {
         alimentoDao.insert(alimento)
     }

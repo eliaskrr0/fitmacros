@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -33,32 +34,38 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.eliaskrr.fitmacros.FitMacrosApplication
 import com.eliaskrr.fitmacros.data.model.Alimento
+import com.eliaskrr.fitmacros.ui.alimento.AddEditAlimentoScreen
+import com.eliaskrr.fitmacros.ui.alimento.AddEditAlimentoViewModel
 import com.eliaskrr.fitmacros.ui.alimento.AlimentoViewModel
 import com.eliaskrr.fitmacros.ui.alimento.AlimentoViewModelFactory
 import com.eliaskrr.fitmacros.ui.home.HomeScreen
 import com.eliaskrr.fitmacros.ui.navigation.AppScreen
+import com.eliaskrr.fitmacros.ui.navigation.NavItem
 import com.eliaskrr.fitmacros.ui.opciones.OptionsScreen
 
 class MainActivity : ComponentActivity() {
-
-    private val alimentoViewModel: AlimentoViewModel by viewModels {
-        AlimentoViewModelFactory((application as FitMacrosApplication).repository)
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             MaterialTheme {
                 Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-                    MainScreen(viewModel = alimentoViewModel)
+                    val application = application as FitMacrosApplication
+                    val alimentoViewModel: AlimentoViewModel by viewModels {
+                        AlimentoViewModelFactory(application.repository)
+                    }
+                    MainScreen(alimentoViewModel = alimentoViewModel)
                 }
             }
         }
@@ -66,9 +73,9 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun MainScreen(viewModel: AlimentoViewModel) {
+fun MainScreen(alimentoViewModel: AlimentoViewModel) {
     val navController = rememberNavController()
-    val screens = listOf(AppScreen.Home, AppScreen.Alimentos, AppScreen.Opciones)
+    val navItems = listOf(NavItem.Home, NavItem.Alimentos, NavItem.Opciones)
 
     Scaffold(
         bottomBar = {
@@ -76,7 +83,7 @@ fun MainScreen(viewModel: AlimentoViewModel) {
                 val navBackStackEntry by navController.currentBackStackEntryAsState()
                 val currentDestination = navBackStackEntry?.destination
 
-                screens.forEach { screen ->
+                navItems.forEach { screen ->
                     NavigationBarItem(
                         label = { Text(screen.label) },
                         icon = { Icon(screen.icon, contentDescription = screen.label) },
@@ -101,47 +108,61 @@ fun MainScreen(viewModel: AlimentoViewModel) {
             modifier = Modifier.padding(innerPadding)
         ) {
             composable(AppScreen.Home.route) { HomeScreen() }
-            composable(AppScreen.Alimentos.route) { AlimentosScreen(viewModel) }
+            composable(AppScreen.Alimentos.route) { 
+                AlimentosScreen(
+                    viewModel = alimentoViewModel,
+                    onAddAlimento = { navController.navigate(AppScreen.AddEditAlimento.createRoute(null)) },
+                    onAlimentoClick = { navController.navigate(AppScreen.AddEditAlimento.createRoute(it.id)) }
+                ) 
+            }
             composable(AppScreen.Opciones.route) { OptionsScreen() }
+            composable(
+                route = AppScreen.AddEditAlimento.route,
+                arguments = listOf(navArgument("alimentoId") { type = NavType.IntType; defaultValue = -1 })
+            ) {
+                val application = navController.context.applicationContext as FitMacrosApplication
+                val addEditViewModel: AddEditAlimentoViewModel = viewModel(
+                    factory = AddEditAlimentoViewModel.provideFactory(application.repository)
+                )
+                AddEditAlimentoScreen(
+                    viewModel = addEditViewModel,
+                    onNavigateUp = { navController.navigateUp() }
+                )
+            }
         }
     }
 }
 
 @Composable
-fun AlimentosScreen(viewModel: AlimentoViewModel) {
+fun AlimentosScreen(
+    viewModel: AlimentoViewModel, 
+    onAddAlimento: () -> Unit,
+    onAlimentoClick: (Alimento) -> Unit
+) {
     val alimentos by viewModel.allAlimentos.collectAsState()
 
     Scaffold(
         floatingActionButton = {
-            FloatingActionButton(onClick = {
-                val nuevoAlimento = Alimento(
-                    nombre = "Pechuga de Pollo",
-                    marca = "Marca Ejemplo",
-                    proteinas = 25.0,
-                    carbos = 0.0,
-                    grasas = 3.5,
-                    calorias = 165.0
-                )
-                viewModel.insert(nuevoAlimento)
-            }) {
+            FloatingActionButton(onClick = onAddAlimento) {
                 Icon(Icons.Filled.Add, contentDescription = "Añadir Alimento")
             }
         }
     ) { paddingValues ->
         LazyColumn(modifier = Modifier.padding(paddingValues)) {
             items(alimentos) { alimento ->
-                AlimentoItem(alimento = alimento)
+                AlimentoItem(alimento = alimento, onClick = { onAlimentoClick(alimento) })
             }
         }
     }
 }
 
 @Composable
-fun AlimentoItem(alimento: Alimento) {
+fun AlimentoItem(alimento: Alimento, onClick: () -> Unit) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 8.dp)
+            .clickable(onClick = onClick)
     ) {
         Row(
             modifier = Modifier
