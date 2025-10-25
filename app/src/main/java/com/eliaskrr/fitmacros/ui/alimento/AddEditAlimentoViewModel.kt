@@ -11,6 +11,7 @@ import com.eliaskrr.fitmacros.data.repository.AlimentoRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -46,7 +47,7 @@ class AddEditAlimentoViewModel(
 
     private fun loadAlimento(id: Int) {
         viewModelScope.launch {
-            repository.getById(id).collect { alimento ->
+            repository.getById(id).first { alimento ->
                 if (alimento != null) {
                     _uiState.update {
                         it.copy(
@@ -62,6 +63,7 @@ class AddEditAlimentoViewModel(
                         )
                     }
                 }
+                true
             }
         }
     }
@@ -104,6 +106,17 @@ class AddEditAlimentoViewModel(
                 repository.update(alimento)
             }
             _uiState.update { it.copy(isSaved = true) }
+        }
+    }
+    
+    fun deleteAlimento() {
+        viewModelScope.launch {
+            val state = _uiState.value
+            if (state.id != 0) {
+                val alimentoToDelete = Alimento(id = state.id, nombre = state.nombre, proteinas = state.proteinas.toDoubleOrNull() ?: 0.0, carbos = state.carbos.toDoubleOrNull() ?: 0.0, grasas = state.grasas.toDoubleOrNull() ?: 0.0, calorias = state.calorias.toDoubleOrNull() ?: 0.0)
+                repository.delete(alimentoToDelete)
+                _uiState.update { it.copy(isSaved = true) }
+            }
         }
     }
 
