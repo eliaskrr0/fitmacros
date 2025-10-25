@@ -19,6 +19,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Card
+import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -39,6 +41,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -74,32 +77,35 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(alimentoViewModel: AlimentoViewModel) {
     val navController = rememberNavController()
     val navItems = listOf(NavItem.Profile, NavItem.Alimentos, NavItem.Opciones)
 
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentDestination = navBackStackEntry?.destination
+
     Scaffold(
+        topBar = {
+            CenterAlignedTopAppBar(title = { Text("FitMacros") })
+        },
         bottomBar = {
             NavigationBar {
-                val navBackStackEntry by navController.currentBackStackEntryAsState()
-                val currentDestination = navBackStackEntry?.destination
-
                 navItems.forEach { screen ->
                     NavigationBarItem(
                         label = { Text(screen.label) },
                         icon = { Icon(screen.icon, contentDescription = screen.label) },
                         selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true,
-                        onClick = {
-                            navController.navigate(screen.route) {
-                                popUpTo(navController.graph.findStartDestination().id) {
-                                    saveState = true
-                                }
-                                launchSingleTop = true
-                                restoreState = true
-                            }
-                        }
+                        onClick = { navigateToScreen(navController, screen.route) }
                     )
+                }
+            }
+        },
+        floatingActionButton = {
+            if (currentDestination?.route == AppScreen.Alimentos.route) {
+                FloatingActionButton(onClick = { navController.navigate(AppScreen.AddEditAlimento.createRoute(null)) }) {
+                    Icon(Icons.Filled.Add, contentDescription = "Añadir Alimento")
                 }
             }
         }
@@ -110,12 +116,11 @@ fun MainScreen(alimentoViewModel: AlimentoViewModel) {
             modifier = Modifier.padding(innerPadding)
         ) {
             composable(AppScreen.Profile.route) { ProfileScreen() }
-            composable(AppScreen.Alimentos.route) { 
+            composable(AppScreen.Alimentos.route) {
                 AlimentosScreen(
                     viewModel = alimentoViewModel,
-                    onAddAlimento = { navController.navigate(AppScreen.AddEditAlimento.createRoute(null)) },
                     onAlimentoClick = { navController.navigate(AppScreen.AddEditAlimento.createRoute(it.id)) }
-                ) 
+                )
             }
             composable(AppScreen.Opciones.route) { OptionsScreen() }
             composable(
@@ -135,37 +140,38 @@ fun MainScreen(alimentoViewModel: AlimentoViewModel) {
     }
 }
 
+fun navigateToScreen(navController: NavHostController, route: String) {
+    navController.navigate(route) {
+        popUpTo(navController.graph.findStartDestination().id) {
+            saveState = true
+        }
+        launchSingleTop = true
+        restoreState = true
+    }
+}
+
 @Composable
 fun AlimentosScreen(
-    viewModel: AlimentoViewModel, 
-    onAddAlimento: () -> Unit,
+    viewModel: AlimentoViewModel,
     onAlimentoClick: (Alimento) -> Unit
 ) {
     val alimentos by viewModel.alimentos.collectAsState()
     val searchQuery by viewModel.searchQuery.collectAsState()
 
-    Scaffold(
-        floatingActionButton = {
-            FloatingActionButton(onClick = onAddAlimento) {
-                Icon(Icons.Filled.Add, contentDescription = "Añadir Alimento")
-            }
-        }
-    ) { paddingValues ->
-        Column(modifier = Modifier.padding(paddingValues)) {
-            OutlinedTextField(
-                value = searchQuery,
-                onValueChange = viewModel::onSearchQueryChange,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                label = { Text("Buscar alimento...") },
-                leadingIcon = { Icon(Icons.Default.Search, contentDescription = "Buscar") },
-                singleLine = true
-            )
-            LazyColumn {
-                items(alimentos) { alimento ->
-                    AlimentoItem(alimento = alimento, onClick = { onAlimentoClick(alimento) })
-                }
+    Column {
+        OutlinedTextField(
+            value = searchQuery,
+            onValueChange = viewModel::onSearchQueryChange,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            label = { Text("Buscar alimento...") },
+            leadingIcon = { Icon(Icons.Default.Search, contentDescription = "Buscar") },
+            singleLine = true
+        )
+        LazyColumn {
+            items(alimentos) { alimento ->
+                AlimentoItem(alimento = alimento, onClick = { onAlimentoClick(alimento) })
             }
         }
     }
