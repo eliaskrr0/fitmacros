@@ -6,7 +6,9 @@ import kotlinx.coroutines.flow.Flow
 
 class AlimentoRepository(private val alimentoDao: AlimentoDao) {
 
-    val allAlimentos: Flow<List<Alimento>> = alimentoDao.getAll()
+    fun getAllAlimentos(): Flow<List<Alimento>> = alimentoDao.getAll()
+
+    fun getAlimentosByName(query: String): Flow<List<Alimento>> = alimentoDao.getByName(query)
 
     fun getById(id: Int): Flow<Alimento?> {
         return alimentoDao.getById(id)

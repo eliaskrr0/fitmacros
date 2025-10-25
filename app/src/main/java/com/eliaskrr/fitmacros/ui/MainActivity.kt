@@ -17,12 +17,14 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Card
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -139,7 +141,8 @@ fun AlimentosScreen(
     onAddAlimento: () -> Unit,
     onAlimentoClick: (Alimento) -> Unit
 ) {
-    val alimentos by viewModel.allAlimentos.collectAsState()
+    val alimentos by viewModel.alimentos.collectAsState()
+    val searchQuery by viewModel.searchQuery.collectAsState()
 
     Scaffold(
         floatingActionButton = {
@@ -148,9 +151,21 @@ fun AlimentosScreen(
             }
         }
     ) { paddingValues ->
-        LazyColumn(modifier = Modifier.padding(paddingValues)) {
-            items(alimentos) { alimento ->
-                AlimentoItem(alimento = alimento, onClick = { onAlimentoClick(alimento) })
+        Column(modifier = Modifier.padding(paddingValues)) {
+            OutlinedTextField(
+                value = searchQuery,
+                onValueChange = viewModel::onSearchQueryChange,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                label = { Text("Buscar alimento...") },
+                leadingIcon = { Icon(Icons.Default.Search, contentDescription = "Buscar") },
+                singleLine = true
+            )
+            LazyColumn {
+                items(alimentos) { alimento ->
+                    AlimentoItem(alimento = alimento, onClick = { onAlimentoClick(alimento) })
+                }
             }
         }
     }

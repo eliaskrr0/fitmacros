@@ -18,6 +18,9 @@ interface AlimentoDao {
     @Query("SELECT * FROM tb_alimentos WHERE id = :id")
     fun getById(id: Int): Flow<Alimento?>
 
+    @Query("SELECT * FROM tb_alimentos WHERE nombre LIKE '%' || :query || '%' ORDER BY nombre ASC")
+    fun getByName(query: String): Flow<List<Alimento>>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(alimento: Alimento)
 
