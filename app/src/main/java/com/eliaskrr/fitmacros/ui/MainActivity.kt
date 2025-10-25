@@ -57,7 +57,10 @@ import com.eliaskrr.fitmacros.ui.alimento.AlimentoViewModelFactory
 import com.eliaskrr.fitmacros.ui.navigation.AppScreen
 import com.eliaskrr.fitmacros.ui.navigation.NavItem
 import com.eliaskrr.fitmacros.ui.opciones.OptionsScreen
+import com.eliaskrr.fitmacros.ui.profile.PersonalDataScreen
 import com.eliaskrr.fitmacros.ui.profile.ProfileScreen
+import com.eliaskrr.fitmacros.ui.profile.ProfileViewModel
+import com.eliaskrr.fitmacros.ui.profile.ProfileViewModelFactory
 
 class MainActivity : ComponentActivity() {
 
@@ -68,9 +71,12 @@ class MainActivity : ComponentActivity() {
                 Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
                     val application = application as FitMacrosApplication
                     val alimentoViewModel: AlimentoViewModel by viewModels {
-                        AlimentoViewModelFactory(application.repository)
+                        AlimentoViewModelFactory(application.alimentoRepository)
                     }
-                    MainScreen(alimentoViewModel = alimentoViewModel)
+                    val profileViewModel: ProfileViewModel by viewModels {
+                        ProfileViewModelFactory(application.userDataRepository)
+                    }
+                    MainScreen(alimentoViewModel = alimentoViewModel, profileViewModel = profileViewModel)
                 }
             }
         }
@@ -79,7 +85,7 @@ class MainActivity : ComponentActivity() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainScreen(alimentoViewModel: AlimentoViewModel) {
+fun MainScreen(alimentoViewModel: AlimentoViewModel, profileViewModel: ProfileViewModel) {
     val navController = rememberNavController()
     val navItems = listOf(NavItem.Profile, NavItem.Alimentos, NavItem.Opciones)
 
@@ -115,7 +121,12 @@ fun MainScreen(alimentoViewModel: AlimentoViewModel) {
             startDestination = AppScreen.Profile.route,
             modifier = Modifier.padding(innerPadding)
         ) {
-            composable(AppScreen.Profile.route) { ProfileScreen() }
+            composable(AppScreen.Profile.route) { 
+                ProfileScreen(
+                    viewModel = profileViewModel,
+                    onEditClick = { navController.navigate("personal_data") }
+                ) 
+            }
             composable(AppScreen.Alimentos.route) {
                 AlimentosScreen(
                     viewModel = alimentoViewModel,
@@ -129,10 +140,21 @@ fun MainScreen(alimentoViewModel: AlimentoViewModel) {
             ) {
                 val application = navController.context.applicationContext as FitMacrosApplication
                 val addEditViewModel: AddEditAlimentoViewModel = viewModel(
-                    factory = AddEditAlimentoViewModel.provideFactory(application.repository)
+                    factory = AddEditAlimentoViewModel.provideFactory(application.alimentoRepository)
                 )
                 AddEditAlimentoScreen(
                     viewModel = addEditViewModel,
+                    onNavigateUp = { navController.navigateUp() }
+                )
+            }
+            composable("personal_data") {
+                val userData by profileViewModel.userData.collectAsState()
+                PersonalDataScreen(
+                    userData = userData,
+                    onSave = { 
+                        profileViewModel.saveUserData(it)
+                        navController.navigateUp()
+                    },
                     onNavigateUp = { navController.navigateUp() }
                 )
             }
