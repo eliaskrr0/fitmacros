@@ -20,7 +20,6 @@ import androidx.compose.material.icons.outlined.Flag
 import androidx.compose.material.icons.outlined.LocalFireDepartment
 import androidx.compose.material.icons.outlined.Restaurant
 import androidx.compose.material.icons.outlined.TrackChanges
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -43,6 +42,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.eliaskrr.fitmacros.R
+import com.eliaskrr.fitmacros.ui.theme.Dimens
 import com.eliaskrr.fitmacros.ui.theme.NutrientColors
 
 @Composable
@@ -53,15 +53,15 @@ fun ProfileScreen(viewModel: ProfileViewModel, onEditClick: () -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp)
+            .padding(Dimens.Large)
             .verticalScroll(rememberScrollState()), // Hacemos la columna scrollable
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Box(modifier = Modifier.fillMaxWidth()) {
             Card(modifier = Modifier.fillMaxWidth()) {
-                Column(modifier = Modifier.padding(16.dp)) {
+                Column(modifier = Modifier.padding(Dimens.Large)) {
                     Text(stringResource(R.string.personal_data), style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
-                    Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(Dimens.Large))
                     ProfileDataRow(label = stringResource(R.string.user_name), value = userData.nombre.ifBlank { stringResource(R.string.placeholder_nodata) })
                     ProfileDataRow(label = stringResource(R.string.user_sex), value = userData.sexo.ifBlank { stringResource(R.string.placeholder_nodata) })
                     ProfileDataRow(label = stringResource(R.string.user_height), value = "${userData.altura.ifBlank { stringResource(R.string.placeholder_nodata) }} ${stringResource(R.string.unit_cm)}")
@@ -78,7 +78,7 @@ fun ProfileScreen(viewModel: ProfileViewModel, onEditClick: () -> Unit) {
             }
         }
 
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(Dimens.ExtraLarge))
 
         MacronutrientsCard(
             carbGoal = calculationResult.carbGoal,
@@ -86,7 +86,7 @@ fun ProfileScreen(viewModel: ProfileViewModel, onEditClick: () -> Unit) {
             proteinGoal = calculationResult.proteinGoal
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(Dimens.Large))
 
         CaloriesCard(
             calorieGoal = calculationResult.calorieGoal,
@@ -100,7 +100,7 @@ fun ProfileDataRow(label: String, value: String) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 8.dp),
+            .padding(vertical = Dimens.Medium),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Text(text = label, fontWeight = FontWeight.SemiBold, fontSize = 16.sp)
@@ -111,9 +111,9 @@ fun ProfileDataRow(label: String, value: String) {
 @Composable
 fun MacronutrientsCard(carbGoal: Int, fatGoal: Int, proteinGoal: Int) {
     Card(modifier = Modifier.fillMaxWidth()) {
-        Column(modifier = Modifier.padding(16.dp)) {
+        Column(modifier = Modifier.padding(Dimens.Large)) {
             Text(stringResource(R.string.macronutrients), style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(Dimens.Large))
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceAround
@@ -131,9 +131,9 @@ fun CaloriesCard(calorieGoal: Int, tdee: Int) {
     val remainingCalories = calorieGoal // Asumimos 0 consumido por ahora
 
     Card(modifier = Modifier.fillMaxWidth()) {
-        Column(modifier = Modifier.padding(16.dp)) {
+        Column(modifier = Modifier.padding(Dimens.Large)) {
             Text(stringResource(R.string.calories), style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(Dimens.Large))
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
@@ -161,7 +161,7 @@ fun CaloriesCard(calorieGoal: Int, tdee: Int) {
 fun NutrientProgressIndicator(label: String, consumed: Int, goal: Int, color: Color) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Text(label, fontWeight = FontWeight.Bold, color = color, fontSize = 14.sp)
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(Dimens.Medium))
         Box(contentAlignment = Alignment.Center, modifier = Modifier.size(80.dp)) {
             CircularProgress(progress = (if (goal > 0) consumed.toFloat() / goal.toFloat() else 0f), color = color)
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -169,7 +169,7 @@ fun NutrientProgressIndicator(label: String, consumed: Int, goal: Int, color: Co
                 Text("/ $goal g", fontSize = 12.sp)
             }
         }
-        Spacer(modifier = Modifier.height(4.dp))
+        Spacer(modifier = Modifier.height(Dimens.Small))
         Text(stringResource(R.string.grams_to_go, goal - consumed), fontSize = 12.sp)
     }
 }
@@ -201,9 +201,9 @@ fun CircularProgress(progress: Float, color: Color, size: Dp = 80.dp, strokeWidt
 
 @Composable
 fun InfoRowWithIcon(icon: ImageVector, label: String, value: String) {
-    Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(vertical = 4.dp)) {
+    Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(vertical = Dimens.Small)) {
         Icon(icon, contentDescription = label, tint = MaterialTheme.colorScheme.onSurfaceVariant)
-        Spacer(modifier = Modifier.width(8.dp))
+        Spacer(modifier = Modifier.width(Dimens.Medium))
         Text("$label: ", fontWeight = FontWeight.SemiBold)
         Text(value)
     }
