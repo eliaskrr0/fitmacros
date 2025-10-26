@@ -43,6 +43,7 @@ import com.eliaskrr.fitmacros.R
 import com.eliaskrr.fitmacros.data.model.ActivityRate
 import com.eliaskrr.fitmacros.data.model.TypeTarget
 import com.eliaskrr.fitmacros.data.repository.UserData
+import com.eliaskrr.fitmacros.ui.theme.Dimens
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -98,7 +99,7 @@ fun PersonalDataScreen(userData: UserData, onSave: (UserData) -> Unit, onNavigat
         Column(
             modifier = Modifier
                 .padding(it)
-                .padding(16.dp)
+                .padding(Dimens.Large)
                 .verticalScroll(rememberScrollState())
         ) {
             OutlinedTextField(
@@ -108,7 +109,7 @@ fun PersonalDataScreen(userData: UserData, onSave: (UserData) -> Unit, onNavigat
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true
             )
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(Dimens.Medium))
 
             val sexOptions = listOf(stringResource(R.string.sex_male), stringResource(R.string.sex_female))
             var expandedSex by remember { mutableStateOf(false) }
@@ -141,7 +142,7 @@ fun PersonalDataScreen(userData: UserData, onSave: (UserData) -> Unit, onNavigat
                 }
             }
 
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(Dimens.Medium))
 
             OutlinedTextField(
                 value = fechaNacimiento,
@@ -157,7 +158,7 @@ fun PersonalDataScreen(userData: UserData, onSave: (UserData) -> Unit, onNavigat
                 },
                 modifier = Modifier.fillMaxWidth()
             )
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(Dimens.Medium))
 
             OutlinedTextField(
                 value = altura,
@@ -167,7 +168,7 @@ fun PersonalDataScreen(userData: UserData, onSave: (UserData) -> Unit, onNavigat
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
             )
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(Dimens.Medium))
 
             OutlinedTextField(
                 value = peso,
@@ -177,7 +178,7 @@ fun PersonalDataScreen(userData: UserData, onSave: (UserData) -> Unit, onNavigat
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
             )
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(Dimens.Medium))
 
             val targetOptions = TypeTarget.entries.map { it.description }
             var expandedTarget by remember { mutableStateOf(false) }
@@ -210,7 +211,7 @@ fun PersonalDataScreen(userData: UserData, onSave: (UserData) -> Unit, onNavigat
                 }
             }
 
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(Dimens.Medium))
 
             val activityOptions = ActivityRate.entries.map { it.description }
             var expandedActivity by remember { mutableStateOf(false) }
@@ -243,7 +244,7 @@ fun PersonalDataScreen(userData: UserData, onSave: (UserData) -> Unit, onNavigat
                 }
             }
             
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(Dimens.Large))
             
             Button(
                 onClick = { onSave(UserData(nombre, sexo, fechaNacimiento, altura, peso, objetivo, activityRate)) },
