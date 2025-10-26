@@ -20,6 +20,7 @@ import androidx.compose.material.icons.outlined.Flag
 import androidx.compose.material.icons.outlined.LocalFireDepartment
 import androidx.compose.material.icons.outlined.Restaurant
 import androidx.compose.material.icons.outlined.TrackChanges
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -42,6 +43,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.eliaskrr.fitmacros.R
+import com.eliaskrr.fitmacros.ui.theme.NutrientColors
 
 @Composable
 fun ProfileScreen(viewModel: ProfileViewModel, onEditClick: () -> Unit) {
@@ -76,19 +78,19 @@ fun ProfileScreen(viewModel: ProfileViewModel, onEditClick: () -> Unit) {
             }
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
-
-        CaloriesCard(
-            calorieGoal = calculationResult.calorieGoal,
-            tdee = calculationResult.tdee
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(24.dp))
 
         MacronutrientsCard(
             carbGoal = calculationResult.carbGoal,
             fatGoal = calculationResult.fatGoal,
             proteinGoal = calculationResult.proteinGoal
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        CaloriesCard(
+            calorieGoal = calculationResult.calorieGoal,
+            tdee = calculationResult.tdee
         )
     }
 }
@@ -116,9 +118,9 @@ fun MacronutrientsCard(carbGoal: Int, fatGoal: Int, proteinGoal: Int) {
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceAround
             ) {
-                NutrientProgressIndicator(label = stringResource(R.string.carbohydrates), consumed = 0, goal = carbGoal, color = Color(0xFF4CAF50))
-                NutrientProgressIndicator(label = stringResource(R.string.fats), consumed = 0, goal = fatGoal, color = Color(0xFF9C27B0))
-                NutrientProgressIndicator(label = stringResource(R.string.proteins), consumed = 0, goal = proteinGoal, color = Color(0xFFE57373))
+                NutrientProgressIndicator(label = stringResource(R.string.carbohydrates), consumed = 0, goal = carbGoal, color = NutrientColors.Carbs)
+                NutrientProgressIndicator(label = stringResource(R.string.fats), consumed = 0, goal = fatGoal, color = NutrientColors.Fat)
+                NutrientProgressIndicator(label = stringResource(R.string.proteins), consumed = 0, goal = proteinGoal, color = NutrientColors.Protein)
             }
         }
     }
@@ -206,4 +208,3 @@ fun InfoRowWithIcon(icon: ImageVector, label: String, value: String) {
         Text(value)
     }
 }
-

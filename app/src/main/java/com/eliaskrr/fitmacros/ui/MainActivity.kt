@@ -61,14 +61,15 @@ import com.eliaskrr.fitmacros.ui.profile.PersonalDataScreen
 import com.eliaskrr.fitmacros.ui.profile.ProfileScreen
 import com.eliaskrr.fitmacros.ui.profile.ProfileViewModel
 import com.eliaskrr.fitmacros.ui.profile.ProfileViewModelFactory
+import com.eliaskrr.fitmacros.ui.theme.FitMacrosTheme
 
 class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            MaterialTheme {
-                Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
+            FitMacrosTheme {
+                Surface(modifier = Modifier.fillMaxSize()) {
                     val application = application as FitMacrosApplication
                     val alimentoViewModel: AlimentoViewModel by viewModels {
                         AlimentoViewModelFactory(application.alimentoRepository)
