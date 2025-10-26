@@ -5,7 +5,7 @@
 
     <!-- Tema para la Splash Screen -->
     <style name="Theme.FitMacros.Splash" parent="Theme.SplashScreen">
-        <item name="windowSplashScreenBackground">@color/brand_blue</item>
+        <item name="windowSplashScreenBackground">@color/bg_splashscreen</item>
         <item name="windowSplashScreenAnimatedIcon">@mipmap/ic_launcher</item>
         <item name="postSplashScreenTheme">@style/Theme.FitMacros</item>
     </style>

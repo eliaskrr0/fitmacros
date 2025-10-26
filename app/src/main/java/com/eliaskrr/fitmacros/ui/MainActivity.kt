@@ -30,6 +30,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -71,7 +72,7 @@ class MainActivity : ComponentActivity() {
         installSplashScreen()
         setContent {
             FitMacrosTheme {
-                Surface(modifier = Modifier.fillMaxSize()) {
+                Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
                     val application = application as FitMacrosApplication
                     val alimentoViewModel: AlimentoViewModel by viewModels {
                         AlimentoViewModelFactory(application.alimentoRepository)
@@ -97,10 +98,15 @@ fun MainScreen(alimentoViewModel: AlimentoViewModel, profileViewModel: ProfileVi
 
     Scaffold(
         topBar = {
-            CenterAlignedTopAppBar(title = { Text("FitMacros") })
+            CenterAlignedTopAppBar(
+                title = { Text("FitMacros", color = MaterialTheme.colorScheme.onPrimary) },
+                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primary
+                )
+            )
         },
         bottomBar = {
-            NavigationBar {
+            NavigationBar(containerColor = MaterialTheme.colorScheme.primary) {
                 navItems.forEach { screen ->
                     NavigationBarItem(
                         label = { Text(screen.label) },
