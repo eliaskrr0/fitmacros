@@ -17,6 +17,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.outlined.Flag
+import androidx.compose.material.icons.outlined.LocalFireDepartment
 import androidx.compose.material.icons.outlined.Restaurant
 import androidx.compose.material.icons.outlined.TrackChanges
 import androidx.compose.material3.Card
@@ -35,10 +36,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.eliaskrr.fitmacros.R
 
 @Composable
 fun ProfileScreen(viewModel: ProfileViewModel, onEditClick: () -> Unit) {
@@ -55,21 +58,21 @@ fun ProfileScreen(viewModel: ProfileViewModel, onEditClick: () -> Unit) {
         Box(modifier = Modifier.fillMaxWidth()) {
             Card(modifier = Modifier.fillMaxWidth()) {
                 Column(modifier = Modifier.padding(16.dp)) {
-                    Text("Datos Personales", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
+                    Text(stringResource(R.string.personal_data), style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
                     Spacer(modifier = Modifier.height(16.dp))
-                    ProfileDataRow(label = "Nombre", value = userData.nombre.ifBlank { "-" })
-                    ProfileDataRow(label = "Sexo", value = userData.sexo.ifBlank { "-" })
-                    ProfileDataRow(label = "Altura", value = "${userData.altura.ifBlank { "-" }} cm")
-                    ProfileDataRow(label = "Peso", value = "${userData.peso.ifBlank { "-" }} kg")
-                    ProfileDataRow(label = "Objetivo", value = userData.objetivo.ifBlank { "-" })
-                    ProfileDataRow(label = "Nivel de actividad", value = userData.activityRate.ifBlank { "-" })
+                    ProfileDataRow(label = stringResource(R.string.user_name), value = userData.nombre.ifBlank { stringResource(R.string.placeholder_nodata) })
+                    ProfileDataRow(label = stringResource(R.string.user_sex), value = userData.sexo.ifBlank { stringResource(R.string.placeholder_nodata) })
+                    ProfileDataRow(label = stringResource(R.string.user_height), value = "${userData.altura.ifBlank { stringResource(R.string.placeholder_nodata) }} ${stringResource(R.string.unit_cm)}")
+                    ProfileDataRow(label = stringResource(R.string.user_weight), value = "${userData.peso.ifBlank { stringResource(R.string.placeholder_nodata) }} ${stringResource(R.string.unit_kg)}")
+                    ProfileDataRow(label = stringResource(R.string.user_target), value = userData.objetivo.ifBlank { stringResource(R.string.placeholder_nodata) })
+                    ProfileDataRow(label = stringResource(R.string.user_activity_level), value = userData.activityRate.ifBlank { stringResource(R.string.placeholder_nodata) })
                 }
             }
             IconButton(
                 onClick = onEditClick,
                 modifier = Modifier.align(Alignment.TopEnd)
             ) {
-                Icon(Icons.Default.Edit, contentDescription = "Editar Datos")
+                Icon(Icons.Default.Edit, contentDescription = stringResource(R.string.edit_data))
             }
         }
 
@@ -107,15 +110,15 @@ fun ProfileDataRow(label: String, value: String) {
 fun MacronutrientsCard(carbGoal: Int, fatGoal: Int, proteinGoal: Int) {
     Card(modifier = Modifier.fillMaxWidth()) {
         Column(modifier = Modifier.padding(16.dp)) {
-            Text("Macronutrientes", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
+            Text(stringResource(R.string.macronutrients), style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
             Spacer(modifier = Modifier.height(16.dp))
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceAround
             ) {
-                NutrientProgressIndicator(label = "Carbohidratos", consumed = 0, goal = carbGoal, color = Color(0xFF4CAF50))
-                NutrientProgressIndicator(label = "Grasas", consumed = 0, goal = fatGoal, color = Color(0xFF9C27B0))
-                NutrientProgressIndicator(label = "Proteínas", consumed = 0, goal = proteinGoal, color = Color(0xFFE57373))
+                NutrientProgressIndicator(label = stringResource(R.string.carbohydrates), consumed = 0, goal = carbGoal, color = Color(0xFF4CAF50))
+                NutrientProgressIndicator(label = stringResource(R.string.fats), consumed = 0, goal = fatGoal, color = Color(0xFF9C27B0))
+                NutrientProgressIndicator(label = stringResource(R.string.proteins), consumed = 0, goal = proteinGoal, color = Color(0xFFE57373))
             }
         }
     }
@@ -127,7 +130,7 @@ fun CaloriesCard(calorieGoal: Int, tdee: Int) {
 
     Card(modifier = Modifier.fillMaxWidth()) {
         Column(modifier = Modifier.padding(16.dp)) {
-            Text("Calorías", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
+            Text(stringResource(R.string.calories), style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
             Spacer(modifier = Modifier.height(16.dp))
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -139,13 +142,13 @@ fun CaloriesCard(calorieGoal: Int, tdee: Int) {
                     CircularProgress(progress = progress, color = MaterialTheme.colorScheme.primary, size = 120.dp)
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         Text("$remainingCalories", fontSize = 24.sp, fontWeight = FontWeight.Bold)
-                        Text("Restantes", fontSize = 12.sp)
+                        Text(stringResource(R.string.calories_remaining), fontSize = 12.sp)
                     }
                 }
                 Column {
-                    InfoRowWithIcon(icon = Icons.Outlined.TrackChanges, label = "Mantenimiento", value = "$tdee")
-                    InfoRowWithIcon(icon = Icons.Outlined.Flag, label = "Objetivo", value = "$calorieGoal")
-                    InfoRowWithIcon(icon = Icons.Outlined.Restaurant, label = "Alimentos", value = "0")
+                    InfoRowWithIcon(icon = Icons.Outlined.TrackChanges, label = stringResource(R.string.maintenance_calories), value = "$tdee")
+                    InfoRowWithIcon(icon = Icons.Outlined.Flag, label = stringResource(R.string.target_calories), value = "$calorieGoal")
+                    InfoRowWithIcon(icon = Icons.Outlined.Restaurant, label = stringResource(R.string.food_calories), value = "0")
                 }
             }
         }
@@ -165,7 +168,7 @@ fun NutrientProgressIndicator(label: String, consumed: Int, goal: Int, color: Co
             }
         }
         Spacer(modifier = Modifier.height(4.dp))
-        Text("${goal - consumed} g faltan", fontSize = 12.sp)
+        Text(stringResource(R.string.grams_to_go, goal - consumed), fontSize = 12.sp)
     }
 }
 
@@ -203,3 +206,4 @@ fun InfoRowWithIcon(icon: ImageVector, label: String, value: String) {
         Text(value)
     }
 }
+

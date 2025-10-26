@@ -32,12 +32,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.OffsetMapping
 import androidx.compose.ui.text.input.TransformedText
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
+import com.eliaskrr.fitmacros.R
 import com.eliaskrr.fitmacros.data.model.ActivityRate
 import com.eliaskrr.fitmacros.data.model.TypeTarget
 import com.eliaskrr.fitmacros.data.repository.UserData
@@ -71,10 +73,10 @@ fun PersonalDataScreen(userData: UserData, onSave: (UserData) -> Unit, onNavigat
                         }
                         showDatePicker = false
                     }
-                ) { Text("Aceptar") }
+                ) { Text(stringResource(R.string.accept)) }
             },
             dismissButton = {
-                TextButton(onClick = { showDatePicker = false }) { Text("Cancelar") }
+                TextButton(onClick = { showDatePicker = false }) { Text(stringResource(R.string.cancel)) }
             }
         ) {
             DatePicker(state = datePickerState)
@@ -84,10 +86,10 @@ fun PersonalDataScreen(userData: UserData, onSave: (UserData) -> Unit, onNavigat
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Datos Personales") },
+                title = { Text(stringResource(R.string.personal_data)) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateUp) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Volver")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.back))
                     }
                 }
             )
@@ -102,13 +104,13 @@ fun PersonalDataScreen(userData: UserData, onSave: (UserData) -> Unit, onNavigat
             OutlinedTextField(
                 value = nombre,
                 onValueChange = { nombre = it },
-                label = { Text("Nombre") },
+                label = { Text(stringResource(R.string.user_name)) },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true
             )
             Spacer(modifier = Modifier.height(8.dp))
 
-            val sexOptions = listOf("Hombre", "Mujer")
+            val sexOptions = listOf(stringResource(R.string.sex_male), stringResource(R.string.sex_female))
             var expandedSex by remember { mutableStateOf(false) }
 
             ExposedDropdownMenuBox(
@@ -118,7 +120,7 @@ fun PersonalDataScreen(userData: UserData, onSave: (UserData) -> Unit, onNavigat
                 OutlinedTextField(
                     value = sexo,
                     onValueChange = {},
-                    label = { Text("Sexo") },
+                    label = { Text(stringResource(R.string.user_sex)) },
                     readOnly = true,
                     trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedSex) },
                     modifier = Modifier.fillMaxWidth().menuAnchor()
@@ -144,13 +146,13 @@ fun PersonalDataScreen(userData: UserData, onSave: (UserData) -> Unit, onNavigat
             OutlinedTextField(
                 value = fechaNacimiento,
                 onValueChange = { fechaNacimiento = it.filter { char -> char.isDigit() }.take(8) },
-                label = { Text("Fecha de Nacimiento") },
-                placeholder = { Text("DD/MM/AAAA") },
+                label = { Text(stringResource(R.string.birthdate)) },
+                placeholder = { Text(stringResource(R.string.birthdate_placeholder)) },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 visualTransformation = DateVisualTransformation(),
                 trailingIcon = {
                     IconButton(onClick = { showDatePicker = true }) {
-                        Icon(Icons.Default.CalendarToday, contentDescription = "Calendario")
+                        Icon(Icons.Default.CalendarToday, contentDescription = stringResource(R.string.calendar))
                     }
                 },
                 modifier = Modifier.fillMaxWidth()
@@ -160,7 +162,7 @@ fun PersonalDataScreen(userData: UserData, onSave: (UserData) -> Unit, onNavigat
             OutlinedTextField(
                 value = altura,
                 onValueChange = { altura = it },
-                label = { Text("Altura (cm)") },
+                label = { Text(stringResource(R.string.height_cm)) },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
@@ -170,7 +172,7 @@ fun PersonalDataScreen(userData: UserData, onSave: (UserData) -> Unit, onNavigat
             OutlinedTextField(
                 value = peso,
                 onValueChange = { peso = it },
-                label = { Text("Peso (kg)") },
+                label = { Text(stringResource(R.string.weight_kg)) },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
@@ -187,7 +189,7 @@ fun PersonalDataScreen(userData: UserData, onSave: (UserData) -> Unit, onNavigat
                 OutlinedTextField(
                     value = objetivo,
                     onValueChange = {},
-                    label = { Text("Objetivo") },
+                    label = { Text(stringResource(R.string.user_target)) },
                     readOnly = true,
                     trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedTarget) },
                     modifier = Modifier.fillMaxWidth().menuAnchor()
@@ -220,7 +222,7 @@ fun PersonalDataScreen(userData: UserData, onSave: (UserData) -> Unit, onNavigat
                 OutlinedTextField(
                     value = activityRate,
                     onValueChange = {},
-                    label = { Text("Nivel de Actividad") },
+                    label = { Text(stringResource(R.string.user_activity_level)) },
                     readOnly = true,
                     trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedActivity) },
                     modifier = Modifier.fillMaxWidth().menuAnchor()
@@ -247,7 +249,7 @@ fun PersonalDataScreen(userData: UserData, onSave: (UserData) -> Unit, onNavigat
                 onClick = { onSave(UserData(nombre, sexo, fechaNacimiento, altura, peso, objetivo, activityRate)) },
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text("Guardar")
+                Text(stringResource(R.string.save))
             }
         }
     }

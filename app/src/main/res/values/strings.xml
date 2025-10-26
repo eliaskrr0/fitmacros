@@ -1,3 +1,52 @@
 <resources>
     <string name="app_name">FitMacros</string>
+
+    <!-- Profile Screen -->
+    <string name="personal_data">Datos Personales</string>
+    <string name="user_name">Nombre</string>
+    <string name="user_sex">Sexo</string>
+    <string name="user_height">Altura</string>
+    <string name="user_weight">Peso</string>
+    <string name="user_target">Objetivo</string>
+    <string name="user_activity_level">Nivel de actividad</string>
+    <string name="edit_data">Editar Datos</string>
+    <string name="macronutrients">Macronutrientes</string>
+    <string name="carbohydrates">Carbohidratos</string>
+    <string name="fats">Grasas</string>
+    <string name="proteins">Proteínas</string>
+    <string name="grams_to_go">%d g faltan</string>
+    <string name="calories">Calorías</string>
+    <string name="calories_remaining_formula">Restantes = Objetivo - Alimentos + Ejercicio</string>
+    <string name="calories_remaining">Restantes</string>
+    <string name="maintenance_calories">Mantenimiento</string>
+    <string name="target_calories">Objetivo</string>
+    <string name="food_calories">Alimentos</string>
+    <string name="exercise_calories">Ejercicio</string>
+    <string name="unit_cm">cm</string>
+    <string name="unit_kg">kg</string>
+    <string name="placeholder_nodata">-</string>
+
+    <!-- Personal Data Screen -->
+    <string name="accept">Aceptar</string>
+    <string name="cancel">Cancelar</string>
+    <string name="back">Volver</string>
+    <string name="birthdate">Fecha de Nacimiento</string>
+    <string name="birthdate_placeholder">DD/MM/AAAA</string>
+    <string name="calendar">Calendario</string>
+    <string name="height_cm">Altura (cm)</string>
+    <string name="weight_kg">Peso (kg)</string>
+    <string name="save">Guardar</string>
+    <string name="sex_male">Hombre</string>
+    <string name="sex_female">Mujer</string>
+
+    <!-- Add/Edit Alimento Screen -->
+    <string name="add_alimento_title">Nuevo Alimento</string>
+    <string name="edit_alimento_title">Editar Alimento</string>
+    <string name="delete_confirmation_title">Confirmar Borrado</string>
+    <string name="delete_confirmation_message">¿Estás seguro de que quieres borrar este alimento?</string>
+    <string name="delete">Borrar</string>
+    <string name="brand_optional">Marca (Opcional)</string>
+    <string name="price_optional">Precio (Opcional)</string>
+    <string name="details_optional">Detalles (Opcional)</string>
+
 </resources>

@@ -29,8 +29,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import com.eliaskrr.fitmacros.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -50,8 +52,8 @@ fun AddEditAlimentoScreen(
     if (showDeleteDialog) {
         AlertDialog(
             onDismissRequest = { showDeleteDialog = false },
-            title = { Text("Confirmar Borrado") },
-            text = { Text("¿Estás seguro de que quieres borrar este alimento?") },
+            title = { Text(stringResource(R.string.delete_confirmation_title)) },
+            text = { Text(stringResource(R.string.delete_confirmation_message)) },
             confirmButton = {
                 TextButton(
                     onClick = {
@@ -59,12 +61,12 @@ fun AddEditAlimentoScreen(
                         showDeleteDialog = false
                     }
                 ) {
-                    Text("Borrar")
+                    Text(stringResource(R.string.delete))
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showDeleteDialog = false }) {
-                    Text("Cancelar")
+                    Text(stringResource(R.string.cancel))
                 }
             }
         )
@@ -73,16 +75,16 @@ fun AddEditAlimentoScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(if (uiState.id == 0) "Nuevo Alimento" else "Editar Alimento") },
+                title = { Text(if (uiState.id == 0) stringResource(R.string.add_alimento_title) else stringResource(R.string.edit_alimento_title)) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateUp) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Volver")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.back))
                     }
                 },
                 actions = {
                     if (uiState.id != 0) {
                         IconButton(onClick = { showDeleteDialog = true }) {
-                            Icon(Icons.Default.Delete, contentDescription = "Borrar")
+                            Icon(Icons.Default.Delete, contentDescription = stringResource(R.string.delete))
                         }
                     }
                 }
@@ -98,21 +100,21 @@ fun AddEditAlimentoScreen(
             OutlinedTextField(
                 value = uiState.nombre,
                 onValueChange = { viewModel.onValueChange(nombre = it) },
-                label = { Text("Nombre") },
+                label = { Text(stringResource(R.string.user_name)) },
                 modifier = Modifier.fillMaxWidth()
             )
             Spacer(modifier = Modifier.height(8.dp))
             OutlinedTextField(
                 value = uiState.marca,
                 onValueChange = { viewModel.onValueChange(marca = it) },
-                label = { Text("Marca (Opcional)") },
+                label = { Text(stringResource(R.string.brand_optional)) },
                 modifier = Modifier.fillMaxWidth()
             )
             Spacer(modifier = Modifier.height(8.dp))
             OutlinedTextField(
                 value = uiState.precio,
                 onValueChange = { viewModel.onValueChange(precio = it) },
-                label = { Text("Precio (Opcional)") },
+                label = { Text(stringResource(R.string.price_optional)) },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                 modifier = Modifier.fillMaxWidth()
             )
@@ -120,7 +122,7 @@ fun AddEditAlimentoScreen(
             OutlinedTextField(
                 value = uiState.proteinas,
                 onValueChange = { viewModel.onValueChange(proteinas = it) },
-                label = { Text("Proteínas") },
+                label = { Text(stringResource(R.string.proteins)) },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                 modifier = Modifier.fillMaxWidth()
             )
@@ -128,7 +130,7 @@ fun AddEditAlimentoScreen(
             OutlinedTextField(
                 value = uiState.carbos,
                 onValueChange = { viewModel.onValueChange(carbos = it) },
-                label = { Text("Carbohidratos") },
+                label = { Text(stringResource(R.string.carbohydrates)) },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                 modifier = Modifier.fillMaxWidth()
             )
@@ -136,7 +138,7 @@ fun AddEditAlimentoScreen(
             OutlinedTextField(
                 value = uiState.grasas,
                 onValueChange = { viewModel.onValueChange(grasas = it) },
-                label = { Text("Grasas") },
+                label = { Text(stringResource(R.string.fats)) },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                 modifier = Modifier.fillMaxWidth()
             )
@@ -144,7 +146,7 @@ fun AddEditAlimentoScreen(
             OutlinedTextField(
                 value = uiState.calorias,
                 onValueChange = { viewModel.onValueChange(calorias = it) },
-                label = { Text("Calorías") },
+                label = { Text(stringResource(R.string.calories)) },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                 modifier = Modifier.fillMaxWidth()
             )
@@ -152,7 +154,7 @@ fun AddEditAlimentoScreen(
             OutlinedTextField(
                 value = uiState.detalles,
                 onValueChange = { viewModel.onValueChange(detalles = it) },
-                label = { Text("Detalles (Opcional)") },
+                label = { Text(stringResource(R.string.details_optional)) },
                 modifier = Modifier.fillMaxWidth(),
                 minLines = 3
             )
@@ -161,7 +163,7 @@ fun AddEditAlimentoScreen(
                 onClick = { viewModel.saveAlimento() },
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text("Guardar")
+                Text(stringResource(R.string.save))
             }
         }
     }
