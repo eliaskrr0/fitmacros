@@ -17,10 +17,8 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.outlined.Flag
-import androidx.compose.material.icons.outlined.LocalFireDepartment
 import androidx.compose.material.icons.outlined.Restaurant
 import androidx.compose.material.icons.outlined.TrackChanges
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -64,7 +62,7 @@ fun ProfileScreen(viewModel: ProfileViewModel, onEditClick: () -> Unit) {
                     ProfileDataRow(label = "Altura", value = "${userData.altura.ifBlank { "-" }} cm")
                     ProfileDataRow(label = "Peso", value = "${userData.peso.ifBlank { "-" }} kg")
                     ProfileDataRow(label = "Objetivo", value = userData.objetivo.ifBlank { "-" })
-                    ProfileDataRow(label = "Nivel de Actividad", value = userData.activityRate.ifBlank { "-" })
+                    ProfileDataRow(label = "Nivel de actividad", value = userData.activityRate.ifBlank { "-" })
                 }
             }
             IconButton(
@@ -75,19 +73,19 @@ fun ProfileScreen(viewModel: ProfileViewModel, onEditClick: () -> Unit) {
             }
         }
 
-        Spacer(modifier = Modifier.height(24.dp))
-
-        MacronutrientsCard(
-            carbGoal = calculationResult.carbGoal,
-            fatGoal = calculationResult.fatGoal,
-            proteinGoal = calculationResult.proteinGoal
-        )
-
         Spacer(modifier = Modifier.height(16.dp))
 
         CaloriesCard(
             calorieGoal = calculationResult.calorieGoal,
             tdee = calculationResult.tdee
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        MacronutrientsCard(
+            carbGoal = calculationResult.carbGoal,
+            fatGoal = calculationResult.fatGoal,
+            proteinGoal = calculationResult.proteinGoal
         )
     }
 }
@@ -130,7 +128,6 @@ fun CaloriesCard(calorieGoal: Int, tdee: Int) {
     Card(modifier = Modifier.fillMaxWidth()) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text("Calorías", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
-            Text("Restantes = Objetivo - Alimentos + Ejercicio", style = MaterialTheme.typography.bodySmall)
             Spacer(modifier = Modifier.height(16.dp))
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -149,7 +146,6 @@ fun CaloriesCard(calorieGoal: Int, tdee: Int) {
                     InfoRowWithIcon(icon = Icons.Outlined.TrackChanges, label = "Mantenimiento", value = "$tdee")
                     InfoRowWithIcon(icon = Icons.Outlined.Flag, label = "Objetivo", value = "$calorieGoal")
                     InfoRowWithIcon(icon = Icons.Outlined.Restaurant, label = "Alimentos", value = "0")
-                    InfoRowWithIcon(icon = Icons.Outlined.LocalFireDepartment, label = "Ejercicio", value = "0")
                 }
             }
         }
