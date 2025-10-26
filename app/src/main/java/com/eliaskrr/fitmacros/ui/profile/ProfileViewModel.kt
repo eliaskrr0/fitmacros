@@ -5,8 +5,11 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.eliaskrr.fitmacros.data.repository.UserData
 import com.eliaskrr.fitmacros.data.repository.UserDataRepository
+import com.eliaskrr.fitmacros.domain.CalculationResult
+import com.eliaskrr.fitmacros.domain.MacroCalculator
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
@@ -16,6 +19,14 @@ class ProfileViewModel(private val userDataRepository: UserDataRepository) : Vie
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000),
         initialValue = UserData("", "", "", "", "", "", "")
+    )
+
+    val calculationResult: StateFlow<CalculationResult> = userData.map {
+        MacroCalculator.calculate(it)
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = CalculationResult()
     )
 
     fun saveUserData(userData: UserData) {
