@@ -8,6 +8,7 @@ navigation = "2.7.7"
 composeBom = "2024.05.00"
 activityCompose = "1.9.0"
 datastore = "1.1.1"
+splashscreen = "1.0.1"
 coreKtx = "1.10.1"
 junit = "4.13.2"
 junitVersion = "1.1.5"
@@ -34,6 +35,9 @@ androidx-navigation-compose = { group = "androidx.navigation", name = "navigatio
 
 # DataStore
 androidx-datastore-preferences = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "datastore" }
+
+# Splash Screen
+androidx-core-splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "splashscreen" }
 
 # Compose
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
