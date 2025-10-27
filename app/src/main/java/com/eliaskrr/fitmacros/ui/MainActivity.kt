@@ -19,6 +19,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
@@ -63,7 +64,9 @@ import com.eliaskrr.fitmacros.ui.profile.PersonalDataScreen
 import com.eliaskrr.fitmacros.ui.profile.ProfileScreen
 import com.eliaskrr.fitmacros.ui.profile.ProfileViewModel
 import com.eliaskrr.fitmacros.ui.profile.ProfileViewModelFactory
+import com.eliaskrr.fitmacros.ui.theme.Brand
 import com.eliaskrr.fitmacros.ui.theme.FitMacrosTheme
+import com.eliaskrr.fitmacros.ui.theme.White
 
 class MainActivity : ComponentActivity() {
 
@@ -214,7 +217,11 @@ fun AlimentoItem(alimento: Alimento, onClick: () -> Unit) {
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 8.dp)
-            .clickable(onClick = onClick)
+            .clickable(onClick = onClick),
+        colors = CardDefaults.cardColors(
+            containerColor = Brand,
+            contentColor = White
+        )
     ) {
         Row(
             modifier = Modifier
@@ -233,7 +240,7 @@ fun AlimentoItem(alimento: Alimento, onClick: () -> Unit) {
                     Text(
                         text = it,
                         style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        color = White.copy(alpha = 0.8f)
                     )
                 }
             }

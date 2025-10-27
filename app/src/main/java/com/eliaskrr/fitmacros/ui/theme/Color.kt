@@ -4,6 +4,7 @@ import androidx.compose.ui.graphics.Color
 
 // Paleta Principal (inspirada en el logo)
 val Brand = Color(0xFF43A047)
+val White = Color(0xFFFFFFFF)
 
 // --- Tema Claro ---
 val md_theme_light_primary = Color(0xFFFDFDFD) // Borde superior e inferior

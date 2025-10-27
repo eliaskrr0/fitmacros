@@ -17,10 +17,10 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.outlined.Flag
-import androidx.compose.material.icons.outlined.LocalFireDepartment
 import androidx.compose.material.icons.outlined.Restaurant
 import androidx.compose.material.icons.outlined.TrackChanges
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -42,8 +42,10 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.eliaskrr.fitmacros.R
+import com.eliaskrr.fitmacros.ui.theme.Brand
 import com.eliaskrr.fitmacros.ui.theme.Dimens
 import com.eliaskrr.fitmacros.ui.theme.NutrientColors
+import com.eliaskrr.fitmacros.ui.theme.White
 
 @Composable
 fun ProfileScreen(viewModel: ProfileViewModel, onEditClick: () -> Unit) {
@@ -58,7 +60,13 @@ fun ProfileScreen(viewModel: ProfileViewModel, onEditClick: () -> Unit) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Box(modifier = Modifier.fillMaxWidth()) {
-            Card(modifier = Modifier.fillMaxWidth()) {
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                colors = CardDefaults.cardColors(
+                    containerColor = Brand,
+                    contentColor = White
+                )
+            ) {
                 Column(modifier = Modifier.padding(Dimens.Large)) {
                     Text(stringResource(R.string.personal_data), style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
                     Spacer(modifier = Modifier.height(Dimens.Large))
@@ -74,7 +82,11 @@ fun ProfileScreen(viewModel: ProfileViewModel, onEditClick: () -> Unit) {
                 onClick = onEditClick,
                 modifier = Modifier.align(Alignment.TopEnd)
             ) {
-                Icon(Icons.Default.Edit, contentDescription = stringResource(R.string.edit_data))
+                Icon(
+                    Icons.Default.Edit,
+                    contentDescription = stringResource(R.string.edit_data),
+                    tint = White
+                )
             }
         }
 
@@ -110,7 +122,13 @@ fun ProfileDataRow(label: String, value: String) {
 
 @Composable
 fun MacronutrientsCard(carbGoal: Int, fatGoal: Int, proteinGoal: Int) {
-    Card(modifier = Modifier.fillMaxWidth()) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(
+            containerColor = Brand,
+            contentColor = White
+        )
+    ) {
         Column(modifier = Modifier.padding(Dimens.Large)) {
             Text(stringResource(R.string.macronutrients), style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
             Spacer(modifier = Modifier.height(Dimens.Large))
@@ -130,7 +148,13 @@ fun MacronutrientsCard(carbGoal: Int, fatGoal: Int, proteinGoal: Int) {
 fun CaloriesCard(calorieGoal: Int, tdee: Int) {
     val remainingCalories = calorieGoal // Asumimos 0 consumido por ahora
 
-    Card(modifier = Modifier.fillMaxWidth()) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(
+            containerColor = Brand,
+            contentColor = White
+        )
+    ) {
         Column(modifier = Modifier.padding(Dimens.Large)) {
             Text(stringResource(R.string.calories), style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
             Spacer(modifier = Modifier.height(Dimens.Large))
@@ -202,7 +226,7 @@ fun CircularProgress(progress: Float, color: Color, size: Dp = 80.dp, strokeWidt
 @Composable
 fun InfoRowWithIcon(icon: ImageVector, label: String, value: String) {
     Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(vertical = Dimens.Small)) {
-        Icon(icon, contentDescription = label, tint = MaterialTheme.colorScheme.onSurfaceVariant)
+        Icon(icon, contentDescription = label, tint = White.copy(alpha = 0.9f))
         Spacer(modifier = Modifier.width(Dimens.Medium))
         Text("$label: ", fontWeight = FontWeight.SemiBold)
         Text(value)
