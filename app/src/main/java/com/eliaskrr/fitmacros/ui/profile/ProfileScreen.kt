@@ -42,10 +42,10 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.eliaskrr.fitmacros.R
-import com.eliaskrr.fitmacros.ui.theme.Brand
+import com.eliaskrr.fitmacros.ui.theme.BackgroundCard
 import com.eliaskrr.fitmacros.ui.theme.Dimens
 import com.eliaskrr.fitmacros.ui.theme.NutrientColors
-import com.eliaskrr.fitmacros.ui.theme.White
+import com.eliaskrr.fitmacros.ui.theme.TextCard
 
 @Composable
 fun ProfileScreen(viewModel: ProfileViewModel, onEditClick: () -> Unit) {
@@ -63,8 +63,8 @@ fun ProfileScreen(viewModel: ProfileViewModel, onEditClick: () -> Unit) {
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 colors = CardDefaults.cardColors(
-                    containerColor = Brand,
-                    contentColor = White
+                    containerColor = BackgroundCard,
+                    contentColor = TextCard
                 )
             ) {
                 Column(modifier = Modifier.padding(Dimens.Large)) {
@@ -85,7 +85,7 @@ fun ProfileScreen(viewModel: ProfileViewModel, onEditClick: () -> Unit) {
                 Icon(
                     Icons.Default.Edit,
                     contentDescription = stringResource(R.string.edit_data),
-                    tint = White
+                    tint = TextCard
                 )
             }
         }
@@ -125,8 +125,8 @@ fun MacronutrientsCard(carbGoal: Int, fatGoal: Int, proteinGoal: Int) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(
-            containerColor = Brand,
-            contentColor = White
+            containerColor = BackgroundCard,
+            contentColor = TextCard
         )
     ) {
         Column(modifier = Modifier.padding(Dimens.Large)) {
@@ -151,8 +151,8 @@ fun CaloriesCard(calorieGoal: Int, tdee: Int) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(
-            containerColor = Brand,
-            contentColor = White
+            containerColor = BackgroundCard,
+            contentColor = TextCard
         )
     ) {
         Column(modifier = Modifier.padding(Dimens.Large)) {
@@ -226,7 +226,7 @@ fun CircularProgress(progress: Float, color: Color, size: Dp = 80.dp, strokeWidt
 @Composable
 fun InfoRowWithIcon(icon: ImageVector, label: String, value: String) {
     Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(vertical = Dimens.Small)) {
-        Icon(icon, contentDescription = label, tint = White.copy(alpha = 0.9f))
+        Icon(icon, contentDescription = label, tint = TextCard.copy(alpha = 0.9f))
         Spacer(modifier = Modifier.width(Dimens.Medium))
         Text("$label: ", fontWeight = FontWeight.SemiBold)
         Text(value)

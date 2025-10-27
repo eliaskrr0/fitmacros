@@ -64,9 +64,9 @@ import com.eliaskrr.fitmacros.ui.profile.PersonalDataScreen
 import com.eliaskrr.fitmacros.ui.profile.ProfileScreen
 import com.eliaskrr.fitmacros.ui.profile.ProfileViewModel
 import com.eliaskrr.fitmacros.ui.profile.ProfileViewModelFactory
-import com.eliaskrr.fitmacros.ui.theme.Brand
+import com.eliaskrr.fitmacros.ui.theme.BackgroundCard
 import com.eliaskrr.fitmacros.ui.theme.FitMacrosTheme
-import com.eliaskrr.fitmacros.ui.theme.White
+import com.eliaskrr.fitmacros.ui.theme.TextCard
 
 class MainActivity : ComponentActivity() {
 
@@ -219,8 +219,8 @@ fun AlimentoItem(alimento: Alimento, onClick: () -> Unit) {
             .padding(horizontal = 16.dp, vertical = 8.dp)
             .clickable(onClick = onClick),
         colors = CardDefaults.cardColors(
-            containerColor = Brand,
-            contentColor = White
+            containerColor = BackgroundCard,
+            contentColor = TextCard
         )
     ) {
         Row(
@@ -240,7 +240,7 @@ fun AlimentoItem(alimento: Alimento, onClick: () -> Unit) {
                     Text(
                         text = it,
                         style = MaterialTheme.typography.bodySmall,
-                        color = White.copy(alpha = 0.8f)
+                        color = TextCard.copy(alpha = 0.8f)
                     )
                 }
             }
