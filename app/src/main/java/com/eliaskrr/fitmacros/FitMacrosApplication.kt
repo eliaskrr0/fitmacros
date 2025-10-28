@@ -3,6 +3,7 @@ package com.eliaskrr.fitmacros
 import android.app.Application
 import com.eliaskrr.fitmacros.data.database.AppDatabase
 import com.eliaskrr.fitmacros.data.repository.AlimentoRepository
+import com.eliaskrr.fitmacros.data.repository.DietaRepository
 import com.eliaskrr.fitmacros.data.repository.UserDataRepository
 
 class FitMacrosApplication : Application() {
@@ -11,4 +12,5 @@ class FitMacrosApplication : Application() {
     private val database by lazy { AppDatabase.getDatabase(this) }
     val alimentoRepository by lazy { AlimentoRepository(database.alimentoDao()) }
     val userDataRepository by lazy { UserDataRepository(this) }
+    val dietaRepository by lazy { DietaRepository(database.dietaDao()) }
 }

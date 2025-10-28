@@ -1,6 +1,14 @@
 <resources>
     <string name="app_name">FitMacros</string>
 
+    <!-- Comunes -->
+    <string name="accept">Aceptar</string>
+    <string name="cancel">Cancelar</string>
+    <string name="back">Volver</string>
+    <string name="save">Guardar</string>
+    <string name="delete">Borrar</string>
+    <string name="create">Crear</string>
+
     <!-- Profile Screen -->
     <string name="personal_data">Datos Personales</string>
     <string name="user_name">Nombre</string>
@@ -27,15 +35,11 @@
     <string name="placeholder_nodata">-</string>
 
     <!-- Personal Data Screen -->
-    <string name="accept">Aceptar</string>
-    <string name="cancel">Cancelar</string>
-    <string name="back">Volver</string>
     <string name="birthdate">Fecha de Nacimiento</string>
     <string name="birthdate_placeholder">DD/MM/AAAA</string>
     <string name="calendar">Calendario</string>
     <string name="height_cm">Altura (cm)</string>
     <string name="weight_kg">Peso (kg)</string>
-    <string name="save">Guardar</string>
     <string name="sex_male">Hombre</string>
     <string name="sex_female">Mujer</string>
 
@@ -44,9 +48,12 @@
     <string name="edit_alimento_title">Editar Alimento</string>
     <string name="delete_confirmation_title">Confirmar Borrado</string>
     <string name="delete_confirmation_message">¿Estás seguro de que quieres borrar este alimento?</string>
-    <string name="delete">Borrar</string>
     <string name="brand_optional">Marca (Opcional)</string>
     <string name="price_optional">Precio (Opcional)</string>
     <string name="details_optional">Detalles (Opcional)</string>
+
+    <!-- Dietas Screen -->
+    <string name="new_dieta_title">Nueva Dieta</string>
+    <string name="dieta_name">Nombre de la Dieta</string>
 
 </resources>

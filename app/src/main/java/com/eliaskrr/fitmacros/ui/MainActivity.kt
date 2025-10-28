@@ -57,6 +57,9 @@ import com.eliaskrr.fitmacros.ui.alimento.AddEditAlimentoScreen
 import com.eliaskrr.fitmacros.ui.alimento.AddEditAlimentoViewModel
 import com.eliaskrr.fitmacros.ui.alimento.AlimentoViewModel
 import com.eliaskrr.fitmacros.ui.alimento.AlimentoViewModelFactory
+import com.eliaskrr.fitmacros.ui.dieta.DietasScreen
+import com.eliaskrr.fitmacros.ui.dieta.DietaViewModel
+import com.eliaskrr.fitmacros.ui.dieta.DietaViewModelFactory
 import com.eliaskrr.fitmacros.ui.navigation.AppScreen
 import com.eliaskrr.fitmacros.ui.navigation.NavItem
 import com.eliaskrr.fitmacros.ui.opciones.OptionsScreen
@@ -83,7 +86,10 @@ class MainActivity : ComponentActivity() {
                     val profileViewModel: ProfileViewModel by viewModels {
                         ProfileViewModelFactory(application.userDataRepository)
                     }
-                    MainScreen(alimentoViewModel = alimentoViewModel, profileViewModel = profileViewModel)
+                    val dietaViewModel: DietaViewModel by viewModels {
+                        DietaViewModelFactory(application.dietaRepository)
+                    }
+                    MainScreen(alimentoViewModel = alimentoViewModel, profileViewModel = profileViewModel, dietaViewModel = dietaViewModel)
                 }
             }
         }
@@ -92,9 +98,9 @@ class MainActivity : ComponentActivity() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainScreen(alimentoViewModel: AlimentoViewModel, profileViewModel: ProfileViewModel) {
+fun MainScreen(alimentoViewModel: AlimentoViewModel, profileViewModel: ProfileViewModel, dietaViewModel: DietaViewModel) {
     val navController = rememberNavController()
-    val navItems = listOf(NavItem.Profile, NavItem.Alimentos, NavItem.Opciones)
+    val navItems = listOf(NavItem.Profile, NavItem.Alimentos, NavItem.Dietas, NavItem.Opciones)
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
@@ -145,6 +151,7 @@ fun MainScreen(alimentoViewModel: AlimentoViewModel, profileViewModel: ProfileVi
                     onAlimentoClick = { navController.navigate(AppScreen.AddEditAlimento.createRoute(it.id)) }
                 )
             }
+            composable(AppScreen.Dietas.route) { DietasScreen(viewModel = dietaViewModel) }
             composable(AppScreen.Opciones.route) { OptionsScreen() }
             composable(
                 route = AppScreen.AddEditAlimento.route,
