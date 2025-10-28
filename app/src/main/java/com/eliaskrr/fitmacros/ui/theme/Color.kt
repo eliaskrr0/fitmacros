@@ -14,6 +14,8 @@ val TextCard = Color(0xFFF6F6F6)
 val DialogBackgroundColor = Color(0xFF1E1E1E) // Color de fondo para diálogos emergentes en modo oscuro.
 val DialogTitleColor = TextCard // Color para el título de los diálogos.
 val DialogTextColor = TextCard.copy(alpha = 0.8f) // Color para el texto del contenido de los diálogos.
+val ButtonConfirmColor = Color(0xFF3A86F4) // Azul para botones de confirmación.
+val ButtonCancelColor = Color(0xFFE53935) // Rojo para botones de cancelación.
 
 
 // --- Tema Claro ---
