@@ -1,7 +1,6 @@
 package com.eliaskrr.fitmacros.ui.dieta
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -15,6 +14,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -30,6 +30,9 @@ import androidx.compose.ui.unit.dp
 import com.eliaskrr.fitmacros.R
 import com.eliaskrr.fitmacros.data.model.Dieta
 import com.eliaskrr.fitmacros.ui.theme.BackgroundCard
+import com.eliaskrr.fitmacros.ui.theme.DialogBackgroundColor
+import com.eliaskrr.fitmacros.ui.theme.DialogTextColor
+import com.eliaskrr.fitmacros.ui.theme.DialogTitleColor
 import com.eliaskrr.fitmacros.ui.theme.TextCard
 
 @Composable
@@ -41,13 +44,28 @@ fun DietasScreen(viewModel: DietaViewModel) {
     if (showDialog) {
         AlertDialog(
             onDismissRequest = { showDialog = false },
+            containerColor = DialogBackgroundColor,
+            titleContentColor = DialogTitleColor,
+            textContentColor = DialogTextColor,
             title = { Text(stringResource(R.string.new_dieta_title)) },
             text = {
                 OutlinedTextField(
                     value = newDietaName,
                     onValueChange = { newDietaName = it },
                     label = { Text(stringResource(R.string.dieta_name)) },
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedContainerColor = BackgroundCard,
+                        unfocusedContainerColor = BackgroundCard,
+                        disabledContainerColor = BackgroundCard,
+                        cursorColor = TextCard,
+                        focusedBorderColor = TextCard.copy(alpha = 0.8f),
+                        unfocusedBorderColor = TextCard.copy(alpha = 0.5f),
+                        focusedLabelColor = TextCard.copy(alpha = 0.8f),
+                        unfocusedLabelColor = TextCard.copy(alpha = 0.5f),
+                        focusedTextColor = TextCard,
+                        unfocusedTextColor = TextCard
+                    )
                 )
             },
             confirmButton = {
@@ -100,7 +118,8 @@ fun DietaItem(dieta: Dieta, onClick: () -> Unit) {
     ) {
         Text(
             text = dieta.nombre,
-            modifier = Modifier.padding(16.dp)
+            modifier = Modifier.padding(16.dp),
+            color = TextCard
         )
     }
 }

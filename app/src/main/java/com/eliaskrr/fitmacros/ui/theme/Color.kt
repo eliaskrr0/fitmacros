@@ -10,6 +10,11 @@ val TextGeneral = Color(0xFFFFFFFF)
 val BackgroundCard = Color(0xFF1C1B1B)
 val TextCard = Color(0xFFF6F6F6)
 
+// Diálogo
+val DialogBackgroundColor = Color(0xFF1E1E1E) // Color de fondo para diálogos emergentes en modo oscuro.
+val DialogTitleColor = TextCard // Color para el título de los diálogos.
+val DialogTextColor = TextCard.copy(alpha = 0.8f) // Color para el texto del contenido de los diálogos.
+
 
 // --- Tema Claro ---
 val md_theme_light_primary = Brand // Borde superior e inferior

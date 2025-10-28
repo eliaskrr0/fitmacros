@@ -28,6 +28,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -208,7 +209,19 @@ fun AlimentosScreen(
                 .padding(16.dp),
             label = { Text("Buscar alimento...") },
             leadingIcon = { Icon(Icons.Default.Search, contentDescription = "Buscar") },
-            singleLine = true
+            singleLine = true,
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedContainerColor = BackgroundCard,
+                unfocusedContainerColor = BackgroundCard,
+                disabledContainerColor = BackgroundCard,
+                cursorColor = TextCard,
+                focusedBorderColor = TextCard.copy(alpha = 0.8f),
+                unfocusedBorderColor = TextCard.copy(alpha = 0.5f),
+                focusedLabelColor = TextCard.copy(alpha = 0.8f),
+                unfocusedLabelColor = TextCard.copy(alpha = 0.5f),
+                focusedLeadingIconColor = TextCard.copy(alpha = 0.8f),
+                unfocusedLeadingIconColor = TextCard.copy(alpha = 0.5f)
+            )
         )
         LazyColumn {
             items(alimentos) { alimento ->

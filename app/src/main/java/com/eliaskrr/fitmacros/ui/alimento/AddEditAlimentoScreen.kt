@@ -33,6 +33,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.eliaskrr.fitmacros.R
+import com.eliaskrr.fitmacros.ui.theme.DialogBackgroundColor
+import com.eliaskrr.fitmacros.ui.theme.DialogTextColor
+import com.eliaskrr.fitmacros.ui.theme.DialogTitleColor
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -52,6 +55,9 @@ fun AddEditAlimentoScreen(
     if (showDeleteDialog) {
         AlertDialog(
             onDismissRequest = { showDeleteDialog = false },
+            containerColor = DialogBackgroundColor,
+            titleContentColor = DialogTitleColor,
+            textContentColor = DialogTextColor,
             title = { Text(stringResource(R.string.delete_confirmation_title)) },
             text = { Text(stringResource(R.string.delete_confirmation_message)) },
             confirmButton = {
