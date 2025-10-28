@@ -15,6 +15,9 @@ sealed class AppScreen(val route: String) {
     data object AddEditAlimento : AppScreen("add_edit_alimento?alimentoId={alimentoId}") {
         fun createRoute(alimentoId: Int?) = "add_edit_alimento?alimentoId=$alimentoId"
     }
+    data object DietaDetail : AppScreen("dieta_detail/{dietaId}") {
+        fun createRoute(dietaId: Int) = "dieta_detail/$dietaId"
+    }
 }
 
 sealed class NavItem(val route: String, val label: String, val icon: ImageVector) {

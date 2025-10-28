@@ -58,6 +58,8 @@ import com.eliaskrr.fitmacros.ui.alimento.AddEditAlimentoScreen
 import com.eliaskrr.fitmacros.ui.alimento.AddEditAlimentoViewModel
 import com.eliaskrr.fitmacros.ui.alimento.AlimentoViewModel
 import com.eliaskrr.fitmacros.ui.alimento.AlimentoViewModelFactory
+import com.eliaskrr.fitmacros.ui.dieta.DietaDetailScreen
+import com.eliaskrr.fitmacros.ui.dieta.DietaDetailViewModel
 import com.eliaskrr.fitmacros.ui.dieta.DietasScreen
 import com.eliaskrr.fitmacros.ui.dieta.DietaViewModel
 import com.eliaskrr.fitmacros.ui.dieta.DietaViewModelFactory
@@ -152,7 +154,14 @@ fun MainScreen(alimentoViewModel: AlimentoViewModel, profileViewModel: ProfileVi
                     onAlimentoClick = { navController.navigate(AppScreen.AddEditAlimento.createRoute(it.id)) }
                 )
             }
-            composable(AppScreen.Dietas.route) { DietasScreen(viewModel = dietaViewModel) }
+            composable(AppScreen.Dietas.route) { 
+                DietasScreen(
+                    viewModel = dietaViewModel,
+                    onDietaClick = { dietaId ->
+                        navController.navigate(AppScreen.DietaDetail.createRoute(dietaId))
+                    }
+                ) 
+            }
             composable(AppScreen.Opciones.route) { OptionsScreen() }
             composable(
                 route = AppScreen.AddEditAlimento.route,
@@ -177,6 +186,16 @@ fun MainScreen(alimentoViewModel: AlimentoViewModel, profileViewModel: ProfileVi
                     },
                     onNavigateUp = { navController.navigateUp() }
                 )
+            }
+            composable(
+                route = AppScreen.DietaDetail.route,
+                arguments = listOf(navArgument("dietaId") { type = NavType.IntType })
+            ) {
+                val application = navController.context.applicationContext as FitMacrosApplication
+                val detailViewModel: DietaDetailViewModel = viewModel(
+                    factory = DietaDetailViewModel.provideFactory(application.userDataRepository)
+                )
+                DietaDetailScreen(viewModel = detailViewModel)
             }
         }
     }

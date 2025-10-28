@@ -8,6 +8,7 @@
     <string name="save">Guardar</string>
     <string name="delete">Borrar</string>
     <string name="create">Crear</string>
+    <string name="add_alimento">Añadir Alimento</string>
 
     <!-- Profile Screen -->
     <string name="personal_data">Datos Personales</string>
@@ -55,5 +56,12 @@
     <!-- Dietas Screen -->
     <string name="new_dieta_title">Nueva Dieta</string>
     <string name="dieta_name">Nombre de la Dieta</string>
+
+    <!-- Dieta Detail Screen -->
+    <string name="remaining_nutrients">Nutrientes restantes</string>
+    <string name="breakfast">Desayuno</string>
+    <string name="lunch">Comida</string>
+    <string name="afternoon_snack">Almuerzo</string>
+    <string name="dinner">Cena</string>
 
 </resources>
