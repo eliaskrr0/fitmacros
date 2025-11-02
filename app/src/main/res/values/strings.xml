@@ -9,6 +9,7 @@
     <string name="delete">Borrar</string>
     <string name="create">Crear</string>
     <string name="add_alimento">Añadir Alimento</string>
+    <string name="search_alimento_placeholder">Buscar alimento...</string>
 
     <!-- Profile Screen -->
     <string name="personal_data">Datos Personales</string>
@@ -63,5 +64,14 @@
     <string name="lunch">Comida</string>
     <string name="afternoon_snack">Almuerzo</string>
     <string name="dinner">Cena</string>
+    <string name="meal_empty_state">Aún no has añadido alimentos.</string>
+    <string name="alimento_quantity_format">%1$d g</string>
+    <string name="alimento_calories_format">%1$d kcal</string>
+    <string name="alimento_macro_format">%1$s: %2$s g</string>
+    <string name="add_alimento_to_meal_title">Añadir alimento a %1$s</string>
+    <string name="add_alimento_to_meal_dialog_title">Añadir %1$s</string>
+    <string name="quantity_in_grams">Cantidad (g)</string>
+    <string name="invalid_quantity_message">Introduce una cantidad válida mayor que 0.</string>
+    <string name="no_alimentos_found">No hay alimentos registrados. Crea uno desde la sección Alimentos.</string>
 
 </resources>

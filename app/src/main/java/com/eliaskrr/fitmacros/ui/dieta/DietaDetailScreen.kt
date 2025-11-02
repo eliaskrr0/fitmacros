@@ -29,8 +29,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.eliaskrr.fitmacros.R
-import com.eliaskrr.fitmacros.data.model.Alimento
 import com.eliaskrr.fitmacros.data.model.MealType
+import java.util.Locale
 import kotlin.math.roundToInt
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -125,8 +125,17 @@ fun MealSection(
         }
         HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp))
 
-        mealData.alimentos.forEach { alimento ->
-            AlimentoInDietaItem(alimento)
+        if (mealData.alimentos.isEmpty()) {
+            Text(
+                text = stringResource(R.string.meal_empty_state),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(vertical = 8.dp)
+            )
+        } else {
+            mealData.alimentos.forEach { alimento ->
+                AlimentoInDietaItem(alimento)
+            }
         }
 
         TextButton(onClick = onAddAlimentoClick) {
@@ -137,9 +146,68 @@ fun MealSection(
 }
 
 @Composable
-fun AlimentoInDietaItem(alimento: Alimento) {
-    Row(modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)) {
-        Text(text = alimento.nombre, modifier = Modifier.weight(1f))
-        Text(text = "${alimento.calorias.roundToInt()} kcal")
+fun AlimentoInDietaItem(alimento: AlimentoEnComida) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 4.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Column(modifier = Modifier.weight(1f)) {
+            Text(
+                text = alimento.alimento.nombre,
+                style = MaterialTheme.typography.bodyLarge,
+                fontWeight = FontWeight.SemiBold
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                text = stringResource(
+                    R.string.alimento_quantity_format,
+                    alimento.cantidad.roundToInt()
+                ),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
+        Column(horizontalAlignment = Alignment.End) {
+            Text(
+                text = stringResource(
+                    R.string.alimento_calories_format,
+                    alimento.calorias.roundToInt()
+                ),
+                style = MaterialTheme.typography.bodyMedium,
+                fontWeight = FontWeight.SemiBold
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                Text(
+                    text = stringResource(
+                        R.string.alimento_macro_format,
+                        "P",
+                        formatDouble(alimento.proteinas)
+                    ),
+                    fontSize = 12.sp
+                )
+                Text(
+                    text = stringResource(
+                        R.string.alimento_macro_format,
+                        "C",
+                        formatDouble(alimento.carbos)
+                    ),
+                    fontSize = 12.sp
+                )
+                Text(
+                    text = stringResource(
+                        R.string.alimento_macro_format,
+                        "G",
+                        formatDouble(alimento.grasas)
+                    ),
+                    fontSize = 12.sp
+                )
+            }
+        }
     }
 }
+
+private fun formatDouble(value: Double): String =
+    String.format(Locale.getDefault(), "%.1f", value)

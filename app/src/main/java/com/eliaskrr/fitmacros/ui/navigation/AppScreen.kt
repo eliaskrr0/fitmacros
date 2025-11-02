@@ -6,6 +6,7 @@ import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.outlined.Fastfood
 import androidx.compose.ui.graphics.vector.ImageVector
+import com.eliaskrr.fitmacros.data.model.MealType
 
 sealed class AppScreen(val route: String) {
     data object Profile : AppScreen("profile")
@@ -17,6 +18,10 @@ sealed class AppScreen(val route: String) {
     }
     data object DietaDetail : AppScreen("dieta_detail/{dietaId}") {
         fun createRoute(dietaId: Int) = "dieta_detail/$dietaId"
+    }
+    data object AddAlimentoToDieta : AppScreen("dieta_detail/{dietaId}/add_alimento/{mealType}") {
+        fun createRoute(dietaId: Int, mealType: MealType) =
+            "dieta_detail/$dietaId/add_alimento/${mealType.name}"
     }
 }
 

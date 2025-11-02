@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.CreationExtras
+import com.eliaskrr.fitmacros.data.model.AlimentoConCantidad
 import com.eliaskrr.fitmacros.data.model.Alimento
 import com.eliaskrr.fitmacros.data.model.DietaAlimento
 import com.eliaskrr.fitmacros.data.model.MealType
@@ -19,9 +20,21 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
+data class AlimentoEnComida(
+    val alimento: Alimento,
+    val cantidad: Double,
+    val calorias: Double,
+    val proteinas: Double,
+    val carbos: Double,
+    val grasas: Double
+)
+
 data class MealData(
-    val alimentos: List<Alimento> = emptyList(),
-    val totalCalorias: Double = 0.0
+    val alimentos: List<AlimentoEnComida> = emptyList(),
+    val totalCalorias: Double = 0.0,
+    val totalProteinas: Double = 0.0,
+    val totalCarbos: Double = 0.0,
+    val totalGrasas: Double = 0.0
 )
 
 class DietaDetailViewModel(
@@ -43,14 +56,33 @@ class DietaDetailViewModel(
     fun getMealData(mealType: MealType): StateFlow<MealData> {
         return dietaAlimentoRepository.getAlimentosForDietaAndMeal(dietaId, mealType)
             .map { alimentos ->
-                val totalCalorias = alimentos.sumOf { it.calorias }
-                MealData(alimentos, totalCalorias)
+                val mappedAlimentos = alimentos.map { it.toAlimentoEnComida() }
+                MealData(
+                    alimentos = mappedAlimentos,
+                    totalCalorias = mappedAlimentos.sumOf { it.calorias },
+                    totalProteinas = mappedAlimentos.sumOf { it.proteinas },
+                    totalCarbos = mappedAlimentos.sumOf { it.carbos },
+                    totalGrasas = mappedAlimentos.sumOf { it.grasas }
+                )
             }
             .stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(5000),
                 initialValue = MealData()
             )
+    }
+
+    private fun AlimentoConCantidad.toAlimentoEnComida(): AlimentoEnComida {
+        val factor = cantidad / 100.0
+        val alimentoBase = alimento
+        return AlimentoEnComida(
+            alimento = alimentoBase,
+            cantidad = cantidad,
+            calorias = alimentoBase.calorias * factor,
+            proteinas = alimentoBase.proteinas * factor,
+            carbos = alimentoBase.carbos * factor,
+            grasas = alimentoBase.grasas * factor
+        )
     }
 
     fun addAlimentoToDieta(alimentoId: Int, mealType: MealType, cantidad: Double) {

@@ -53,11 +53,14 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.eliaskrr.fitmacros.FitMacrosApplication
+import com.eliaskrr.fitmacros.R
 import com.eliaskrr.fitmacros.data.model.Alimento
 import com.eliaskrr.fitmacros.ui.alimento.AddEditAlimentoScreen
 import com.eliaskrr.fitmacros.ui.alimento.AddEditAlimentoViewModel
 import com.eliaskrr.fitmacros.ui.alimento.AlimentoViewModel
 import com.eliaskrr.fitmacros.ui.alimento.AlimentoViewModelFactory
+import com.eliaskrr.fitmacros.ui.dieta.AddAlimentoToDietaScreen
+import com.eliaskrr.fitmacros.ui.dieta.AddAlimentoToDietaViewModel
 import com.eliaskrr.fitmacros.ui.dieta.DietaDetailScreen
 import com.eliaskrr.fitmacros.ui.dieta.DietaDetailViewModel
 import com.eliaskrr.fitmacros.ui.dieta.DietasScreen
@@ -73,6 +76,7 @@ import com.eliaskrr.fitmacros.ui.profile.ProfileViewModelFactory
 import com.eliaskrr.fitmacros.ui.theme.BackgroundCard
 import com.eliaskrr.fitmacros.ui.theme.FitMacrosTheme
 import com.eliaskrr.fitmacros.ui.theme.TextCard
+import androidx.compose.ui.res.stringResource
 
 class MainActivity : ComponentActivity() {
 
@@ -198,11 +202,31 @@ fun MainScreen(alimentoViewModel: AlimentoViewModel, profileViewModel: ProfileVi
                         dietaAlimentoRepository = application.dietaAlimentoRepository
                     )
                 )
+                val dietaId = it.arguments?.getInt("dietaId") ?: return@composable
                 DietaDetailScreen(
                     viewModel = detailViewModel,
                     onAddAlimentoClick = { mealType ->
-                        navController.navigate(AppScreen.Alimentos.route)
+                        navController.navigate(AppScreen.AddAlimentoToDieta.createRoute(dietaId, mealType))
                     },
+                    onNavigateUp = { navController.navigateUp() }
+                )
+            }
+            composable(
+                route = AppScreen.AddAlimentoToDieta.route,
+                arguments = listOf(
+                    navArgument("dietaId") { type = NavType.IntType },
+                    navArgument("mealType") { type = NavType.StringType }
+                )
+            ) {
+                val application = navController.context.applicationContext as FitMacrosApplication
+                val addAlimentoToDietaViewModel: AddAlimentoToDietaViewModel = viewModel(
+                    factory = AddAlimentoToDietaViewModel.provideFactory(
+                        alimentoRepository = application.alimentoRepository,
+                        dietaAlimentoRepository = application.dietaAlimentoRepository
+                    )
+                )
+                AddAlimentoToDietaScreen(
+                    viewModel = addAlimentoToDietaViewModel,
                     onNavigateUp = { navController.navigateUp() }
                 )
             }
@@ -227,6 +251,7 @@ fun AlimentosScreen(
 ) {
     val alimentos by viewModel.alimentos.collectAsState()
     val searchQuery by viewModel.searchQuery.collectAsState()
+    val searchPlaceholder = stringResource(R.string.search_alimento_placeholder)
 
     Column {
         OutlinedTextField(
@@ -235,8 +260,8 @@ fun AlimentosScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp),
-            label = { Text("Buscar alimento...") },
-            leadingIcon = { Icon(Icons.Default.Search, contentDescription = "Buscar") },
+            label = { Text(searchPlaceholder) },
+            leadingIcon = { Icon(Icons.Default.Search, contentDescription = searchPlaceholder) },
             singleLine = true,
             colors = OutlinedTextFieldDefaults.colors(
                 focusedContainerColor = BackgroundCard,
