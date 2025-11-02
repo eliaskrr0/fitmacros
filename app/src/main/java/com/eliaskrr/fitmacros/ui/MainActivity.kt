@@ -193,9 +193,18 @@ fun MainScreen(alimentoViewModel: AlimentoViewModel, profileViewModel: ProfileVi
             ) {
                 val application = navController.context.applicationContext as FitMacrosApplication
                 val detailViewModel: DietaDetailViewModel = viewModel(
-                    factory = DietaDetailViewModel.provideFactory(application.userDataRepository)
+                    factory = DietaDetailViewModel.provideFactory(
+                        userDataRepository = application.userDataRepository,
+                        dietaAlimentoRepository = application.dietaAlimentoRepository
+                    )
                 )
-                DietaDetailScreen(viewModel = detailViewModel)
+                DietaDetailScreen(
+                    viewModel = detailViewModel,
+                    onAddAlimentoClick = { mealType ->
+                        navController.navigate(AppScreen.Alimentos.route)
+                    },
+                    onNavigateUp = { navController.navigateUp() }
+                )
             }
         }
     }

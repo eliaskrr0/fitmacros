@@ -8,11 +8,17 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -23,12 +29,27 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.eliaskrr.fitmacros.R
+import com.eliaskrr.fitmacros.data.model.Alimento
+import com.eliaskrr.fitmacros.data.model.MealType
+import kotlin.math.roundToInt
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DietaDetailScreen(viewModel: DietaDetailViewModel) {
+fun DietaDetailScreen(viewModel: DietaDetailViewModel, onAddAlimentoClick: (MealType) -> Unit, onNavigateUp: () -> Unit) {
     val nutrientGoals by viewModel.nutrientGoals.collectAsState()
 
-    Scaffold {
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("Detalle de Dieta") }, // TODO: Poner el nombre de la dieta real
+                navigationIcon = {
+                    IconButton(onClick = onNavigateUp) {
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.back))
+                    }
+                }
+            )
+        }
+    ) {
         LazyColumn(modifier = Modifier.padding(it).padding(16.dp)) {
             item {
                 RemainingNutrients(
@@ -40,16 +61,16 @@ fun DietaDetailScreen(viewModel: DietaDetailViewModel) {
                 Spacer(modifier = Modifier.height(24.dp))
             }
             item {
-                MealSection(mealName = stringResource(R.string.breakfast))
+                MealSection(mealType = MealType.BREAKFAST, viewModel = viewModel, onAddAlimentoClick = { onAddAlimentoClick(MealType.BREAKFAST) })
             }
             item {
-                MealSection(mealName = stringResource(R.string.lunch))
+                MealSection(mealType = MealType.LUNCH, viewModel = viewModel, onAddAlimentoClick = { onAddAlimentoClick(MealType.LUNCH) })
             }
             item {
-                MealSection(mealName = stringResource(R.string.afternoon_snack))
+                MealSection(mealType = MealType.AFTERNOON_SNACK, viewModel = viewModel, onAddAlimentoClick = { onAddAlimentoClick(MealType.AFTERNOON_SNACK) })
             }
             item {
-                MealSection(mealName = stringResource(R.string.dinner))
+                MealSection(mealType = MealType.DINNER, viewModel = viewModel, onAddAlimentoClick = { onAddAlimentoClick(MealType.DINNER) })
             }
         }
     }
@@ -81,22 +102,44 @@ fun NutrientColumn(value: String, label: String) {
 }
 
 @Composable
-fun MealSection(mealName: String) {
+fun MealSection(
+    mealType: MealType,
+    viewModel: DietaDetailViewModel,
+    onAddAlimentoClick: () -> Unit
+) {
+    val mealData by viewModel.getMealData(mealType).collectAsState()
+
     Column(modifier = Modifier.padding(vertical = 8.dp)) {
         Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
             Text(
-                text = mealName,
+                text = stringResource(mealType.stringRes),
                 style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.weight(1f)
             )
-            Text(text = "0", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold)
+            Text(
+                text = mealData.totalCalorias.roundToInt().toString(),
+                style = MaterialTheme.typography.headlineSmall, 
+                fontWeight = FontWeight.Bold
+            )
         }
         HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp))
-        // Aquí iría la lista de alimentos de esta comida
-        TextButton(onClick = { /* TODO */ }) {
+
+        mealData.alimentos.forEach { alimento ->
+            AlimentoInDietaItem(alimento)
+        }
+
+        TextButton(onClick = onAddAlimentoClick) {
             Text(stringResource(R.string.add_alimento))
         }
         HorizontalDivider(modifier = Modifier.padding(top = 4.dp, bottom = 16.dp))
+    }
+}
+
+@Composable
+fun AlimentoInDietaItem(alimento: Alimento) {
+    Row(modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)) {
+        Text(text = alimento.nombre, modifier = Modifier.weight(1f))
+        Text(text = "${alimento.calorias.roundToInt()} kcal")
     }
 }
