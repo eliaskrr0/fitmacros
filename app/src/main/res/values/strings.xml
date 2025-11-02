@@ -63,5 +63,12 @@
     <string name="lunch">Comida</string>
     <string name="afternoon_snack">Almuerzo</string>
     <string name="dinner">Cena</string>
+    <string name="no_foods_added">No hay alimentos añadidos todavía.</string>
+    <string name="food_macros_preview">%1$.1f raciones · P %2$d g · C %3$d g · G %4$d g · %5$d kcal</string>
+    <string name="delete_alimento">Eliminar alimento</string>
+    <string name="add_food_to_meal">Añadir alimento a %1$s</string>
+    <string name="search_food">Buscar alimento</string>
+    <string name="servings_label">Raciones</string>
+    <string name="add_to_meal">Añadir a la comida</string>
 
 </resources>

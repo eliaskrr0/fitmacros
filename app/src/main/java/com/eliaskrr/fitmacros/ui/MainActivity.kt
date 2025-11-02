@@ -193,7 +193,11 @@ fun MainScreen(alimentoViewModel: AlimentoViewModel, profileViewModel: ProfileVi
             ) {
                 val application = navController.context.applicationContext as FitMacrosApplication
                 val detailViewModel: DietaDetailViewModel = viewModel(
-                    factory = DietaDetailViewModel.provideFactory(application.userDataRepository)
+                    factory = DietaDetailViewModel.provideFactory(
+                        userDataRepository = application.userDataRepository,
+                        dietaAlimentoRepository = application.dietaAlimentoRepository,
+                        alimentoRepository = application.alimentoRepository
+                    )
                 )
                 DietaDetailScreen(viewModel = detailViewModel)
             }
