@@ -1,6 +1,7 @@
 package com.eliaskrr.fitmacros.data.repository
 
 import android.content.Context
+import android.util.Log
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
@@ -38,14 +39,20 @@ class UserDataRepository(context: Context) {
     }
 
     suspend fun saveUserData(userData: UserData) {
-        dataStore.edit {
-            it[PreferencesKeys.USER_NAME] = userData.nombre
-            it[PreferencesKeys.USER_SEX] = userData.sexo
-            it[PreferencesKeys.USER_BIRTHDATE] = userData.fechaNacimiento
-            it[PreferencesKeys.USER_HEIGHT] = userData.altura
-            it[PreferencesKeys.USER_WEIGHT] = userData.peso
-            it[PreferencesKeys.USER_TARGET] = userData.objetivo
-            it[PreferencesKeys.USER_ACTIVITY_RATE] = userData.activityRate
+        try {
+            dataStore.edit {
+                it[PreferencesKeys.USER_NAME] = userData.nombre
+                it[PreferencesKeys.USER_SEX] = userData.sexo
+                it[PreferencesKeys.USER_BIRTHDATE] = userData.fechaNacimiento
+                it[PreferencesKeys.USER_HEIGHT] = userData.altura
+                it[PreferencesKeys.USER_WEIGHT] = userData.peso
+                it[PreferencesKeys.USER_TARGET] = userData.objetivo
+                it[PreferencesKeys.USER_ACTIVITY_RATE] = userData.activityRate
+            }
+            Log.i(TAG, "Datos de usuario guardados para ${userData.nombre}")
+        } catch (ex: Exception) {
+            Log.e(TAG, "Error al guardar datos de usuario para ${userData.nombre}", ex)
+            throw ex
         }
     }
 
@@ -57,5 +64,9 @@ class UserDataRepository(context: Context) {
         val USER_WEIGHT = stringPreferencesKey("user_weight")
         val USER_TARGET = stringPreferencesKey("user_target")
         val USER_ACTIVITY_RATE = stringPreferencesKey("user_activity_rate")
+    }
+
+    companion object {
+        private const val TAG = "UserDataRepository"
     }
 }

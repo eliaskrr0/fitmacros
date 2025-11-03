@@ -1,5 +1,6 @@
 package com.eliaskrr.fitmacros.ui.alimento
 
+import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -41,30 +42,37 @@ class AddEditAlimentoViewModel(
     init {
         // El valor por defecto de alimentoId es -1, así que solo cargamos si es un ID válido
         if (alimentoId != null && alimentoId != -1) {
+            Log.d(TAG, "Inicializando edición para alimento con id $alimentoId")
             loadAlimento(alimentoId)
         }
     }
 
     private fun loadAlimento(id: Int) {
         viewModelScope.launch {
-            repository.getById(id).first { alimento ->
-                if (alimento != null) {
-                    _uiState.update {
-                        it.copy(
-                            id = alimento.id,
-                            nombre = alimento.nombre,
-                            precio = alimento.precio?.toString() ?: "",
-                            marca = alimento.marca ?: "",
-                            proteinas = alimento.proteinas.toString(),
-                            carbos = alimento.carbos.toString(),
-                            grasas = alimento.grasas.toString(),
-                            calorias = alimento.calorias.toString(),
-                            detalles = alimento.detalles ?: ""
-                        )
+            runCatching { repository.getById(id).first() }
+                .onSuccess { alimento ->
+                    if (alimento != null) {
+                        Log.d(TAG, "Alimento cargado para edición: ${alimento.nombre} (id=${alimento.id})")
+                        _uiState.update {
+                            it.copy(
+                                id = alimento.id,
+                                nombre = alimento.nombre,
+                                precio = alimento.precio?.toString() ?: "",
+                                marca = alimento.marca ?: "",
+                                proteinas = alimento.proteinas.toString(),
+                                carbos = alimento.carbos.toString(),
+                                grasas = alimento.grasas.toString(),
+                                calorias = alimento.calorias.toString(),
+                                detalles = alimento.detalles ?: ""
+                            )
+                        }
+                    } else {
+                        Log.w(TAG, "No se encontró el alimento con id $id")
                     }
                 }
-                true
-            }
+                .onFailure { ex ->
+                    Log.e(TAG, "Error cargando alimento con id $id", ex)
+                }
         }
     }
 
@@ -100,27 +108,44 @@ class AddEditAlimentoViewModel(
                 detalles = state.detalles.ifEmpty { null }
             )
 
-            if (isNewAlimento) {
-                repository.insert(alimento)
-            } else {
-                repository.update(alimento)
+            runCatching {
+                if (isNewAlimento) {
+                    Log.d(TAG, "Insertando nuevo alimento ${alimento.nombre}")
+                    repository.insert(alimento)
+                } else {
+                    Log.d(TAG, "Actualizando alimento ${alimento.nombre} (id=${alimento.id})")
+                    repository.update(alimento)
+                }
+            }.onSuccess {
+                Log.i(TAG, "Alimento guardado correctamente: ${alimento.nombre}")
+                _uiState.update { it.copy(isSaved = true) }
+            }.onFailure { ex ->
+                Log.e(TAG, "Error al guardar alimento ${alimento.nombre}", ex)
             }
-            _uiState.update { it.copy(isSaved = true) }
         }
     }
-    
+
     fun deleteAlimento() {
         viewModelScope.launch {
             val state = _uiState.value
             if (state.id != 0) {
                 val alimentoToDelete = Alimento(id = state.id, nombre = state.nombre, proteinas = state.proteinas.toDoubleOrNull() ?: 0.0, carbos = state.carbos.toDoubleOrNull() ?: 0.0, grasas = state.grasas.toDoubleOrNull() ?: 0.0, calorias = state.calorias.toDoubleOrNull() ?: 0.0)
-                repository.delete(alimentoToDelete)
-                _uiState.update { it.copy(isSaved = true) }
+                runCatching {
+                    Log.d(TAG, "Eliminando alimento ${alimentoToDelete.nombre} (id=${alimentoToDelete.id})")
+                    repository.delete(alimentoToDelete)
+                }.onSuccess {
+                    Log.i(TAG, "Alimento eliminado correctamente: ${alimentoToDelete.nombre}")
+                    _uiState.update { it.copy(isSaved = true) }
+                }.onFailure { ex ->
+                    Log.e(TAG, "Error al eliminar alimento ${alimentoToDelete.nombre} (id=${alimentoToDelete.id})", ex)
+                }
             }
         }
     }
 
     companion object {
+        private const val TAG = "AddEditAlimentoVM"
+
         fun provideFactory(
             repository: AlimentoRepository,
         ): ViewModelProvider.Factory = object : ViewModelProvider.Factory {

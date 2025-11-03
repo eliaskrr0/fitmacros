@@ -1,5 +1,6 @@
 package com.eliaskrr.fitmacros.ui.dieta
 
+import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -41,6 +42,7 @@ class DietaDetailViewModel(
     )
 
     fun getMealData(mealType: MealType): StateFlow<MealData> {
+        Log.d(TAG, "Obteniendo datos de comida $mealType para dieta $dietaId")
         return dietaAlimentoRepository.getAlimentosForDietaAndMeal(dietaId, mealType)
             .map { alimentos ->
                 val totalCalorias = alimentos.sumOf { it.calorias }
@@ -56,11 +58,23 @@ class DietaDetailViewModel(
     fun addAlimentoToDieta(alimentoId: Int, mealType: MealType, cantidad: Double) {
         viewModelScope.launch {
             val dietaAlimento = DietaAlimento(dietaId, alimentoId, mealType, cantidad)
-            dietaAlimentoRepository.insert(dietaAlimento)
+            runCatching {
+                Log.d(
+                    TAG,
+                    "Añadiendo alimento $alimentoId a dieta $dietaId para $mealType con cantidad $cantidad"
+                )
+                dietaAlimentoRepository.insert(dietaAlimento)
+            }.onSuccess {
+                Log.i(TAG, "Alimento $alimentoId añadido a dieta $dietaId para $mealType")
+            }.onFailure { ex ->
+                Log.e(TAG, "Error al añadir alimento $alimentoId a dieta $dietaId", ex)
+            }
         }
     }
 
     companion object {
+        private const val TAG = "DietaDetailVM"
+
         fun provideFactory(
             userDataRepository: UserDataRepository,
             dietaAlimentoRepository: DietaAlimentoRepository

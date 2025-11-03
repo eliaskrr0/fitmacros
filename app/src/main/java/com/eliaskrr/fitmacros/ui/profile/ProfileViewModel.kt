@@ -1,5 +1,6 @@
 package com.eliaskrr.fitmacros.ui.profile
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -31,8 +32,19 @@ class ProfileViewModel(private val userDataRepository: UserDataRepository) : Vie
 
     fun saveUserData(userData: UserData) {
         viewModelScope.launch {
-            userDataRepository.saveUserData(userData)
+            runCatching {
+                Log.d(TAG, "Guardando datos de usuario para ${userData.nombre}")
+                userDataRepository.saveUserData(userData)
+            }.onSuccess {
+                Log.i(TAG, "Datos de usuario guardados para ${userData.nombre}")
+            }.onFailure { ex ->
+                Log.e(TAG, "Error al guardar datos de usuario para ${userData.nombre}", ex)
+            }
         }
+    }
+
+    companion object {
+        private const val TAG = "ProfileViewModel"
     }
 }
 
