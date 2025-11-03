@@ -29,7 +29,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.eliaskrr.fitmacros.R
-import com.eliaskrr.fitmacros.data.model.Alimento
 import com.eliaskrr.fitmacros.data.model.MealType
 import kotlin.math.roundToInt
 
@@ -125,8 +124,24 @@ fun MealSection(
         }
         HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp))
 
-        mealData.alimentos.forEach { alimento ->
-            AlimentoInDietaItem(alimento)
+        MealMacrosSummary(
+            proteinas = mealData.totalProteinas,
+            carbos = mealData.totalCarbos,
+            grasas = mealData.totalGrasas
+        )
+
+        if (mealData.items.isEmpty()) {
+            Text(
+                text = stringResource(R.string.meal_without_foods),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
+                modifier = Modifier.padding(vertical = 8.dp)
+            )
+        } else {
+            Spacer(modifier = Modifier.height(8.dp))
+            mealData.items.forEach { item ->
+                AlimentoInDietaItem(item)
+            }
         }
 
         Text(
@@ -142,9 +157,57 @@ fun MealSection(
 }
 
 @Composable
-fun AlimentoInDietaItem(alimento: Alimento) {
-    Row(modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)) {
-        Text(text = alimento.nombre, modifier = Modifier.weight(1f))
-        Text(text = "${alimento.calorias.roundToInt()} kcal")
+fun MealMacrosSummary(proteinas: Double, carbos: Double, grasas: Double) {
+    val summaryText = stringResource(
+        R.string.meal_macros_summary,
+        proteinas,
+        carbos,
+        grasas
+    )
+    Text(
+        text = summaryText,
+        style = MaterialTheme.typography.bodySmall,
+        fontWeight = FontWeight.SemiBold,
+        color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f),
+        modifier = Modifier.padding(vertical = 4.dp)
+    )
+}
+
+@Composable
+fun AlimentoInDietaItem(item: MealItem) {
+    val unitAbbreviation = stringResource(item.unidad.shortLabelRes)
+    val quantityText = stringResource(R.string.quantity_with_unit, item.cantidad, unitAbbreviation)
+    val macrosDetail = stringResource(
+        R.string.food_macros_detail,
+        item.proteinas,
+        item.carbos,
+        item.grasas
+    )
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 6.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Column(modifier = Modifier.weight(1f)) {
+            Text(text = item.alimento.nombre, style = MaterialTheme.typography.bodyLarge)
+            Text(
+                text = quantityText,
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f)
+            )
+        }
+        Column(horizontalAlignment = Alignment.End) {
+            Text(
+                text = "${item.calorias.roundToInt()} kcal",
+                style = MaterialTheme.typography.bodyMedium,
+                fontWeight = FontWeight.SemiBold
+            )
+            Text(
+                text = macrosDetail,
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f)
+            )
+        }
     }
 }

@@ -15,5 +15,6 @@ data class DietaAlimento(
     val dietaId: Int,
     val alimentoId: Int,
     val mealType: MealType,
-    val cantidad: Double // en gramos
+    val cantidad: Double,
+    val unidad: QuantityUnit = QuantityUnit.GRAMS
 )
