@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
 import com.eliaskrr.fitmacros.data.dao.AlimentoDao
 import com.eliaskrr.fitmacros.data.dao.DietaAlimentoDao
 import com.eliaskrr.fitmacros.data.dao.DietaDao
@@ -11,7 +12,8 @@ import com.eliaskrr.fitmacros.data.model.Alimento
 import com.eliaskrr.fitmacros.data.model.Dieta
 import com.eliaskrr.fitmacros.data.model.DietaAlimento
 
-@Database(entities = [Alimento::class, Dieta::class, DietaAlimento::class], version = 3, exportSchema = false)
+@Database(entities = [Alimento::class, Dieta::class, DietaAlimento::class], version = 4, exportSchema = false)
+@TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun alimentoDao(): AlimentoDao

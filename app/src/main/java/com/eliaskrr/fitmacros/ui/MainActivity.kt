@@ -72,7 +72,7 @@ import com.eliaskrr.fitmacros.ui.profile.ProfileViewModel
 import com.eliaskrr.fitmacros.ui.profile.ProfileViewModelFactory
 import com.eliaskrr.fitmacros.ui.theme.BackgroundCard
 import com.eliaskrr.fitmacros.ui.theme.FitMacrosTheme
-import com.eliaskrr.fitmacros.ui.theme.TextCard
+import com.eliaskrr.fitmacros.ui.theme.ColorTextCard
 
 class MainActivity : ComponentActivity() {
 
@@ -242,13 +242,13 @@ fun AlimentosScreen(
                 focusedContainerColor = BackgroundCard,
                 unfocusedContainerColor = BackgroundCard,
                 disabledContainerColor = BackgroundCard,
-                cursorColor = TextCard,
-                focusedBorderColor = TextCard.copy(alpha = 0.8f),
-                unfocusedBorderColor = TextCard.copy(alpha = 0.5f),
-                focusedLabelColor = TextCard.copy(alpha = 0.8f),
-                unfocusedLabelColor = TextCard.copy(alpha = 0.5f),
-                focusedLeadingIconColor = TextCard.copy(alpha = 0.8f),
-                unfocusedLeadingIconColor = TextCard.copy(alpha = 0.5f)
+                cursorColor = ColorTextCard,
+                focusedBorderColor = ColorTextCard.copy(alpha = 0.8f),
+                unfocusedBorderColor = ColorTextCard.copy(alpha = 0.5f),
+                focusedLabelColor = ColorTextCard.copy(alpha = 0.8f),
+                unfocusedLabelColor = ColorTextCard.copy(alpha = 0.5f),
+                focusedLeadingIconColor = ColorTextCard.copy(alpha = 0.8f),
+                unfocusedLeadingIconColor = ColorTextCard.copy(alpha = 0.5f)
             )
         )
         LazyColumn {
@@ -268,7 +268,7 @@ fun AlimentoItem(alimento: Alimento, onClick: () -> Unit) {
             .clickable(onClick = onClick),
         colors = CardDefaults.cardColors(
             containerColor = BackgroundCard,
-            contentColor = TextCard
+            contentColor = ColorTextCard
         )
     ) {
         Row(
@@ -288,7 +288,7 @@ fun AlimentoItem(alimento: Alimento, onClick: () -> Unit) {
                     Text(
                         text = it,
                         style = MaterialTheme.typography.bodySmall,
-                        color = TextCard.copy(alpha = 0.8f)
+                        color = ColorTextCard.copy(alpha = 0.8f)
                     )
                 }
             }

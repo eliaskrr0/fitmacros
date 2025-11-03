@@ -1,5 +1,6 @@
 package com.eliaskrr.fitmacros.ui.dieta
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -17,7 +18,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -119,7 +119,7 @@ fun MealSection(
             )
             Text(
                 text = mealData.totalCalorias.roundToInt().toString(),
-                style = MaterialTheme.typography.headlineSmall, 
+                style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.Bold
             )
         }
@@ -129,9 +129,14 @@ fun MealSection(
             AlimentoInDietaItem(alimento)
         }
 
-        TextButton(onClick = onAddAlimentoClick) {
-            Text(stringResource(R.string.add_alimento))
-        }
+        Text(
+            text = stringResource(R.string.add_alimento).uppercase(),
+            color = MaterialTheme.colorScheme.onBackground,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier
+                .clickable(onClick = onAddAlimentoClick)
+                .padding(vertical = 8.dp)
+        )
         HorizontalDivider(modifier = Modifier.padding(top = 4.dp, bottom = 16.dp))
     }
 }

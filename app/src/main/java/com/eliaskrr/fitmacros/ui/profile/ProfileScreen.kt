@@ -45,7 +45,7 @@ import com.eliaskrr.fitmacros.R
 import com.eliaskrr.fitmacros.ui.theme.BackgroundCard
 import com.eliaskrr.fitmacros.ui.theme.Dimens
 import com.eliaskrr.fitmacros.ui.theme.NutrientColors
-import com.eliaskrr.fitmacros.ui.theme.TextCard
+import com.eliaskrr.fitmacros.ui.theme.ColorTextCard
 
 @Composable
 fun ProfileScreen(viewModel: ProfileViewModel, onEditClick: () -> Unit) {
@@ -64,7 +64,7 @@ fun ProfileScreen(viewModel: ProfileViewModel, onEditClick: () -> Unit) {
                 modifier = Modifier.fillMaxWidth(),
                 colors = CardDefaults.cardColors(
                     containerColor = BackgroundCard,
-                    contentColor = TextCard
+                    contentColor = ColorTextCard
                 )
             ) {
                 Column(modifier = Modifier.padding(Dimens.Large)) {
@@ -85,7 +85,7 @@ fun ProfileScreen(viewModel: ProfileViewModel, onEditClick: () -> Unit) {
                 Icon(
                     Icons.Default.Edit,
                     contentDescription = stringResource(R.string.edit_data),
-                    tint = TextCard
+                    tint = ColorTextCard
                 )
             }
         }
@@ -126,7 +126,7 @@ fun MacronutrientsCard(carbGoal: Int, fatGoal: Int, proteinGoal: Int) {
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(
             containerColor = BackgroundCard,
-            contentColor = TextCard
+            contentColor = ColorTextCard
         )
     ) {
         Column(modifier = Modifier.padding(Dimens.Large)) {
@@ -152,7 +152,7 @@ fun CaloriesCard(calorieGoal: Int, tdee: Int) {
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(
             containerColor = BackgroundCard,
-            contentColor = TextCard
+            contentColor = ColorTextCard
         )
     ) {
         Column(modifier = Modifier.padding(Dimens.Large)) {
@@ -226,7 +226,7 @@ fun CircularProgress(progress: Float, color: Color, size: Dp = 80.dp, strokeWidt
 @Composable
 fun InfoRowWithIcon(icon: ImageVector, label: String, value: String) {
     Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(vertical = Dimens.Small)) {
-        Icon(icon, contentDescription = label, tint = TextCard.copy(alpha = 0.9f))
+        Icon(icon, contentDescription = label, tint = ColorTextCard.copy(alpha = 0.9f))
         Spacer(modifier = Modifier.width(Dimens.Medium))
         Text("$label: ", fontWeight = FontWeight.SemiBold)
         Text(value)

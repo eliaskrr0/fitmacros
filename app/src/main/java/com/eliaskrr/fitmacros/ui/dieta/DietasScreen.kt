@@ -35,7 +35,7 @@ import com.eliaskrr.fitmacros.ui.theme.ButtonConfirmColor
 import com.eliaskrr.fitmacros.ui.theme.DialogBackgroundColor
 import com.eliaskrr.fitmacros.ui.theme.DialogTextColor
 import com.eliaskrr.fitmacros.ui.theme.DialogTitleColor
-import com.eliaskrr.fitmacros.ui.theme.TextCard
+import com.eliaskrr.fitmacros.ui.theme.ColorTextCard
 
 @Composable
 fun DietasScreen(viewModel: DietaViewModel, onDietaClick: (Int) -> Unit) {
@@ -60,13 +60,13 @@ fun DietasScreen(viewModel: DietaViewModel, onDietaClick: (Int) -> Unit) {
                         focusedContainerColor = BackgroundCard,
                         unfocusedContainerColor = BackgroundCard,
                         disabledContainerColor = BackgroundCard,
-                        cursorColor = TextCard,
-                        focusedBorderColor = TextCard.copy(alpha = 0.8f),
-                        unfocusedBorderColor = TextCard.copy(alpha = 0.5f),
-                        focusedLabelColor = TextCard.copy(alpha = 0.8f),
-                        unfocusedLabelColor = TextCard.copy(alpha = 0.5f),
-                        focusedTextColor = TextCard,
-                        unfocusedTextColor = TextCard
+                        cursorColor = ColorTextCard,
+                        focusedBorderColor = ColorTextCard.copy(alpha = 0.8f),
+                        unfocusedBorderColor = ColorTextCard.copy(alpha = 0.5f),
+                        focusedLabelColor = ColorTextCard.copy(alpha = 0.8f),
+                        unfocusedLabelColor = ColorTextCard.copy(alpha = 0.5f),
+                        focusedTextColor = ColorTextCard,
+                        unfocusedTextColor = ColorTextCard
                     )
                 )
             },
@@ -119,13 +119,13 @@ fun DietaItem(dieta: Dieta, onClick: () -> Unit) {
             .clickable(onClick = onClick),
         colors = CardDefaults.cardColors(
             containerColor = BackgroundCard,
-            contentColor = TextCard
+            contentColor = ColorTextCard
         )
     ) {
         Text(
             text = dieta.nombre,
             modifier = Modifier.padding(16.dp),
-            color = TextCard
+            color = ColorTextCard
         )
     }
 }
