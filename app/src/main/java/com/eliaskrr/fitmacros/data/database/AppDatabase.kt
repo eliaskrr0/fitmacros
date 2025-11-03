@@ -12,7 +12,7 @@ import com.eliaskrr.fitmacros.data.model.Alimento
 import com.eliaskrr.fitmacros.data.model.Dieta
 import com.eliaskrr.fitmacros.data.model.DietaAlimento
 
-@Database(entities = [Alimento::class, Dieta::class, DietaAlimento::class], version = 4, exportSchema = false)
+@Database(entities = [Alimento::class, Dieta::class, DietaAlimento::class], version = 5, exportSchema = false)
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
 

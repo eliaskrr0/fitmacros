@@ -54,6 +54,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.eliaskrr.fitmacros.FitMacrosApplication
 import com.eliaskrr.fitmacros.data.model.Alimento
+import com.eliaskrr.fitmacros.data.model.MealType
 import com.eliaskrr.fitmacros.ui.alimento.AddEditAlimentoScreen
 import com.eliaskrr.fitmacros.ui.alimento.AddEditAlimentoViewModel
 import com.eliaskrr.fitmacros.ui.alimento.AlimentoViewModel
@@ -63,6 +64,7 @@ import com.eliaskrr.fitmacros.ui.dieta.DietaDetailViewModel
 import com.eliaskrr.fitmacros.ui.dieta.DietasScreen
 import com.eliaskrr.fitmacros.ui.dieta.DietaViewModel
 import com.eliaskrr.fitmacros.ui.dieta.DietaViewModelFactory
+import com.eliaskrr.fitmacros.ui.dieta.SelectAlimentoForMealScreen
 import com.eliaskrr.fitmacros.ui.navigation.AppScreen
 import com.eliaskrr.fitmacros.ui.navigation.NavItem
 import com.eliaskrr.fitmacros.ui.opciones.OptionsScreen
@@ -72,7 +74,7 @@ import com.eliaskrr.fitmacros.ui.profile.ProfileViewModel
 import com.eliaskrr.fitmacros.ui.profile.ProfileViewModelFactory
 import com.eliaskrr.fitmacros.ui.theme.BackgroundCard
 import com.eliaskrr.fitmacros.ui.theme.FitMacrosTheme
-import com.eliaskrr.fitmacros.ui.theme.ColorTextCard
+import com.eliaskrr.fitmacros.ui.theme.TextCardColor
 
 class MainActivity : ComponentActivity() {
 
@@ -190,7 +192,8 @@ fun MainScreen(alimentoViewModel: AlimentoViewModel, profileViewModel: ProfileVi
             composable(
                 route = AppScreen.DietaDetail.route,
                 arguments = listOf(navArgument("dietaId") { type = NavType.IntType })
-            ) {
+            ) { backStackEntry ->
+                val dietaId = backStackEntry.arguments?.getInt("dietaId") ?: return@composable
                 val application = navController.context.applicationContext as FitMacrosApplication
                 val detailViewModel: DietaDetailViewModel = viewModel(
                     factory = DietaDetailViewModel.provideFactory(
@@ -201,7 +204,33 @@ fun MainScreen(alimentoViewModel: AlimentoViewModel, profileViewModel: ProfileVi
                 DietaDetailScreen(
                     viewModel = detailViewModel,
                     onAddAlimentoClick = { mealType ->
-                        navController.navigate(AppScreen.Alimentos.route)
+                        navController.navigate(AppScreen.SelectAlimentoForMeal.createRoute(dietaId, mealType))
+                    },
+                    onNavigateUp = { navController.navigateUp() }
+                )
+            }
+            composable(
+                route = AppScreen.SelectAlimentoForMeal.route,
+                arguments = listOf(
+                    navArgument("dietaId") { type = NavType.IntType },
+                    navArgument("mealType") { type = NavType.StringType }
+                )
+            ) { backStackEntry ->
+                val mealTypeArg = backStackEntry.arguments?.getString("mealType") ?: MealType.BREAKFAST.name
+                val mealType = runCatching { MealType.valueOf(mealTypeArg) }.getOrDefault(MealType.BREAKFAST)
+                val application = navController.context.applicationContext as FitMacrosApplication
+                val detailViewModel: DietaDetailViewModel = viewModel(
+                    factory = DietaDetailViewModel.provideFactory(
+                        userDataRepository = application.userDataRepository,
+                        dietaAlimentoRepository = application.dietaAlimentoRepository
+                    )
+                )
+                SelectAlimentoForMealScreen(
+                    alimentoViewModel = alimentoViewModel,
+                    mealType = mealType,
+                    onAlimentoSelected = { alimento, cantidad, unidad ->
+                        detailViewModel.addAlimentoToDieta(alimento.id, mealType, cantidad, unidad)
+                        navController.navigateUp()
                     },
                     onNavigateUp = { navController.navigateUp() }
                 )
@@ -242,13 +271,13 @@ fun AlimentosScreen(
                 focusedContainerColor = BackgroundCard,
                 unfocusedContainerColor = BackgroundCard,
                 disabledContainerColor = BackgroundCard,
-                cursorColor = ColorTextCard,
-                focusedBorderColor = ColorTextCard.copy(alpha = 0.8f),
-                unfocusedBorderColor = ColorTextCard.copy(alpha = 0.5f),
-                focusedLabelColor = ColorTextCard.copy(alpha = 0.8f),
-                unfocusedLabelColor = ColorTextCard.copy(alpha = 0.5f),
-                focusedLeadingIconColor = ColorTextCard.copy(alpha = 0.8f),
-                unfocusedLeadingIconColor = ColorTextCard.copy(alpha = 0.5f)
+                cursorColor = TextCardColor,
+                focusedBorderColor = TextCardColor.copy(alpha = 0.8f),
+                unfocusedBorderColor = TextCardColor.copy(alpha = 0.5f),
+                focusedLabelColor = TextCardColor.copy(alpha = 0.8f),
+                unfocusedLabelColor = TextCardColor.copy(alpha = 0.5f),
+                focusedLeadingIconColor = TextCardColor.copy(alpha = 0.8f),
+                unfocusedLeadingIconColor = TextCardColor.copy(alpha = 0.5f)
             )
         )
         LazyColumn {
@@ -268,7 +297,7 @@ fun AlimentoItem(alimento: Alimento, onClick: () -> Unit) {
             .clickable(onClick = onClick),
         colors = CardDefaults.cardColors(
             containerColor = BackgroundCard,
-            contentColor = ColorTextCard
+            contentColor = TextCardColor
         )
     ) {
         Row(
@@ -288,7 +317,7 @@ fun AlimentoItem(alimento: Alimento, onClick: () -> Unit) {
                     Text(
                         text = it,
                         style = MaterialTheme.typography.bodySmall,
-                        color = ColorTextCard.copy(alpha = 0.8f)
+                        color = TextCardColor.copy(alpha = 0.8f)
                     )
                 }
             }

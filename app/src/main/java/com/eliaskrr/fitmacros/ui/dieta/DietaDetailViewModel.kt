@@ -7,9 +7,10 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.CreationExtras
-import com.eliaskrr.fitmacros.data.model.Alimento
 import com.eliaskrr.fitmacros.data.model.DietaAlimento
+import com.eliaskrr.fitmacros.data.model.DietaAlimentoWithAlimento
 import com.eliaskrr.fitmacros.data.model.MealType
+import com.eliaskrr.fitmacros.data.model.QuantityUnit
 import com.eliaskrr.fitmacros.data.repository.DietaAlimentoRepository
 import com.eliaskrr.fitmacros.data.repository.UserDataRepository
 import com.eliaskrr.fitmacros.domain.CalculationResult
@@ -21,8 +22,21 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 data class MealData(
-    val alimentos: List<Alimento> = emptyList(),
-    val totalCalorias: Double = 0.0
+    val items: List<MealItem> = emptyList(),
+    val totalCalorias: Double = 0.0,
+    val totalProteinas: Double = 0.0,
+    val totalCarbos: Double = 0.0,
+    val totalGrasas: Double = 0.0
+)
+
+data class MealItem(
+    val alimento: com.eliaskrr.fitmacros.data.model.Alimento,
+    val cantidad: Double,
+    val unidad: QuantityUnit,
+    val calorias: Double,
+    val proteinas: Double,
+    val carbos: Double,
+    val grasas: Double
 )
 
 class DietaDetailViewModel(
@@ -44,9 +58,19 @@ class DietaDetailViewModel(
     fun getMealData(mealType: MealType): StateFlow<MealData> {
         Log.d(TAG, "Obteniendo datos de comida $mealType para dieta $dietaId")
         return dietaAlimentoRepository.getAlimentosForDietaAndMeal(dietaId, mealType)
-            .map { alimentos ->
-                val totalCalorias = alimentos.sumOf { it.calorias }
-                MealData(alimentos, totalCalorias)
+            .map { registros ->
+                val items = registros.map { it.toMealItem() }
+                val totalCalorias = items.sumOf { it.calorias }
+                val totalProteinas = items.sumOf { it.proteinas }
+                val totalCarbos = items.sumOf { it.carbos }
+                val totalGrasas = items.sumOf { it.grasas }
+                MealData(
+                    items = items,
+                    totalCalorias = totalCalorias,
+                    totalProteinas = totalProteinas,
+                    totalCarbos = totalCarbos,
+                    totalGrasas = totalGrasas
+                )
             }
             .stateIn(
                 scope = viewModelScope,
@@ -55,13 +79,13 @@ class DietaDetailViewModel(
             )
     }
 
-    fun addAlimentoToDieta(alimentoId: Int, mealType: MealType, cantidad: Double) {
+    fun addAlimentoToDieta(alimentoId: Int, mealType: MealType, cantidad: Double, unidad: QuantityUnit) {
         viewModelScope.launch {
-            val dietaAlimento = DietaAlimento(dietaId, alimentoId, mealType, cantidad)
+            val dietaAlimento = DietaAlimento(dietaId, alimentoId, mealType, cantidad, unidad)
             runCatching {
                 Log.d(
                     TAG,
-                    "Añadiendo alimento $alimentoId a dieta $dietaId para $mealType con cantidad $cantidad"
+                    "Añadiendo alimento $alimentoId a dieta $dietaId para $mealType con cantidad $cantidad $unidad"
                 )
                 dietaAlimentoRepository.insert(dietaAlimento)
             }.onSuccess {
@@ -92,4 +116,17 @@ class DietaDetailViewModel(
             }
         }
     }
+}
+
+private fun DietaAlimentoWithAlimento.toMealItem(): MealItem {
+    val factor = cantidad / 100.0
+    return MealItem(
+        alimento = alimento,
+        cantidad = cantidad,
+        unidad = unidad,
+        calorias = alimento.calorias * factor,
+        proteinas = alimento.proteinas * factor,
+        carbos = alimento.carbos * factor,
+        grasas = alimento.grasas * factor
+    )
 }

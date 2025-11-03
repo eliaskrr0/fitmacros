@@ -18,6 +18,10 @@ sealed class AppScreen(val route: String) {
     data object DietaDetail : AppScreen("dieta_detail/{dietaId}") {
         fun createRoute(dietaId: Int) = "dieta_detail/$dietaId"
     }
+    data object SelectAlimentoForMeal : AppScreen("select_alimento/{dietaId}/{mealType}") {
+        fun createRoute(dietaId: Int, mealType: com.eliaskrr.fitmacros.data.model.MealType) =
+            "select_alimento/$dietaId/${mealType.name}"
+    }
 }
 
 sealed class NavItem(val route: String, val label: String, val icon: ImageVector) {

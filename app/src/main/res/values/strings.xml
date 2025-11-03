@@ -9,6 +9,15 @@
     <string name="delete">Borrar</string>
     <string name="create">Crear</string>
     <string name="add_alimento">Añadir Alimento</string>
+    <string name="search_food_placeholder">Buscar alimento...</string>
+    <string name="quantity">Cantidad</string>
+    <string name="unit_label">Unidad</string>
+    <string name="unit_grams">Gramos</string>
+    <string name="unit_milliliters">Mililitros</string>
+    <string name="unit_grams_short">g</string>
+    <string name="unit_milliliters_short">ml</string>
+    <string name="invalid_quantity">Introduce una cantidad válida mayor que cero</string>
+    <string name="quantity_with_unit">%1$.1f %2$s</string>
 
     <!-- Profile Screen -->
     <string name="personal_data">Datos Personales</string>
@@ -63,5 +72,12 @@
     <string name="lunch">Comida</string>
     <string name="afternoon_snack">Almuerzo</string>
     <string name="dinner">Cena</string>
+    <string name="select_alimento_instruction">Selecciona un alimento para %1$s</string>
+    <string name="select_quantity_for">¿Cuánta cantidad vas a consumir de %1$s?</string>
+    <string name="add_to_meal">Añadir a %1$s</string>
+    <string name="meal_macros_summary">P: %1$.1f g   C: %2$.1f g   G: %3$.1f g</string>
+    <string name="meal_without_foods">Todavía no hay alimentos en esta comida</string>
+    <string name="food_macros_detail">P: %1$.1f g · C: %2$.1f g · G: %3$.1f g</string>
+    <string name="search_alimento">Buscar alimento…</string>
 
 </resources>
