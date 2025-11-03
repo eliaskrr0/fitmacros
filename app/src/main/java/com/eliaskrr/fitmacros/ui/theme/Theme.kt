@@ -42,8 +42,10 @@ fun FitMacrosTheme(
     if (!view.isInEditMode) {
         SideEffect {
             val window = (view.context as Activity).window
-            window.statusBarColor = colorScheme.primary.toArgb()
-            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = false
+            // Hacemos que la barra de estado coincida con el fondo de la app
+            window.statusBarColor = colorScheme.background.toArgb()
+            // Hacemos que los iconos de la barra de estado (hora, batería) sean oscuros en tema claro y claros en tema oscuro
+            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = !darkTheme
         }
     }
 
