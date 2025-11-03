@@ -1,5 +1,6 @@
 package com.eliaskrr.fitmacros.ui.dieta
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -19,7 +20,16 @@ class DietaViewModel(private val repository: DietaRepository) : ViewModel() {
     )
 
     fun insert(dieta: Dieta) = viewModelScope.launch {
-        repository.insert(dieta)
+        runCatching {
+            Log.d(TAG, "Solicitando inserción de dieta ${dieta.nombre}")
+            repository.insert(dieta)
+        }.onFailure { ex ->
+            Log.e(TAG, "Error solicitando inserción de dieta ${dieta.nombre}", ex)
+        }
+    }
+
+    companion object {
+        private const val TAG = "DietaViewModel"
     }
 }
 

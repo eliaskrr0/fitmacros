@@ -1,5 +1,6 @@
 package com.eliaskrr.fitmacros.ui.alimento
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -23,8 +24,10 @@ class AlimentoViewModel(private val repository: AlimentoRepository) : ViewModel(
     val alimentos: StateFlow<List<Alimento>> = _searchQuery
         .flatMapLatest { query ->
             if (query.isBlank()) {
+                Log.d(TAG, "Buscando todos los alimentos")
                 repository.getAllAlimentos()
             } else {
+                Log.d(TAG, "Buscando alimentos por nombre: $query")
                 repository.getAlimentosByName(query)
             }
         }
@@ -39,15 +42,34 @@ class AlimentoViewModel(private val repository: AlimentoRepository) : ViewModel(
     }
 
     fun insert(alimento: Alimento) = viewModelScope.launch {
-        repository.insert(alimento)
+        runCatching {
+            Log.d(TAG, "Solicitando inserción de alimento ${alimento.nombre}")
+            repository.insert(alimento)
+        }.onFailure { ex ->
+            Log.e(TAG, "Error solicitando inserción de ${alimento.nombre}", ex)
+        }
     }
 
     fun update(alimento: Alimento) = viewModelScope.launch {
-        repository.update(alimento)
+        runCatching {
+            Log.d(TAG, "Solicitando actualización de alimento ${alimento.nombre} (id=${alimento.id})")
+            repository.update(alimento)
+        }.onFailure { ex ->
+            Log.e(TAG, "Error solicitando actualización de ${alimento.nombre} (id=${alimento.id})", ex)
+        }
     }
 
     fun delete(alimento: Alimento) = viewModelScope.launch {
-        repository.delete(alimento)
+        runCatching {
+            Log.d(TAG, "Solicitando eliminación de alimento ${alimento.nombre} (id=${alimento.id})")
+            repository.delete(alimento)
+        }.onFailure { ex ->
+            Log.e(TAG, "Error solicitando eliminación de ${alimento.nombre} (id=${alimento.id})", ex)
+        }
+    }
+
+    companion object {
+        private const val TAG = "AlimentoViewModel"
     }
 }
 
