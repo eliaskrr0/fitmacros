@@ -14,10 +14,7 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExposedDropdownMenuBox
-import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -34,7 +31,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
@@ -62,7 +58,6 @@ fun SelectAlimentoForMealScreen(
 
     var selectedAlimento by remember { mutableStateOf<Alimento?>(null) }
     var quantityText by remember { mutableStateOf("100") }
-    var selectedUnit by remember { mutableStateOf(QuantityUnit.GRAMS) }
     var showError by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
@@ -78,13 +73,10 @@ fun SelectAlimentoForMealScreen(
                 quantityText = it
                 showError = false
             },
-            selectedUnit = selectedUnit,
-            onUnitSelected = { selectedUnit = it },
             showError = showError,
             onDismiss = {
                 selectedAlimento = null
                 quantityText = "100"
-                selectedUnit = QuantityUnit.GRAMS
                 showError = false
             },
             onConfirm = {
@@ -93,10 +85,9 @@ fun SelectAlimentoForMealScreen(
                     showError = true
                     return@QuantityDialog
                 }
-                onAlimentoSelected(selectedAlimento!!, normalized, selectedUnit)
+                onAlimentoSelected(selectedAlimento!!, normalized, selectedAlimento!!.unidadBase)
                 selectedAlimento = null
                 quantityText = "100"
-                selectedUnit = QuantityUnit.GRAMS
                 showError = false
             }
         )
@@ -161,7 +152,6 @@ fun SelectAlimentoForMealScreen(
                         onClick = {
                             selectedAlimento = alimento
                             quantityText = formatQuantity(alimento.cantidadBase)
-                            selectedUnit = alimento.unidadBase
                         }
                     )
                 }
@@ -184,8 +174,6 @@ private fun QuantityDialog(
     mealType: MealType,
     quantityText: String,
     onQuantityChange: (String) -> Unit,
-    selectedUnit: QuantityUnit,
-    onUnitSelected: (QuantityUnit) -> Unit,
     showError: Boolean,
     onDismiss: () -> Unit,
     onConfirm: () -> Unit
@@ -210,9 +198,11 @@ private fun QuantityDialog(
                     } else null
                 )
                 Spacer(modifier = Modifier.height(12.dp))
-                QuantityUnitDropdown(
-                    selectedUnit = selectedUnit,
-                    onUnitSelected = onUnitSelected
+                Text(
+                    text = stringResource(
+                        R.string.unit_label_with_value,
+                        stringResource(alimento.unidadBase.labelRes)
+                    )
                 )
             }
         },
@@ -227,50 +217,4 @@ private fun QuantityDialog(
             }
         }
     )
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun QuantityUnitDropdown(
-    selectedUnit: QuantityUnit,
-    onUnitSelected: (QuantityUnit) -> Unit
-) {
-    var expanded by remember { mutableStateOf(false) }
-    ExposedDropdownMenuBox(
-        expanded = expanded,
-        onExpandedChange = { expanded = !expanded }
-    ) {
-        OutlinedTextField(
-            value = stringResource(selectedUnit.labelRes),
-            onValueChange = {},
-            readOnly = true,
-            label = { Text(stringResource(R.string.unit_label)) },
-            modifier = Modifier.menuAnchor().fillMaxWidth(),
-            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
-            colors = OutlinedTextFieldDefaults.colors(
-                focusedContainerColor = BackgroundCard,
-                unfocusedContainerColor = BackgroundCard,
-                disabledContainerColor = BackgroundCard,
-                cursorColor = TextCardColor,
-                focusedBorderColor = TextCardColor.copy(alpha = 0.8f),
-                unfocusedBorderColor = TextCardColor.copy(alpha = 0.5f),
-                focusedLabelColor = TextCardColor.copy(alpha = 0.8f),
-                unfocusedLabelColor = TextCardColor.copy(alpha = 0.5f)
-            )
-        )
-        ExposedDropdownMenu(
-            expanded = expanded,
-            onDismissRequest = { expanded = false }
-        ) {
-            QuantityUnit.values().forEach { unit ->
-                DropdownMenuItem(
-                    text = { Text(stringResource(unit.labelRes)) },
-                    onClick = {
-                        onUnitSelected(unit)
-                        expanded = false
-                    }
-                )
-            }
-        }
-    }
 }

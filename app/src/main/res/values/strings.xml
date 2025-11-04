@@ -12,6 +12,7 @@
     <string name="search_food_placeholder">Buscar alimento...</string>
     <string name="quantity">Cantidad</string>
     <string name="unit_label">Unidad</string>
+    <string name="unit_label_with_value">Unidad: %1$s</string>
     <string name="unit_grams">Gramos</string>
     <string name="unit_milliliters">Mililitros</string>
     <string name="unit_grams_short">g</string>
