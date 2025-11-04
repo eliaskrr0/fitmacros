@@ -3,18 +3,17 @@ package com.eliaskrr.fitmacros.ui.alimento
 import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.CreationExtras
 import com.eliaskrr.fitmacros.data.model.Alimento
 import com.eliaskrr.fitmacros.data.repository.AlimentoRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 data class AlimentoUiState(
     val id: Int = 0,
@@ -29,7 +28,8 @@ data class AlimentoUiState(
     val isSaved: Boolean = false
 )
 
-class AddEditAlimentoViewModel(
+@HiltViewModel
+class AddEditAlimentoViewModel @Inject constructor(
     private val repository: AlimentoRepository,
     private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
@@ -145,18 +145,5 @@ class AddEditAlimentoViewModel(
 
     companion object {
         private const val TAG = "AddEditAlimentoVM"
-
-        fun provideFactory(
-            repository: AlimentoRepository,
-        ): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
-            @Suppress("UNCHECKED_CAST")
-            override fun <T : ViewModel> create(
-                modelClass: Class<T>,
-                extras: CreationExtras
-            ): T {
-                val savedStateHandle = extras.createSavedStateHandle()
-                return AddEditAlimentoViewModel(repository, savedStateHandle) as T
-            }
-        }
     }
 }

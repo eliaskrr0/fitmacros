@@ -3,15 +3,13 @@ package com.eliaskrr.fitmacros.ui.dieta
 import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.CreationExtras
 import com.eliaskrr.fitmacros.data.model.Alimento
 import com.eliaskrr.fitmacros.data.model.DietaAlimento
 import com.eliaskrr.fitmacros.data.model.MealType
 import com.eliaskrr.fitmacros.data.repository.AlimentoRepository
 import com.eliaskrr.fitmacros.data.repository.DietaAlimentoRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -20,9 +18,11 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class SelectAlimentoViewModel(
+@HiltViewModel
+class SelectAlimentoViewModel @Inject constructor(
     private val alimentoRepository: AlimentoRepository,
     private val dietaAlimentoRepository: DietaAlimentoRepository,
     savedStateHandle: SavedStateHandle
@@ -72,22 +72,5 @@ class SelectAlimentoViewModel(
 
     companion object {
         private const val TAG = "SelectAlimentoVM"
-
-        fun provideFactory(
-            alimentoRepository: AlimentoRepository,
-            dietaAlimentoRepository: DietaAlimentoRepository
-        ): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
-            @Suppress("UNCHECKED_CAST")
-            override fun <T : ViewModel> create(
-                modelClass: Class<T>,
-                extras: CreationExtras
-            ): T {
-                return SelectAlimentoViewModel(
-                    alimentoRepository,
-                    dietaAlimentoRepository,
-                    extras.createSavedStateHandle()
-                ) as T
-            }
-        }
     }
 }

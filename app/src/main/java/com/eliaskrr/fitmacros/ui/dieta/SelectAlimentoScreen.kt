@@ -30,9 +30,13 @@ import com.eliaskrr.fitmacros.R
 import com.eliaskrr.fitmacros.data.model.Alimento
 import com.eliaskrr.fitmacros.ui.theme.BackgroundCard
 import com.eliaskrr.fitmacros.ui.theme.TextCardColor
+import androidx.hilt.navigation.compose.hiltViewModel
 
 @Composable
-fun SelectAlimentoScreen(viewModel: SelectAlimentoViewModel, onNavigateUp: () -> Unit) {
+fun SelectAlimentoScreen(
+    viewModel: SelectAlimentoViewModel = hiltViewModel(),
+    onNavigateUp: () -> Unit
+) {
     val alimentos by viewModel.alimentos.collectAsState()
     val searchQuery by viewModel.searchQuery.collectAsState()
     val isSaved by viewModel.isSaved.collectAsState()

@@ -2,16 +2,20 @@ package com.eliaskrr.fitmacros.ui.dieta
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.eliaskrr.fitmacros.data.model.Dieta
 import com.eliaskrr.fitmacros.data.repository.DietaRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class DietaViewModel(private val repository: DietaRepository) : ViewModel() {
+@HiltViewModel
+class DietaViewModel @Inject constructor(
+    private val repository: DietaRepository
+) : ViewModel() {
 
     val allDietas: StateFlow<List<Dieta>> = repository.allDietas.stateIn(
         scope = viewModelScope,
@@ -30,15 +34,5 @@ class DietaViewModel(private val repository: DietaRepository) : ViewModel() {
 
     companion object {
         private const val TAG = "DietaViewModel"
-    }
-}
-
-class DietaViewModelFactory(private val repository: DietaRepository) : ViewModelProvider.Factory {
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(DietaViewModel::class.java)) {
-            @Suppress("UNCHECKED_CAST")
-            return DietaViewModel(repository) as T
-        }
-        throw IllegalArgumentException("Unknown ViewModel class")
     }
 }

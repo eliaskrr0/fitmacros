@@ -42,7 +42,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
@@ -52,18 +51,15 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.eliaskrr.fitmacros.FitMacrosApplication
 import com.eliaskrr.fitmacros.data.model.Alimento
 import com.eliaskrr.fitmacros.data.model.MealType
 import com.eliaskrr.fitmacros.ui.alimento.AddEditAlimentoScreen
 import com.eliaskrr.fitmacros.ui.alimento.AddEditAlimentoViewModel
 import com.eliaskrr.fitmacros.ui.alimento.AlimentoViewModel
-import com.eliaskrr.fitmacros.ui.alimento.AlimentoViewModelFactory
 import com.eliaskrr.fitmacros.ui.dieta.DietaDetailScreen
 import com.eliaskrr.fitmacros.ui.dieta.DietaDetailViewModel
 import com.eliaskrr.fitmacros.ui.dieta.DietasScreen
 import com.eliaskrr.fitmacros.ui.dieta.DietaViewModel
-import com.eliaskrr.fitmacros.ui.dieta.DietaViewModelFactory
 import com.eliaskrr.fitmacros.ui.dieta.SelectAlimentoForMealScreen
 import com.eliaskrr.fitmacros.ui.navigation.AppScreen
 import com.eliaskrr.fitmacros.ui.navigation.NavItem
@@ -71,12 +67,18 @@ import com.eliaskrr.fitmacros.ui.opciones.OptionsScreen
 import com.eliaskrr.fitmacros.ui.profile.PersonalDataScreen
 import com.eliaskrr.fitmacros.ui.profile.ProfileScreen
 import com.eliaskrr.fitmacros.ui.profile.ProfileViewModel
-import com.eliaskrr.fitmacros.ui.profile.ProfileViewModelFactory
 import com.eliaskrr.fitmacros.ui.theme.BackgroundCard
 import com.eliaskrr.fitmacros.ui.theme.FitMacrosTheme
 import com.eliaskrr.fitmacros.ui.theme.TextCardColor
+import androidx.hilt.navigation.compose.hiltViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
+    private val alimentoViewModel: AlimentoViewModel by viewModels()
+    private val profileViewModel: ProfileViewModel by viewModels()
+    private val dietaViewModel: DietaViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -84,16 +86,6 @@ class MainActivity : ComponentActivity() {
         setContent {
             FitMacrosTheme {
                 Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-                    val application = application as FitMacrosApplication
-                    val alimentoViewModel: AlimentoViewModel by viewModels {
-                        AlimentoViewModelFactory(application.alimentoRepository)
-                    }
-                    val profileViewModel: ProfileViewModel by viewModels {
-                        ProfileViewModelFactory(application.userDataRepository)
-                    }
-                    val dietaViewModel: DietaViewModel by viewModels {
-                        DietaViewModelFactory(application.dietaRepository)
-                    }
                     MainScreen(alimentoViewModel = alimentoViewModel, profileViewModel = profileViewModel, dietaViewModel = dietaViewModel)
                 }
             }
@@ -169,10 +161,7 @@ fun MainScreen(alimentoViewModel: AlimentoViewModel, profileViewModel: ProfileVi
                 route = AppScreen.AddEditAlimento.route,
                 arguments = listOf(navArgument("alimentoId") { type = NavType.IntType; defaultValue = -1 })
             ) {
-                val application = navController.context.applicationContext as FitMacrosApplication
-                val addEditViewModel: AddEditAlimentoViewModel = viewModel(
-                    factory = AddEditAlimentoViewModel.provideFactory(application.alimentoRepository)
-                )
+                val addEditViewModel: AddEditAlimentoViewModel = hiltViewModel()
                 AddEditAlimentoScreen(
                     viewModel = addEditViewModel,
                     onNavigateUp = { navController.navigateUp() }
@@ -194,13 +183,7 @@ fun MainScreen(alimentoViewModel: AlimentoViewModel, profileViewModel: ProfileVi
                 arguments = listOf(navArgument("dietaId") { type = NavType.IntType })
             ) { backStackEntry ->
                 val dietaId = backStackEntry.arguments?.getInt("dietaId") ?: return@composable
-                val application = navController.context.applicationContext as FitMacrosApplication
-                val detailViewModel: DietaDetailViewModel = viewModel(
-                    factory = DietaDetailViewModel.provideFactory(
-                        userDataRepository = application.userDataRepository,
-                        dietaAlimentoRepository = application.dietaAlimentoRepository
-                    )
-                )
+                val detailViewModel: DietaDetailViewModel = hiltViewModel()
                 DietaDetailScreen(
                     viewModel = detailViewModel,
                     onAddAlimentoClick = { mealType ->
@@ -218,13 +201,7 @@ fun MainScreen(alimentoViewModel: AlimentoViewModel, profileViewModel: ProfileVi
             ) { backStackEntry ->
                 val mealTypeArg = backStackEntry.arguments?.getString("mealType") ?: MealType.BREAKFAST.name
                 val mealType = runCatching { MealType.valueOf(mealTypeArg) }.getOrDefault(MealType.BREAKFAST)
-                val application = navController.context.applicationContext as FitMacrosApplication
-                val detailViewModel: DietaDetailViewModel = viewModel(
-                    factory = DietaDetailViewModel.provideFactory(
-                        userDataRepository = application.userDataRepository,
-                        dietaAlimentoRepository = application.dietaAlimentoRepository
-                    )
-                )
+                val detailViewModel: DietaDetailViewModel = hiltViewModel()
                 SelectAlimentoForMealScreen(
                     alimentoViewModel = alimentoViewModel,
                     mealType = mealType,
