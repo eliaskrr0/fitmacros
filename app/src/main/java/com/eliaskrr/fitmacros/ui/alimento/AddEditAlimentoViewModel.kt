@@ -120,9 +120,9 @@ class AddEditAlimentoViewModel @Inject constructor(
                 nombre = state.nombre,
                 precio = state.precio.toDoubleOrNull(),
                 marca = state.marca.ifEmpty { null },
-                proteinas = state.proteinas.toDoubleOrNull() ?: 0.0,
-                carbos = state.carbos.toDoubleOrNull() ?: 0.0,
-                grasas = state.grasas.toDoubleOrNull() ?: 0.0,
+                proteinas = parseMacroInput(state.proteinas),
+                carbos = parseMacroInput(state.carbos),
+                grasas = parseMacroInput(state.grasas),
                 calorias = caloriasCalculadas,
                 detalles = state.detalles.ifEmpty { null }
             )
@@ -151,9 +151,9 @@ class AddEditAlimentoViewModel @Inject constructor(
                 val alimentoToDelete = Alimento(
                     id = state.id,
                     nombre = state.nombre,
-                    proteinas = state.proteinas.toDoubleOrNull() ?: 0.0,
-                    carbos = state.carbos.toDoubleOrNull() ?: 0.0,
-                    grasas = state.grasas.toDoubleOrNull() ?: 0.0,
+                    proteinas = parseMacroInput(state.proteinas),
+                    carbos = parseMacroInput(state.carbos),
+                    grasas = parseMacroInput(state.grasas),
                     calorias = calculateCalories(state.proteinas, state.carbos, state.grasas)
                 )
                 runCatching {
@@ -174,14 +174,18 @@ class AddEditAlimentoViewModel @Inject constructor(
     }
 
     private fun calculateCalories(proteinas: String, carbos: String, grasas: String): Double {
-        val proteinasDouble = proteinas.toDoubleOrNull() ?: 0.0
-        val carbosDouble = carbos.toDoubleOrNull() ?: 0.0
-        val grasasDouble = grasas.toDoubleOrNull() ?: 0.0
+        val proteinasDouble = parseMacroInput(proteinas)
+        val carbosDouble = parseMacroInput(carbos)
+        val grasasDouble = parseMacroInput(grasas)
         return calculateCalories(proteinasDouble, carbosDouble, grasasDouble)
     }
 
     private fun calculateCalories(proteinas: Double, carbos: Double, grasas: Double): Double {
         return (proteinas * 4) + (carbos * 4) + (grasas * 9)
+    }
+
+    private fun parseMacroInput(value: String): Double {
+        return value.replace(',', '.').trim().toDoubleOrNull() ?: 0.0
     }
 
     private fun formatCalories(calorias: Double): String {
