@@ -13,6 +13,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.math.BigDecimal
+import java.math.RoundingMode
 import javax.inject.Inject
 
 data class AlimentoUiState(
@@ -23,7 +25,7 @@ data class AlimentoUiState(
     val proteinas: String = "",
     val carbos: String = "",
     val grasas: String = "",
-    val calorias: String = "",
+    val calorias: String = "0",
     val detalles: String = "",
     val isSaved: Boolean = false
 )
@@ -53,6 +55,7 @@ class AddEditAlimentoViewModel @Inject constructor(
                 .onSuccess { alimento ->
                     if (alimento != null) {
                         Log.d(TAG, "Alimento cargado para edición: ${alimento.nombre} (id=${alimento.id})")
+                        val caloriasCalculadas = calculateCalories(alimento.proteinas, alimento.carbos, alimento.grasas)
                         _uiState.update {
                             it.copy(
                                 id = alimento.id,
@@ -62,7 +65,7 @@ class AddEditAlimentoViewModel @Inject constructor(
                                 proteinas = alimento.proteinas.toString(),
                                 carbos = alimento.carbos.toString(),
                                 grasas = alimento.grasas.toString(),
-                                calorias = alimento.calorias.toString(),
+                                calorias = formatCalories(caloriasCalculadas),
                                 detalles = alimento.detalles ?: ""
                             )
                         }
@@ -76,17 +79,31 @@ class AddEditAlimentoViewModel @Inject constructor(
         }
     }
 
-    fun onValueChange(nombre: String? = null, precio: String? = null, marca: String? = null, proteinas: String? = null, carbos: String? = null, grasas: String? = null, calorias: String? = null, detalles: String? = null) {
-        _uiState.update {
-            it.copy(
-                nombre = nombre ?: it.nombre,
-                precio = precio ?: it.precio,
-                marca = marca ?: it.marca,
-                proteinas = proteinas ?: it.proteinas,
-                carbos = carbos ?: it.carbos,
-                grasas = grasas ?: it.grasas,
-                calorias = calorias ?: it.calorias,
-                detalles = detalles ?: it.detalles
+    fun onValueChange(
+        nombre: String? = null,
+        precio: String? = null,
+        marca: String? = null,
+        proteinas: String? = null,
+        carbos: String? = null,
+        grasas: String? = null,
+        detalles: String? = null
+    ) {
+        _uiState.update { currentState ->
+            val updatedProteinas = proteinas ?: currentState.proteinas
+            val updatedCarbos = carbos ?: currentState.carbos
+            val updatedGrasas = grasas ?: currentState.grasas
+
+            val calculatedCalories = calculateCalories(updatedProteinas, updatedCarbos, updatedGrasas)
+
+            currentState.copy(
+                nombre = nombre ?: currentState.nombre,
+                precio = precio ?: currentState.precio,
+                marca = marca ?: currentState.marca,
+                proteinas = updatedProteinas,
+                carbos = updatedCarbos,
+                grasas = updatedGrasas,
+                calorias = formatCalories(calculatedCalories),
+                detalles = detalles ?: currentState.detalles
             )
         }
     }
@@ -96,6 +113,8 @@ class AddEditAlimentoViewModel @Inject constructor(
             val state = _uiState.value
             val isNewAlimento = alimentoId == null || alimentoId == -1
 
+            val caloriasCalculadas = calculateCalories(state.proteinas, state.carbos, state.grasas)
+
             val alimento = Alimento(
                 id = if (isNewAlimento) 0 else state.id,
                 nombre = state.nombre,
@@ -104,7 +123,7 @@ class AddEditAlimentoViewModel @Inject constructor(
                 proteinas = state.proteinas.toDoubleOrNull() ?: 0.0,
                 carbos = state.carbos.toDoubleOrNull() ?: 0.0,
                 grasas = state.grasas.toDoubleOrNull() ?: 0.0,
-                calorias = state.calorias.toDoubleOrNull() ?: 0.0,
+                calorias = caloriasCalculadas,
                 detalles = state.detalles.ifEmpty { null }
             )
 
@@ -129,7 +148,14 @@ class AddEditAlimentoViewModel @Inject constructor(
         viewModelScope.launch {
             val state = _uiState.value
             if (state.id != 0) {
-                val alimentoToDelete = Alimento(id = state.id, nombre = state.nombre, proteinas = state.proteinas.toDoubleOrNull() ?: 0.0, carbos = state.carbos.toDoubleOrNull() ?: 0.0, grasas = state.grasas.toDoubleOrNull() ?: 0.0, calorias = state.calorias.toDoubleOrNull() ?: 0.0)
+                val alimentoToDelete = Alimento(
+                    id = state.id,
+                    nombre = state.nombre,
+                    proteinas = state.proteinas.toDoubleOrNull() ?: 0.0,
+                    carbos = state.carbos.toDoubleOrNull() ?: 0.0,
+                    grasas = state.grasas.toDoubleOrNull() ?: 0.0,
+                    calorias = calculateCalories(state.proteinas, state.carbos, state.grasas)
+                )
                 runCatching {
                     Log.d(TAG, "Eliminando alimento ${alimentoToDelete.nombre} (id=${alimentoToDelete.id})")
                     repository.delete(alimentoToDelete)
@@ -145,5 +171,27 @@ class AddEditAlimentoViewModel @Inject constructor(
 
     companion object {
         private const val TAG = "AddEditAlimentoVM"
+    }
+
+    private fun calculateCalories(proteinas: String, carbos: String, grasas: String): Double {
+        val proteinasDouble = proteinas.toDoubleOrNull() ?: 0.0
+        val carbosDouble = carbos.toDoubleOrNull() ?: 0.0
+        val grasasDouble = grasas.toDoubleOrNull() ?: 0.0
+        return calculateCalories(proteinasDouble, carbosDouble, grasasDouble)
+    }
+
+    private fun calculateCalories(proteinas: Double, carbos: Double, grasas: Double): Double {
+        return (proteinas * 4) + (carbos * 4) + (grasas * 9)
+    }
+
+    private fun formatCalories(calorias: Double): String {
+        return if (calorias == 0.0) {
+            "0"
+        } else {
+            BigDecimal.valueOf(calorias)
+                .setScale(2, RoundingMode.HALF_UP)
+                .stripTrailingZeros()
+                .toPlainString()
+        }
     }
 }

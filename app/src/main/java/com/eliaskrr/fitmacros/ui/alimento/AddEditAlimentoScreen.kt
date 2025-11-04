@@ -151,9 +151,9 @@ fun AddEditAlimentoScreen(
             Spacer(modifier = Modifier.height(8.dp))
             OutlinedTextField(
                 value = uiState.calorias,
-                onValueChange = { viewModel.onValueChange(calorias = it) },
+                onValueChange = {},
                 label = { Text(stringResource(R.string.calories)) },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                readOnly = true,
                 modifier = Modifier.fillMaxWidth()
             )
             Spacer(modifier = Modifier.height(8.dp))
