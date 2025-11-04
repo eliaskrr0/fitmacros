@@ -102,7 +102,8 @@ class DietaDetailViewModel @Inject constructor(
 }
 
 private fun DietaAlimentoWithAlimento.toMealItem(): MealItem {
-    val factor = cantidad / 100.0
+    val baseQuantity = alimento.cantidadBase.takeIf { it > 0.0 } ?: 100.0
+    val factor = cantidad / baseQuantity
     return MealItem(
         alimento = alimento,
         cantidad = cantidad,

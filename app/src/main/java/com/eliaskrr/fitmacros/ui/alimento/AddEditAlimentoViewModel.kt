@@ -5,6 +5,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.eliaskrr.fitmacros.data.model.Alimento
+import com.eliaskrr.fitmacros.data.model.QuantityUnit
 import com.eliaskrr.fitmacros.data.repository.AlimentoRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -25,6 +26,8 @@ data class AlimentoUiState(
     val proteinas: String = "",
     val carbos: String = "",
     val grasas: String = "",
+    val cantidadBase: String = "100",
+    val unidadBase: QuantityUnit = QuantityUnit.GRAMS,
     val calorias: String = "0",
     val detalles: String = "",
     val isSaved: Boolean = false
@@ -65,6 +68,8 @@ class AddEditAlimentoViewModel @Inject constructor(
                                 proteinas = alimento.proteinas.toString(),
                                 carbos = alimento.carbos.toString(),
                                 grasas = alimento.grasas.toString(),
+                                cantidadBase = formatQuantity(alimento.cantidadBase),
+                                unidadBase = alimento.unidadBase,
                                 calorias = formatCalories(caloriasCalculadas),
                                 detalles = alimento.detalles ?: ""
                             )
@@ -86,6 +91,8 @@ class AddEditAlimentoViewModel @Inject constructor(
         proteinas: String? = null,
         carbos: String? = null,
         grasas: String? = null,
+        cantidadBase: String? = null,
+        unidadBase: QuantityUnit? = null,
         detalles: String? = null
     ) {
         _uiState.update { currentState ->
@@ -93,6 +100,7 @@ class AddEditAlimentoViewModel @Inject constructor(
             val updatedCarbos = carbos?.let(::sanitizeDecimalInput) ?: currentState.carbos
             val updatedGrasas = grasas?.let(::sanitizeDecimalInput) ?: currentState.grasas
             val updatedPrecio = precio?.let(::sanitizeDecimalInput) ?: currentState.precio
+            val updatedCantidadBase = cantidadBase?.let(::sanitizeDecimalInput) ?: currentState.cantidadBase
 
             val calculatedCalories = calculateCalories(updatedProteinas, updatedCarbos, updatedGrasas)
 
@@ -103,6 +111,8 @@ class AddEditAlimentoViewModel @Inject constructor(
                 proteinas = updatedProteinas,
                 carbos = updatedCarbos,
                 grasas = updatedGrasas,
+                cantidadBase = updatedCantidadBase,
+                unidadBase = unidadBase ?: currentState.unidadBase,
                 calorias = formatCalories(calculatedCalories),
                 detalles = detalles ?: currentState.detalles
             )
@@ -124,6 +134,8 @@ class AddEditAlimentoViewModel @Inject constructor(
                 proteinas = parseMacroInput(state.proteinas),
                 carbos = parseMacroInput(state.carbos),
                 grasas = parseMacroInput(state.grasas),
+                cantidadBase = parseQuantity(state.cantidadBase),
+                unidadBase = state.unidadBase,
                 calorias = caloriasCalculadas,
                 detalles = state.detalles.ifEmpty { null }
             )
@@ -149,12 +161,15 @@ class AddEditAlimentoViewModel @Inject constructor(
         viewModelScope.launch {
             val state = _uiState.value
             if (state.id != 0) {
+                val cantidadBase = parseQuantity(state.cantidadBase)
                 val alimentoToDelete = Alimento(
                     id = state.id,
                     nombre = state.nombre,
                     proteinas = parseMacroInput(state.proteinas),
                     carbos = parseMacroInput(state.carbos),
                     grasas = parseMacroInput(state.grasas),
+                    cantidadBase = cantidadBase,
+                    unidadBase = state.unidadBase,
                     calorias = calculateCalories(state.proteinas, state.carbos, state.grasas)
                 )
                 runCatching {
@@ -198,6 +213,18 @@ class AddEditAlimentoViewModel @Inject constructor(
                 .stripTrailingZeros()
                 .toPlainString()
         }
+    }
+
+    private fun formatQuantity(value: Double): String {
+        return BigDecimal.valueOf(value)
+            .setScale(2, RoundingMode.HALF_UP)
+            .stripTrailingZeros()
+            .toPlainString()
+    }
+
+    private fun parseQuantity(value: String): Double {
+        val parsed = sanitizeDecimalInput(value).toDoubleOrNull()
+        return if (parsed != null && parsed > 0.0) parsed else 100.0
     }
 
     private fun sanitizeDecimalInput(value: String): String {

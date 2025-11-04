@@ -14,6 +14,10 @@ data class Alimento(
     val proteinas: Double,
     val carbos: Double,
     val grasas: Double,
+    @ColumnInfo(name = "cantidad_base")
+    val cantidadBase: Double = 100.0,
+    @ColumnInfo(name = "unidad_base")
+    val unidadBase: QuantityUnit = QuantityUnit.GRAMS,
     val calorias: Double,
     @ColumnInfo(name = "fecha_creacion")
     val fechaCreacion: Long = System.currentTimeMillis(),

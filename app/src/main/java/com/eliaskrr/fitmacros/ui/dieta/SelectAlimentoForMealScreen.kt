@@ -46,6 +46,8 @@ import com.eliaskrr.fitmacros.data.model.QuantityUnit
 import com.eliaskrr.fitmacros.ui.alimento.AlimentoViewModel
 import com.eliaskrr.fitmacros.ui.theme.BackgroundCard
 import com.eliaskrr.fitmacros.ui.theme.TextCardColor
+import java.math.BigDecimal
+import java.math.RoundingMode
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -156,12 +158,23 @@ fun SelectAlimentoForMealScreen(
                 items(alimentos) { alimento ->
                     com.eliaskrr.fitmacros.ui.AlimentoItem(
                         alimento = alimento,
-                        onClick = { selectedAlimento = alimento }
+                        onClick = {
+                            selectedAlimento = alimento
+                            quantityText = formatQuantity(alimento.cantidadBase)
+                            selectedUnit = alimento.unidadBase
+                        }
                     )
                 }
             }
         }
     }
+}
+
+private fun formatQuantity(value: Double): String {
+    return BigDecimal.valueOf(value)
+        .setScale(2, RoundingMode.HALF_UP)
+        .stripTrailingZeros()
+        .toPlainString()
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

@@ -61,6 +61,8 @@
     <string name="brand_optional">Marca (Opcional)</string>
     <string name="price_optional">Precio (Opcional)</string>
     <string name="details_optional">Detalles (Opcional)</string>
+    <string name="base_quantity_label">Cantidad base (gr/ml)</string>
+    <string name="base_unit_label">Unidad base</string>
 
     <!-- Dietas Screen -->
     <string name="new_dieta_title">Nueva Dieta</string>
