@@ -89,15 +89,16 @@ class AddEditAlimentoViewModel @Inject constructor(
         detalles: String? = null
     ) {
         _uiState.update { currentState ->
-            val updatedProteinas = proteinas ?: currentState.proteinas
-            val updatedCarbos = carbos ?: currentState.carbos
-            val updatedGrasas = grasas ?: currentState.grasas
+            val updatedProteinas = proteinas?.let(::sanitizeDecimalInput) ?: currentState.proteinas
+            val updatedCarbos = carbos?.let(::sanitizeDecimalInput) ?: currentState.carbos
+            val updatedGrasas = grasas?.let(::sanitizeDecimalInput) ?: currentState.grasas
+            val updatedPrecio = precio?.let(::sanitizeDecimalInput) ?: currentState.precio
 
             val calculatedCalories = calculateCalories(updatedProteinas, updatedCarbos, updatedGrasas)
 
             currentState.copy(
                 nombre = nombre ?: currentState.nombre,
-                precio = precio ?: currentState.precio,
+                precio = updatedPrecio,
                 marca = marca ?: currentState.marca,
                 proteinas = updatedProteinas,
                 carbos = updatedCarbos,
@@ -118,7 +119,7 @@ class AddEditAlimentoViewModel @Inject constructor(
             val alimento = Alimento(
                 id = if (isNewAlimento) 0 else state.id,
                 nombre = state.nombre,
-                precio = state.precio.toDoubleOrNull(),
+                precio = sanitizeDecimalInput(state.precio).toDoubleOrNull(),
                 marca = state.marca.ifEmpty { null },
                 proteinas = parseMacroInput(state.proteinas),
                 carbos = parseMacroInput(state.carbos),
@@ -185,7 +186,7 @@ class AddEditAlimentoViewModel @Inject constructor(
     }
 
     private fun parseMacroInput(value: String): Double {
-        return value.replace(',', '.').trim().toDoubleOrNull() ?: 0.0
+        return value.trim().toDoubleOrNull() ?: 0.0
     }
 
     private fun formatCalories(calorias: Double): String {
@@ -197,5 +198,9 @@ class AddEditAlimentoViewModel @Inject constructor(
                 .stripTrailingZeros()
                 .toPlainString()
         }
+    }
+
+    private fun sanitizeDecimalInput(value: String): String {
+        return value.replace(",", "").trim()
     }
 }
