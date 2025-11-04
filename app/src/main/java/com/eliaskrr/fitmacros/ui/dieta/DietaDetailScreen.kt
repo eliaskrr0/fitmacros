@@ -30,6 +30,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.eliaskrr.fitmacros.R
 import com.eliaskrr.fitmacros.data.model.MealType
+import com.eliaskrr.fitmacros.domain.MacroCalculationResult
+import com.eliaskrr.fitmacros.domain.MissingField
 import kotlin.math.roundToInt
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -51,12 +53,7 @@ fun DietaDetailScreen(viewModel: DietaDetailViewModel, onAddAlimentoClick: (Meal
     ) {
         LazyColumn(modifier = Modifier.padding(it).padding(16.dp)) {
             item {
-                RemainingNutrients(
-                    carbGoal = nutrientGoals.carbGoal,
-                    fatGoal = nutrientGoals.fatGoal,
-                    proteinGoal = nutrientGoals.proteinGoal,
-                    calorieGoal = nutrientGoals.calorieGoal
-                )
+                RemainingNutrients(nutrientGoals)
                 Spacer(modifier = Modifier.height(24.dp))
             }
             item {
@@ -76,18 +73,29 @@ fun DietaDetailScreen(viewModel: DietaDetailViewModel, onAddAlimentoClick: (Meal
 }
 
 @Composable
-fun RemainingNutrients(carbGoal: Int, fatGoal: Int, proteinGoal: Int, calorieGoal: Int) {
+fun RemainingNutrients(result: MacroCalculationResult) {
     Column {
         Text(
             text = stringResource(R.string.remaining_nutrients),
             style = MaterialTheme.typography.titleMedium
         )
         Spacer(modifier = Modifier.height(8.dp))
-        Row(horizontalArrangement = Arrangement.SpaceAround, modifier = Modifier.fillMaxWidth()) {
-            NutrientColumn(value = carbGoal.toString(), label = stringResource(R.string.carbohydrates))
-            NutrientColumn(value = fatGoal.toString(), label = stringResource(R.string.fats))
-            NutrientColumn(value = proteinGoal.toString(), label = stringResource(R.string.proteins))
-            NutrientColumn(value = calorieGoal.toString(), label = stringResource(R.string.calories))
+        when (result) {
+            is MacroCalculationResult.Success -> {
+                val data = result.data
+                Row(horizontalArrangement = Arrangement.SpaceAround, modifier = Modifier.fillMaxWidth()) {
+                    NutrientColumn(value = data.carbGoal.toString(), label = stringResource(R.string.carbohydrates))
+                    NutrientColumn(value = data.fatGoal.toString(), label = stringResource(R.string.fats))
+                    NutrientColumn(value = data.proteinGoal.toString(), label = stringResource(R.string.proteins))
+                    NutrientColumn(value = data.calorieGoal.toString(), label = stringResource(R.string.calories))
+                }
+            }
+
+            is MacroCalculationResult.MissingData -> {
+                MissingDataNotice(result.missingFields)
+            }
+
+            MacroCalculationResult.Idle -> MissingDataNotice(emptyList())
         }
     }
 }
@@ -98,6 +106,35 @@ fun NutrientColumn(value: String, label: String) {
         Text(text = value, style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
         Text(text = label, fontSize = 12.sp)
     }
+}
+
+@Composable
+private fun MissingDataNotice(missingFields: List<MissingField>) {
+    val message = if (missingFields.isEmpty()) {
+        stringResource(R.string.missing_user_data_generic)
+    } else {
+        val joinedFields = missingFields.joinToString(", ") { field -> field.toReadableName() }
+        stringResource(R.string.missing_user_data, joinedFields)
+    }
+    Text(
+        text = message,
+        style = MaterialTheme.typography.bodyMedium,
+        color = MaterialTheme.colorScheme.error,
+        modifier = Modifier.padding(vertical = 8.dp)
+    )
+}
+
+@Composable
+private fun MissingField.toReadableName(): String {
+    val labelRes = when (this) {
+        MissingField.WEIGHT -> R.string.missing_field_weight
+        MissingField.HEIGHT -> R.string.missing_field_height
+        MissingField.BIRTH_DATE -> R.string.missing_field_birth_date
+        MissingField.SEX -> R.string.missing_field_sex
+        MissingField.ACTIVITY_LEVEL -> R.string.missing_field_activity_level
+        MissingField.GOAL -> R.string.missing_field_goal
+    }
+    return stringResource(id = labelRes)
 }
 
 @Composable

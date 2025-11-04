@@ -15,29 +15,71 @@ data class CalculationResult(
     val fatGoal: Int = 0
 )
 
+sealed class MacroCalculationResult {
+    data object Idle : MacroCalculationResult()
+    data class Success(val data: CalculationResult) : MacroCalculationResult()
+    data class MissingData(val missingFields: List<MissingField>) : MacroCalculationResult()
+}
+
+enum class MissingField {
+    WEIGHT,
+    HEIGHT,
+    BIRTH_DATE,
+    SEX,
+    ACTIVITY_LEVEL,
+    GOAL
+}
+
 object MacroCalculator {
 
-    fun calculate(userData: UserData): CalculationResult {
+    fun calculate(userData: UserData): MacroCalculationResult {
+        val missingFields = mutableListOf<MissingField>()
+
         val weight = userData.peso.toDoubleOrNull()
+        if (weight == null || weight <= 0.0) {
+            missingFields += MissingField.WEIGHT
+        }
+
         val height = userData.altura.toDoubleOrNull()
-        val birthDate = try {
+        if (height == null || height <= 0.0) {
+            missingFields += MissingField.HEIGHT
+        }
+
+        val birthDate = runCatching {
             val formatter = DateTimeFormatter.ofPattern("ddMMyyyy")
             LocalDate.parse(userData.fechaNacimiento, formatter)
-        } catch (e: Exception) {
-            null
+        }.getOrNull()
+        if (birthDate == null) {
+            missingFields += MissingField.BIRTH_DATE
         }
 
-        if (weight == null || height == null || birthDate == null || userData.sexo.isBlank() || userData.activityRate.isBlank() || userData.objetivo.isBlank()) {
-            return CalculationResult() // Devuelve valores por defecto si los datos no son válidos
+        if (userData.sexo.isBlank()) {
+            missingFields += MissingField.SEX
         }
 
-        val age = Period.between(birthDate, LocalDate.now()).years
+        if (userData.activityRate.isBlank()) {
+            missingFields += MissingField.ACTIVITY_LEVEL
+        }
+
+        if (userData.objetivo.isBlank()) {
+            missingFields += MissingField.GOAL
+        }
+
+        if (missingFields.isNotEmpty()) {
+            return MacroCalculationResult.MissingData(missingFields.distinct())
+        }
+
+        val validWeight = weight!!
+        val validHeight = height!!
+        val validBirthDate = birthDate!!
+
+        val age = Period.between(validBirthDate, LocalDate.now()).years
 
         // 1. Calcular Tasa Metabólica Basal (TMB) - Fórmula Mifflin-St Jeor
         val bmr = if (userData.sexo == "Hombre") {
-            (10 * weight) + (6.25 * height) - (5 * age) + 5
+            (10 * validWeight) + (6.25 * validHeight) - (5 * age) + 5
         } else { // Mujer
-            (10 * weight) + (6.25 * height) - (5 * age) - 161
+            (10 * validWeight) + (6.25 * validHeight) - (5 * age) - 161
         }
 
         // 2. Calcular Calorías de Mantenimiento (TDEE)
@@ -52,18 +94,20 @@ object MacroCalculator {
         val proteinFactor = target?.proteinFactor ?: 1.8
         val fatFactor = target?.fatFactor ?: 0.8
 
-        val proteinGrams = (weight * proteinFactor).roundToInt()
-        val fatGrams = (weight * fatFactor).roundToInt()
+        val proteinGrams = (validWeight * proteinFactor).roundToInt()
+        val fatGrams = (validWeight * fatFactor).roundToInt()
         val caloriesFromProteinAndFat = (proteinGrams * 4) + (fatGrams * 9)
         val carbGrams = ((calorieGoal - caloriesFromProteinAndFat) / 4).roundToInt()
 
-        return CalculationResult(
+        val result = CalculationResult(
             tdee = tdee.roundToInt(),
             calorieGoal = calorieGoal.roundToInt(),
             proteinGoal = proteinGrams,
             carbGoal = if (carbGrams > 0) carbGrams else 0,
             fatGoal = fatGrams
         )
+
+        return MacroCalculationResult.Success(result)
     }
 }
 

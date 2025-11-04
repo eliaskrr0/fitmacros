@@ -42,6 +42,8 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.eliaskrr.fitmacros.R
+import com.eliaskrr.fitmacros.domain.MacroCalculationResult
+import com.eliaskrr.fitmacros.domain.MissingField
 import com.eliaskrr.fitmacros.ui.theme.BackgroundCard
 import com.eliaskrr.fitmacros.ui.theme.Dimens
 import com.eliaskrr.fitmacros.ui.theme.NutrientColors
@@ -92,18 +94,28 @@ fun ProfileScreen(viewModel: ProfileViewModel, onEditClick: () -> Unit) {
 
         Spacer(modifier = Modifier.height(Dimens.ExtraLarge))
 
-        MacronutrientsCard(
-            carbGoal = calculationResult.carbGoal,
-            fatGoal = calculationResult.fatGoal,
-            proteinGoal = calculationResult.proteinGoal
-        )
+        when (val result = calculationResult) {
+            is MacroCalculationResult.Success -> {
+                MacronutrientsCard(
+                    carbGoal = result.data.carbGoal,
+                    fatGoal = result.data.fatGoal,
+                    proteinGoal = result.data.proteinGoal
+                )
 
-        Spacer(modifier = Modifier.height(Dimens.Large))
+                Spacer(modifier = Modifier.height(Dimens.Large))
 
-        CaloriesCard(
-            calorieGoal = calculationResult.calorieGoal,
-            tdee = calculationResult.tdee
-        )
+                CaloriesCard(
+                    calorieGoal = result.data.calorieGoal,
+                    tdee = result.data.tdee
+                )
+            }
+
+            is MacroCalculationResult.MissingData -> {
+                MissingDataNotice(result.missingFields)
+            }
+
+            MacroCalculationResult.Idle -> MissingDataNotice(emptyList())
+        }
     }
 }
 
@@ -179,6 +191,43 @@ fun CaloriesCard(calorieGoal: Int, tdee: Int) {
             }
         }
     }
+}
+
+@Composable
+private fun MissingDataNotice(missingFields: List<MissingField>) {
+    val message = if (missingFields.isEmpty()) {
+        stringResource(R.string.missing_user_data_generic)
+    } else {
+        val joinedFields = missingFields.joinToString(", ") { field -> field.toReadableName() }
+        stringResource(R.string.missing_user_data, joinedFields)
+    }
+
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(
+            containerColor = BackgroundCard,
+            contentColor = MaterialTheme.colorScheme.error
+        )
+    ) {
+        Text(
+            text = message,
+            modifier = Modifier.padding(Dimens.Large),
+            style = MaterialTheme.typography.bodyMedium
+        )
+    }
+}
+
+@Composable
+private fun MissingField.toReadableName(): String {
+    val labelRes = when (this) {
+        MissingField.WEIGHT -> R.string.missing_field_weight
+        MissingField.HEIGHT -> R.string.missing_field_height
+        MissingField.BIRTH_DATE -> R.string.missing_field_birth_date
+        MissingField.SEX -> R.string.missing_field_sex
+        MissingField.ACTIVITY_LEVEL -> R.string.missing_field_activity_level
+        MissingField.GOAL -> R.string.missing_field_goal
+    }
+    return stringResource(id = labelRes)
 }
 
 @Composable

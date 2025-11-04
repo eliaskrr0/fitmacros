@@ -10,8 +10,8 @@ import com.eliaskrr.fitmacros.data.model.MealType
 import com.eliaskrr.fitmacros.data.model.QuantityUnit
 import com.eliaskrr.fitmacros.data.repository.DietaAlimentoRepository
 import com.eliaskrr.fitmacros.data.repository.UserDataRepository
-import com.eliaskrr.fitmacros.domain.CalculationResult
 import com.eliaskrr.fitmacros.domain.MacroCalculator
+import com.eliaskrr.fitmacros.domain.MacroCalculationResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -47,36 +47,40 @@ class DietaDetailViewModel @Inject constructor(
 
     private val dietaId: Int = checkNotNull(savedStateHandle["dietaId"])
 
-    val nutrientGoals: StateFlow<CalculationResult> = userDataRepository.userData.map {
+    val nutrientGoals: StateFlow<MacroCalculationResult> = userDataRepository.userData.map {
         MacroCalculator.calculate(it)
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000),
-        initialValue = CalculationResult()
+        initialValue = MacroCalculationResult.Idle
     )
 
+    private val mealDataFlows: MutableMap<MealType, StateFlow<MealData>> = mutableMapOf()
+
     fun getMealData(mealType: MealType): StateFlow<MealData> {
-        Log.d(TAG, "Obteniendo datos de comida $mealType para dieta $dietaId")
-        return dietaAlimentoRepository.getAlimentosForDietaAndMeal(dietaId, mealType)
-            .map { registros ->
-                val items = registros.map { it.toMealItem() }
-                val totalCalorias = items.sumOf { it.calorias }
-                val totalProteinas = items.sumOf { it.proteinas }
-                val totalCarbos = items.sumOf { it.carbos }
-                val totalGrasas = items.sumOf { it.grasas }
-                MealData(
-                    items = items,
-                    totalCalorias = totalCalorias,
-                    totalProteinas = totalProteinas,
-                    totalCarbos = totalCarbos,
-                    totalGrasas = totalGrasas
+        return mealDataFlows.getOrPut(mealType) {
+            Log.d(TAG, "Obteniendo datos de comida $mealType para dieta $dietaId")
+            dietaAlimentoRepository.getAlimentosForDietaAndMeal(dietaId, mealType)
+                .map { registros ->
+                    val items = registros.map { it.toMealItem() }
+                    val totalCalorias = items.sumOf { it.calorias }
+                    val totalProteinas = items.sumOf { it.proteinas }
+                    val totalCarbos = items.sumOf { it.carbos }
+                    val totalGrasas = items.sumOf { it.grasas }
+                    MealData(
+                        items = items,
+                        totalCalorias = totalCalorias,
+                        totalProteinas = totalProteinas,
+                        totalCarbos = totalCarbos,
+                        totalGrasas = totalGrasas
+                    )
+                }
+                .stateIn(
+                    scope = viewModelScope,
+                    started = SharingStarted.WhileSubscribed(5000),
+                    initialValue = MealData()
                 )
-            }
-            .stateIn(
-                scope = viewModelScope,
-                started = SharingStarted.WhileSubscribed(5000),
-                initialValue = MealData()
-            )
+        }
     }
 
     fun addAlimentoToDieta(alimentoId: Int, mealType: MealType, cantidad: Double, unidad: QuantityUnit) {

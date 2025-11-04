@@ -5,8 +5,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.eliaskrr.fitmacros.data.repository.UserData
 import com.eliaskrr.fitmacros.data.repository.UserDataRepository
-import com.eliaskrr.fitmacros.domain.CalculationResult
 import com.eliaskrr.fitmacros.domain.MacroCalculator
+import com.eliaskrr.fitmacros.domain.MacroCalculationResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -26,12 +26,12 @@ class ProfileViewModel @Inject constructor(
         initialValue = UserData("", "", "", "", "", "", "")
     )
 
-    val calculationResult: StateFlow<CalculationResult> = userData.map {
+    val calculationResult: StateFlow<MacroCalculationResult> = userData.map {
         MacroCalculator.calculate(it)
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000),
-        initialValue = CalculationResult()
+        initialValue = MacroCalculationResult.Idle
     )
 
     fun saveUserData(userData: UserData) {
