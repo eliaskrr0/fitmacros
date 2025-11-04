@@ -186,7 +186,7 @@ class AddEditAlimentoViewModel @Inject constructor(
     }
 
     private fun parseMacroInput(value: String): Double {
-        return value.trim().toDoubleOrNull() ?: 0.0
+        return sanitizeDecimalInput(value).toDoubleOrNull() ?: 0.0
     }
 
     private fun formatCalories(calorias: Double): String {
@@ -201,6 +201,24 @@ class AddEditAlimentoViewModel @Inject constructor(
     }
 
     private fun sanitizeDecimalInput(value: String): String {
-        return value.replace(",", "").trim()
+        val normalized = value.trim().replace(',', '.')
+        if (normalized.isEmpty()) {
+            return ""
+        }
+
+        val result = StringBuilder()
+        var dotUsed = false
+
+        normalized.forEach { char ->
+            when {
+                char.isDigit() -> result.append(char)
+                char == '.' && !dotUsed -> {
+                    result.append(char)
+                    dotUsed = true
+                }
+            }
+        }
+
+        return result.toString()
     }
 }
