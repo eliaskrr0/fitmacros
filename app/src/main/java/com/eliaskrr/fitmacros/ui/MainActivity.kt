@@ -30,14 +30,20 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -101,8 +107,10 @@ fun MainScreen(alimentoViewModel: AlimentoViewModel, profileViewModel: ProfileVi
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
+    val snackbarHostState = remember { SnackbarHostState() }
 
     Scaffold(
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         topBar = {
             CenterAlignedTopAppBar(
                 title = { Text("FitMacros", color = MaterialTheme.colorScheme.onPrimary) },
@@ -145,7 +153,8 @@ fun MainScreen(alimentoViewModel: AlimentoViewModel, profileViewModel: ProfileVi
             composable(AppScreen.Alimentos.route) {
                 AlimentosScreen(
                     viewModel = alimentoViewModel,
-                    onAlimentoClick = { navController.navigate(AppScreen.AddEditAlimento.createRoute(it.id)) }
+                    onAlimentoClick = { navController.navigate(AppScreen.AddEditAlimento.createRoute(it.id)) },
+                    snackbarHostState = snackbarHostState
                 )
             }
             composable(AppScreen.Dietas.route) { 
@@ -229,10 +238,21 @@ fun navigateToScreen(navController: NavHostController, route: String) {
 @Composable
 fun AlimentosScreen(
     viewModel: AlimentoViewModel,
-    onAlimentoClick: (Alimento) -> Unit
+    onAlimentoClick: (Alimento) -> Unit,
+    snackbarHostState: SnackbarHostState
 ) {
-    val alimentos by viewModel.alimentos.collectAsState()
+    val uiState by viewModel.uiState.collectAsState()
     val searchQuery by viewModel.searchQuery.collectAsState()
+    val context = LocalContext.current
+
+    LaunchedEffect(viewModel) {
+        viewModel.events.collect { event ->
+            when (event) {
+                is AlimentoViewModel.AlimentoEvent.ShowMessage ->
+                    snackbarHostState.showSnackbar(context.getString(event.messageRes))
+            }
+        }
+    }
 
     Column {
         OutlinedTextField(
@@ -244,6 +264,7 @@ fun AlimentosScreen(
             label = { Text("Buscar alimento...") },
             leadingIcon = { Icon(Icons.Default.Search, contentDescription = "Buscar") },
             singleLine = true,
+            enabled = !uiState.isLoading,
             colors = OutlinedTextFieldDefaults.colors(
                 focusedContainerColor = BackgroundCard,
                 unfocusedContainerColor = BackgroundCard,
@@ -257,8 +278,23 @@ fun AlimentosScreen(
                 unfocusedLeadingIconColor = TextCardColor.copy(alpha = 0.5f)
             )
         )
+        if (uiState.isLoading) {
+            LinearProgressIndicator(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp)
+            )
+        }
+        uiState.errorMessage?.let { messageRes ->
+            Text(
+                text = stringResource(messageRes),
+                color = MaterialTheme.colorScheme.error,
+                modifier = Modifier
+                    .padding(horizontal = 16.dp, vertical = 8.dp)
+            )
+        }
         LazyColumn {
-            items(alimentos) { alimento ->
+            items(uiState.alimentos) { alimento ->
                 AlimentoItem(alimento = alimento, onClick = { onAlimentoClick(alimento) })
             }
         }

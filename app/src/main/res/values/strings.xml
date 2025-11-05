@@ -64,6 +64,10 @@
     <string name="details_optional">Detalles (Opcional)</string>
     <string name="base_quantity_label">Cantidad base (gr/ml)</string>
     <string name="base_unit_label">Unidad base</string>
+    <string name="error_loading_alimento">No se pudo cargar el alimento. Inténtalo de nuevo.</string>
+    <string name="error_saving_alimento">No se pudo guardar el alimento. Revisa la información e inténtalo otra vez.</string>
+    <string name="error_deleting_alimento">No se pudo eliminar el alimento. Inténtalo de nuevo.</string>
+    <string name="error_loading_alimentos">No se pudieron cargar los alimentos. Inténtalo de nuevo.</string>
 
     <!-- Dietas Screen -->
     <string name="new_dieta_title">Nueva Dieta</string>

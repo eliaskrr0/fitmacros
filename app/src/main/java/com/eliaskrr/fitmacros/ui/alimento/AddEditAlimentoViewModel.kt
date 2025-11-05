@@ -4,12 +4,16 @@ import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.eliaskrr.fitmacros.R
 import com.eliaskrr.fitmacros.data.model.Alimento
 import com.eliaskrr.fitmacros.data.model.QuantityUnit
 import com.eliaskrr.fitmacros.data.repository.AlimentoRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
@@ -33,7 +37,9 @@ data class AlimentoUiState(
     val unidadBase: QuantityUnit = QuantityUnit.GRAMS,
     val calorias: String = "0",
     val detalles: String = "",
-    val isSaved: Boolean = false
+    val isSaved: Boolean = false,
+    val isLoading: Boolean = false,
+    val errorMessage: Int? = null
 )
 
 @HiltViewModel
@@ -44,6 +50,9 @@ class AddEditAlimentoViewModel @Inject constructor(
 
     private val _uiState = MutableStateFlow(AlimentoUiState())
     val uiState: StateFlow<AlimentoUiState> = _uiState.asStateFlow()
+
+    private val _events = MutableSharedFlow<AddEditAlimentoEvent>()
+    val events: SharedFlow<AddEditAlimentoEvent> = _events.asSharedFlow()
 
     private val alimentoId: Int? = savedStateHandle["alimentoId"]
 
@@ -62,33 +71,39 @@ class AddEditAlimentoViewModel @Inject constructor(
 
     private fun loadAlimento(id: Int) {
         viewModelScope.launch {
-            runCatching { repository.getById(id).first() }
-                .onSuccess { alimento ->
-                    if (alimento != null) {
-                        Log.d(TAG, "Alimento cargado para edición: ${alimento.nombre} (id=${alimento.id})")
-                        val caloriasCalculadas = calculateCalories(alimento.proteinas, alimento.carbos, alimento.grasas)
-                        _uiState.update {
-                            it.copy(
-                                id = alimento.id,
-                                nombre = alimento.nombre,
-                                precio = alimento.precio?.toString() ?: "",
-                                marca = alimento.marca ?: "",
-                                proteinas = alimento.proteinas.toString(),
-                                carbos = alimento.carbos.toString(),
-                                grasas = alimento.grasas.toString(),
-                                cantidadBase = formatQuantity(alimento.cantidadBase),
-                                unidadBase = alimento.unidadBase,
-                                calorias = formatCalories(caloriasCalculadas),
-                                detalles = alimento.detalles ?: ""
-                            )
-                        }
-                    } else {
-                        Log.w(TAG, "No se encontró el alimento con id $id")
+            _uiState.update { it.copy(isLoading = true, errorMessage = null) }
+            try {
+                val alimento = repository.getById(id).first()
+                if (alimento != null) {
+                    Log.d(TAG, "Alimento cargado para edición: ${alimento.nombre} (id=${alimento.id})")
+                    val caloriasCalculadas = calculateCalories(alimento.proteinas, alimento.carbos, alimento.grasas)
+                    _uiState.update {
+                        it.copy(
+                            id = alimento.id,
+                            nombre = alimento.nombre,
+                            precio = alimento.precio?.toString() ?: "",
+                            marca = alimento.marca ?: "",
+                            proteinas = alimento.proteinas.toString(),
+                            carbos = alimento.carbos.toString(),
+                            grasas = alimento.grasas.toString(),
+                            cantidadBase = formatQuantity(alimento.cantidadBase),
+                            unidadBase = alimento.unidadBase,
+                            calorias = formatCalories(caloriasCalculadas),
+                            detalles = alimento.detalles ?: "",
+                            isLoading = false,
+                            errorMessage = null
+                        )
                     }
+                } else {
+                    Log.w(TAG, "No se encontró el alimento con id $id")
+                    _uiState.update { it.copy(isLoading = false, errorMessage = R.string.error_loading_alimento) }
+                    _events.emit(AddEditAlimentoEvent.ShowMessage(R.string.error_loading_alimento))
                 }
-                .onFailure { ex ->
-                    Log.e(TAG, "Error cargando alimento con id $id", ex)
-                }
+            } catch (ex: Exception) {
+                Log.e(TAG, "Error cargando alimento con id $id", ex)
+                _uiState.update { it.copy(isLoading = false, errorMessage = R.string.error_loading_alimento) }
+                _events.emit(AddEditAlimentoEvent.ShowMessage(R.string.error_loading_alimento))
+            }
         }
     }
 
@@ -122,7 +137,8 @@ class AddEditAlimentoViewModel @Inject constructor(
                 cantidadBase = updatedCantidadBase,
                 unidadBase = unidadBase ?: currentState.unidadBase,
                 calorias = formatCalories(calculatedCalories),
-                detalles = detalles ?: currentState.detalles
+                detalles = detalles ?: currentState.detalles,
+                errorMessage = null
             )
         }
     }
@@ -148,7 +164,8 @@ class AddEditAlimentoViewModel @Inject constructor(
                 detalles = state.detalles.ifEmpty { null }
             )
 
-            runCatching {
+            _uiState.update { it.copy(isLoading = true, errorMessage = null, isSaved = false) }
+            try {
                 if (isNewAlimento) {
                     Log.d(TAG, "Insertando nuevo alimento ${alimento.nombre}")
                     repository.insert(alimento)
@@ -156,11 +173,12 @@ class AddEditAlimentoViewModel @Inject constructor(
                     Log.d(TAG, "Actualizando alimento ${alimento.nombre} (id=${alimento.id})")
                     repository.update(alimento)
                 }
-            }.onSuccess {
                 Log.i(TAG, "Alimento guardado correctamente: ${alimento.nombre}")
-                _uiState.update { it.copy(isSaved = true) }
-            }.onFailure { ex ->
+                _uiState.update { it.copy(isSaved = true, isLoading = false, errorMessage = null) }
+            } catch (ex: Exception) {
                 Log.e(TAG, "Error al guardar alimento ${alimento.nombre}", ex)
+                _uiState.update { it.copy(isLoading = false, errorMessage = R.string.error_saving_alimento) }
+                _events.emit(AddEditAlimentoEvent.ShowMessage(R.string.error_saving_alimento))
             }
         }
     }
@@ -180,14 +198,16 @@ class AddEditAlimentoViewModel @Inject constructor(
                     unidadBase = state.unidadBase,
                     calorias = calculateCalories(state.proteinas, state.carbos, state.grasas)
                 )
-                runCatching {
+                _uiState.update { it.copy(isLoading = true, errorMessage = null) }
+                try {
                     Log.d(TAG, "Eliminando alimento ${alimentoToDelete.nombre} (id=${alimentoToDelete.id})")
                     repository.delete(alimentoToDelete)
-                }.onSuccess {
                     Log.i(TAG, "Alimento eliminado correctamente: ${alimentoToDelete.nombre}")
-                    _uiState.update { it.copy(isSaved = true) }
-                }.onFailure { ex ->
+                    _uiState.update { it.copy(isSaved = true, isLoading = false, errorMessage = null) }
+                } catch (ex: Exception) {
                     Log.e(TAG, "Error al eliminar alimento ${alimentoToDelete.nombre} (id=${alimentoToDelete.id})", ex)
+                    _uiState.update { it.copy(isLoading = false, errorMessage = R.string.error_deleting_alimento) }
+                    _events.emit(AddEditAlimentoEvent.ShowMessage(R.string.error_deleting_alimento))
                 }
             }
         }
@@ -195,6 +215,10 @@ class AddEditAlimentoViewModel @Inject constructor(
 
     companion object {
         private const val TAG = "AddEditAlimentoVM"
+    }
+
+    sealed interface AddEditAlimentoEvent {
+        data class ShowMessage(val messageRes: Int) : AddEditAlimentoEvent
     }
 
     private fun calculateCalories(proteinas: String, carbos: String, grasas: String): Double {
