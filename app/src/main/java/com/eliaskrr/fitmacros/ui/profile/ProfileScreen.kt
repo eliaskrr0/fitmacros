@@ -1,5 +1,6 @@
 package com.eliaskrr.fitmacros.ui.profile
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -28,6 +29,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -36,12 +38,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.eliaskrr.fitmacros.R
+import com.eliaskrr.fitmacros.domain.MacroCalculationResult
+import com.eliaskrr.fitmacros.domain.MissingField
 import com.eliaskrr.fitmacros.ui.theme.BackgroundCard
 import com.eliaskrr.fitmacros.ui.theme.Dimens
 import com.eliaskrr.fitmacros.ui.theme.NutrientColors
@@ -92,18 +97,28 @@ fun ProfileScreen(viewModel: ProfileViewModel, onEditClick: () -> Unit) {
 
         Spacer(modifier = Modifier.height(Dimens.ExtraLarge))
 
-        MacronutrientsCard(
-            carbGoal = calculationResult.carbGoal,
-            fatGoal = calculationResult.fatGoal,
-            proteinGoal = calculationResult.proteinGoal
-        )
+        when (val result = calculationResult) {
+            is MacroCalculationResult.Success -> {
+                MacronutrientsCard(
+                    carbGoal = result.data.carbGoal,
+                    fatGoal = result.data.fatGoal,
+                    proteinGoal = result.data.proteinGoal
+                )
 
-        Spacer(modifier = Modifier.height(Dimens.Large))
+                Spacer(modifier = Modifier.height(Dimens.Large))
 
-        CaloriesCard(
-            calorieGoal = calculationResult.calorieGoal,
-            tdee = calculationResult.tdee
-        )
+                CaloriesCard(
+                    calorieGoal = result.data.calorieGoal,
+                    tdee = result.data.tdee
+                )
+            }
+
+            is MacroCalculationResult.MissingData -> {
+                MissingDataNotice(result.missingFields)
+            }
+
+            MacroCalculationResult.Idle -> MissingDataNotice(emptyList())
+        }
     }
 }
 
@@ -179,6 +194,45 @@ fun CaloriesCard(calorieGoal: Int, tdee: Int) {
             }
         }
     }
+}
+
+@Composable
+private fun MissingDataNotice(missingFields: List<MissingField>) {
+    val context = LocalContext.current
+    val message = remember(missingFields, context) {
+        if (missingFields.isEmpty()) {
+            context.getString(R.string.missing_user_data_generic)
+        } else {
+            val joinedFields = missingFields.joinToString(", ") { field ->
+                context.getString(field.labelRes())
+            }
+            context.getString(R.string.missing_user_data, joinedFields)
+        }
+    }
+
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(
+            containerColor = BackgroundCard,
+            contentColor = MaterialTheme.colorScheme.error
+        )
+    ) {
+        Text(
+            text = message,
+            modifier = Modifier.padding(Dimens.Large),
+            style = MaterialTheme.typography.bodyMedium
+        )
+    }
+}
+
+@StringRes
+private fun MissingField.labelRes(): Int = when (this) {
+    MissingField.WEIGHT -> R.string.missing_field_weight
+    MissingField.HEIGHT -> R.string.missing_field_height
+    MissingField.BIRTH_DATE -> R.string.missing_field_birth_date
+    MissingField.SEX -> R.string.missing_field_sex
+    MissingField.ACTIVITY_LEVEL -> R.string.missing_field_activity_level
+    MissingField.GOAL -> R.string.missing_field_goal
 }
 
 @Composable

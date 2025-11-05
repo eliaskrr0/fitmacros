@@ -16,6 +16,9 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.math.BigDecimal
 import java.math.RoundingMode
+import java.text.DecimalFormatSymbols
+import java.text.NumberFormat
+import java.util.Locale
 import javax.inject.Inject
 
 data class AlimentoUiState(
@@ -43,6 +46,11 @@ class AddEditAlimentoViewModel @Inject constructor(
     val uiState: StateFlow<AlimentoUiState> = _uiState.asStateFlow()
 
     private val alimentoId: Int? = savedStateHandle["alimentoId"]
+
+    private val decimalSymbols: DecimalFormatSymbols = DecimalFormatSymbols.getInstance(Locale.getDefault())
+    private val numberFormat: NumberFormat = NumberFormat.getNumberInstance(Locale.getDefault()).apply {
+        isGroupingUsed = false
+    }
 
     init {
         // El valor por defecto de alimentoId es -1, así que solo cargamos si es un ID válido
@@ -96,11 +104,11 @@ class AddEditAlimentoViewModel @Inject constructor(
         detalles: String? = null
     ) {
         _uiState.update { currentState ->
-            val updatedProteinas = proteinas?.let(::sanitizeDecimalInput) ?: currentState.proteinas
-            val updatedCarbos = carbos?.let(::sanitizeDecimalInput) ?: currentState.carbos
-            val updatedGrasas = grasas?.let(::sanitizeDecimalInput) ?: currentState.grasas
-            val updatedPrecio = precio?.let(::sanitizeDecimalInput) ?: currentState.precio
-            val updatedCantidadBase = cantidadBase?.let(::sanitizeDecimalInput) ?: currentState.cantidadBase
+            val updatedProteinas = proteinas?.let { normalizeDecimalInput(it) } ?: currentState.proteinas
+            val updatedCarbos = carbos?.let { normalizeDecimalInput(it) } ?: currentState.carbos
+            val updatedGrasas = grasas?.let { normalizeDecimalInput(it) } ?: currentState.grasas
+            val updatedPrecio = precio?.let { normalizeDecimalInput(it, allowNegative = false) } ?: currentState.precio
+            val updatedCantidadBase = cantidadBase?.let { normalizeDecimalInput(it) } ?: currentState.cantidadBase
 
             val calculatedCalories = calculateCalories(updatedProteinas, updatedCarbos, updatedGrasas)
 
@@ -129,7 +137,7 @@ class AddEditAlimentoViewModel @Inject constructor(
             val alimento = Alimento(
                 id = if (isNewAlimento) 0 else state.id,
                 nombre = state.nombre,
-                precio = sanitizeDecimalInput(state.precio).toDoubleOrNull(),
+                precio = parseDecimal(state.precio)?.toDouble(),
                 marca = state.marca.ifEmpty { null },
                 proteinas = parseMacroInput(state.proteinas),
                 carbos = parseMacroInput(state.carbos),
@@ -201,7 +209,7 @@ class AddEditAlimentoViewModel @Inject constructor(
     }
 
     private fun parseMacroInput(value: String): Double {
-        return sanitizeDecimalInput(value).toDoubleOrNull() ?: 0.0
+        return parseDecimal(value)?.takeIf { it >= BigDecimal.ZERO }?.toDouble() ?: 0.0
     }
 
     private fun formatCalories(calorias: Double): String {
@@ -223,29 +231,49 @@ class AddEditAlimentoViewModel @Inject constructor(
     }
 
     private fun parseQuantity(value: String): Double {
-        val parsed = sanitizeDecimalInput(value).toDoubleOrNull()
+        val parsed = parseDecimal(value)?.toDouble()
         return if (parsed != null && parsed > 0.0) parsed else 100.0
     }
 
-    private fun sanitizeDecimalInput(value: String): String {
-        val normalized = value.trim().replace(',', '.')
-        if (normalized.isEmpty()) {
-            return ""
+    private fun normalizeDecimalInput(
+        value: String,
+        scale: Int = 2,
+        allowNegative: Boolean = false
+    ): String {
+        val trimmed = value.trim()
+        if (trimmed.isEmpty()) return ""
+
+        val decimal = parseDecimal(trimmed) ?: return ""
+        if (!allowNegative && decimal < BigDecimal.ZERO) return ""
+
+        return decimal
+            .setScale(scale, RoundingMode.HALF_UP)
+            .stripTrailingZeros()
+            .toPlainString()
+    }
+
+    private fun parseDecimal(value: String): BigDecimal? {
+        if (value.isBlank()) return null
+        val sanitized = sanitizeSeparators(value)
+        if (sanitized.isEmpty()) return null
+        val number = runCatching { numberFormat.parse(sanitized) }.getOrNull() ?: return null
+        return when (number) {
+            is Long -> BigDecimal.valueOf(number.toLong())
+            is Int -> BigDecimal.valueOf(number.toLong())
+            is Double -> BigDecimal.valueOf(number)
+            is Float -> BigDecimal.valueOf(number.toDouble())
+            else -> BigDecimal.valueOf(number.toDouble())
         }
+    }
 
-        val result = StringBuilder()
-        var dotUsed = false
-
-        normalized.forEach { char ->
-            when {
-                char.isDigit() -> result.append(char)
-                char == '.' && !dotUsed -> {
-                    result.append(char)
-                    dotUsed = true
-                }
-            }
-        }
-
-        return result.toString()
+    private fun sanitizeSeparators(value: String): String {
+        val trimmed = value.trim()
+        if (trimmed.isEmpty()) return ""
+        val groupingSeparator = decimalSymbols.groupingSeparator
+        val decimalSeparator = decimalSymbols.decimalSeparator
+        val withoutGrouping = trimmed.replace(groupingSeparator.toString(), "")
+        return withoutGrouping
+            .replace(',', decimalSeparator)
+            .replace('.', decimalSeparator)
     }
 }

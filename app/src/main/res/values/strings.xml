@@ -82,5 +82,13 @@
     <string name="meal_without_foods">Todavía no hay alimentos en esta comida</string>
     <string name="food_macros_detail">P: %1$.1f g · C: %2$.1f g · G: %3$.1f g</string>
     <string name="search_alimento">Buscar alimento…</string>
+    <string name="missing_user_data_generic">Completa tus datos para ver tus objetivos nutricionales.</string>
+    <string name="missing_user_data">Completa los campos: %1$s para ver tus objetivos nutricionales.</string>
+    <string name="missing_field_weight">peso</string>
+    <string name="missing_field_height">altura</string>
+    <string name="missing_field_birth_date">fecha de nacimiento</string>
+    <string name="missing_field_sex">sexo</string>
+    <string name="missing_field_activity_level">nivel de actividad</string>
+    <string name="missing_field_goal">objetivo</string>
 
 </resources>
