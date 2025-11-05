@@ -37,6 +37,8 @@ data class AlimentoUiState(
     val unidadBase: QuantityUnit = QuantityUnit.GRAMS,
     val calorias: String = "0",
     val detalles: String = "",
+    val fechaCreacion: Long? = null,
+    val fechaActualizacion: Long? = null,
     val isSaved: Boolean = false,
     val isLoading: Boolean = false,
     val errorMessage: Int? = null
@@ -90,6 +92,8 @@ class AddEditAlimentoViewModel @Inject constructor(
                             unidadBase = alimento.unidadBase,
                             calorias = formatCalories(caloriasCalculadas),
                             detalles = alimento.detalles ?: "",
+                            fechaCreacion = alimento.fechaCreacion,
+                            fechaActualizacion = alimento.fechaActualizacion,
                             isLoading = false,
                             errorMessage = null
                         )
@@ -150,19 +154,38 @@ class AddEditAlimentoViewModel @Inject constructor(
 
             val caloriasCalculadas = calculateCalories(state.proteinas, state.carbos, state.grasas)
 
-            val alimento = Alimento(
-                id = if (isNewAlimento) 0 else state.id,
-                nombre = state.nombre,
-                precio = parseDecimal(state.precio)?.toDouble(),
-                marca = state.marca.ifEmpty { null },
-                proteinas = parseMacroInput(state.proteinas),
-                carbos = parseMacroInput(state.carbos),
-                grasas = parseMacroInput(state.grasas),
-                cantidadBase = parseQuantity(state.cantidadBase),
-                unidadBase = state.unidadBase,
-                calorias = caloriasCalculadas,
-                detalles = state.detalles.ifEmpty { null }
-            )
+            val alimento = if (isNewAlimento) {
+                Alimento(
+                    id = 0,
+                    nombre = state.nombre,
+                    precio = parseDecimal(state.precio)?.toDouble(),
+                    marca = state.marca.ifEmpty { null },
+                    proteinas = parseMacroInput(state.proteinas),
+                    carbos = parseMacroInput(state.carbos),
+                    grasas = parseMacroInput(state.grasas),
+                    cantidadBase = parseQuantity(state.cantidadBase),
+                    unidadBase = state.unidadBase,
+                    calorias = caloriasCalculadas,
+                    detalles = state.detalles.ifEmpty { null }
+                )
+            } else {
+                val now = System.currentTimeMillis()
+                Alimento(
+                    id = state.id,
+                    nombre = state.nombre,
+                    precio = parseDecimal(state.precio)?.toDouble(),
+                    marca = state.marca.ifEmpty { null },
+                    proteinas = parseMacroInput(state.proteinas),
+                    carbos = parseMacroInput(state.carbos),
+                    grasas = parseMacroInput(state.grasas),
+                    cantidadBase = parseQuantity(state.cantidadBase),
+                    unidadBase = state.unidadBase,
+                    calorias = caloriasCalculadas,
+                    fechaCreacion = state.fechaCreacion ?: now,
+                    fechaActualizacion = now,
+                    detalles = state.detalles.ifEmpty { null }
+                )
+            }
 
             _uiState.update { it.copy(isLoading = true, errorMessage = null, isSaved = false) }
             try {
@@ -174,7 +197,15 @@ class AddEditAlimentoViewModel @Inject constructor(
                     repository.update(alimento)
                 }
                 Log.i(TAG, "Alimento guardado correctamente: ${alimento.nombre}")
-                _uiState.update { it.copy(isSaved = true, isLoading = false, errorMessage = null) }
+                _uiState.update {
+                    it.copy(
+                        isSaved = true,
+                        isLoading = false,
+                        errorMessage = null,
+                        fechaCreacion = alimento.fechaCreacion,
+                        fechaActualizacion = alimento.fechaActualizacion
+                    )
+                }
             } catch (ex: Exception) {
                 Log.e(TAG, "Error al guardar alimento ${alimento.nombre}", ex)
                 _uiState.update { it.copy(isLoading = false, errorMessage = R.string.error_saving_alimento) }
