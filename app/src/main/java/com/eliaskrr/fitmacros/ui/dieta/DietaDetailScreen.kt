@@ -28,6 +28,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalContext
+import androidx.annotation.StringRes
 import com.eliaskrr.fitmacros.R
 import com.eliaskrr.fitmacros.data.model.MealType
 import com.eliaskrr.fitmacros.domain.MacroCalculationResult
@@ -110,10 +113,13 @@ fun NutrientColumn(value: String, label: String) {
 
 @Composable
 private fun MissingDataNotice(missingFields: List<MissingField>) {
+    val context = LocalContext.current
     val message = if (missingFields.isEmpty()) {
         stringResource(R.string.missing_user_data_generic)
     } else {
-        val joinedFields = missingFields.joinToString(", ") { field -> field.toReadableName() }
+        val joinedFields = remember(missingFields, context) {
+            missingFields.joinToString(", ") { field -> context.getString(field.labelRes()) }
+        }
         stringResource(R.string.missing_user_data, joinedFields)
     }
     Text(
@@ -124,17 +130,14 @@ private fun MissingDataNotice(missingFields: List<MissingField>) {
     )
 }
 
-@Composable
-private fun MissingField.toReadableName(): String {
-    val labelRes = when (this) {
-        MissingField.WEIGHT -> R.string.missing_field_weight
-        MissingField.HEIGHT -> R.string.missing_field_height
-        MissingField.BIRTH_DATE -> R.string.missing_field_birth_date
-        MissingField.SEX -> R.string.missing_field_sex
-        MissingField.ACTIVITY_LEVEL -> R.string.missing_field_activity_level
-        MissingField.GOAL -> R.string.missing_field_goal
-    }
-    return stringResource(id = labelRes)
+@StringRes
+private fun MissingField.labelRes(): Int = when (this) {
+    MissingField.WEIGHT -> R.string.missing_field_weight
+    MissingField.HEIGHT -> R.string.missing_field_height
+    MissingField.BIRTH_DATE -> R.string.missing_field_birth_date
+    MissingField.SEX -> R.string.missing_field_sex
+    MissingField.ACTIVITY_LEVEL -> R.string.missing_field_activity_level
+    MissingField.GOAL -> R.string.missing_field_goal
 }
 
 @Composable
