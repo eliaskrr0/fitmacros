@@ -29,7 +29,7 @@ object AppModule {
             AppDatabase::class.java,
             "fitmacros_database"
         )
-            .fallbackToDestructiveMigration()
+            .addMigrations(*AppDatabase.MIGRATIONS)
             .build()
 
     @Provides
