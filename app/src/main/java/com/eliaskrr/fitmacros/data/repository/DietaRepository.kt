@@ -19,6 +19,18 @@ class DietaRepository(private val dietaDao: DietaDao) {
         }
     }
 
+    suspend fun deleteDietas(ids: Set<Int>) {
+        if (ids.isEmpty()) return
+
+        try {
+            dietaDao.deleteByIds(ids.toList())
+            Log.i(TAG, "Dietas eliminadas: ${ids.joinToString()}")
+        } catch (ex: Exception) {
+            Log.e(TAG, "Error al eliminar dietas ${ids.joinToString()}", ex)
+            throw ex
+        }
+    }
+
     companion object {
         private const val TAG = "DietaRepository"
     }

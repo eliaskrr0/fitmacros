@@ -73,6 +73,9 @@
     <!-- Dietas Screen -->
     <string name="new_dieta_title">Nueva Dieta</string>
     <string name="dieta_name">Nombre de la Dieta</string>
+    <string name="error_loading_dietas">No se pudieron cargar las dietas. Inténtalo de nuevo.</string>
+    <string name="error_deleting_dieta">No se pudieron eliminar las dietas seleccionadas. Inténtalo de nuevo.</string>
+    <string name="dietas_deleted_message">Dietas eliminadas</string>
 
     <!-- Dieta Detail Screen -->
     <string name="remaining_nutrients">Nutrientes restantes</string>

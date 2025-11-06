@@ -14,4 +14,7 @@ interface DietaDao {
 
     @Query("SELECT * FROM tb_dietas ORDER BY nombre ASC")
     fun getAll(): Flow<List<Dieta>>
+
+    @Query("DELETE FROM tb_dietas WHERE id IN (:ids)")
+    suspend fun deleteByIds(ids: List<Int>)
 }

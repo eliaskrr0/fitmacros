@@ -21,8 +21,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.CheckCircle
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.outlined.RadioButtonUnchecked
 import androidx.compose.material3.Card
@@ -31,7 +29,6 @@ import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -84,6 +81,7 @@ import com.eliaskrr.fitmacros.ui.opciones.OptionsScreen
 import com.eliaskrr.fitmacros.ui.profile.PersonalDataScreen
 import com.eliaskrr.fitmacros.ui.profile.ProfileScreen
 import com.eliaskrr.fitmacros.ui.profile.ProfileViewModel
+import com.eliaskrr.fitmacros.ui.components.SelectionActionBar
 import com.eliaskrr.fitmacros.ui.theme.BackgroundCard
 import com.eliaskrr.fitmacros.ui.theme.FitMacrosTheme
 import com.eliaskrr.fitmacros.ui.theme.TextCardColor
@@ -412,28 +410,3 @@ fun AlimentoItem(
     }
 }
 
-@Composable
-private fun SelectionActionBar(
-    selectedCount: Int,
-    onClearSelection: () -> Unit,
-    onDeleteSelected: () -> Unit
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 12.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        IconButton(onClick = onClearSelection) {
-            Icon(imageVector = Icons.Filled.Close, contentDescription = stringResource(R.string.clear_selection))
-        }
-        Text(
-            text = stringResource(R.string.selected_count, selectedCount),
-            style = MaterialTheme.typography.titleMedium,
-            modifier = Modifier.weight(1f)
-        )
-        IconButton(onClick = onDeleteSelected) {
-            Icon(imageVector = Icons.Filled.Delete, contentDescription = stringResource(R.string.delete_selected))
-        }
-    }
-}
