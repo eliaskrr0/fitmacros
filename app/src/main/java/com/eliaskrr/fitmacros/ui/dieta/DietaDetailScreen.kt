@@ -17,6 +17,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.outlined.RadioButtonUnchecked
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -42,14 +43,19 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.material3.TextButton
 import androidx.annotation.StringRes
-import androidx.compose.ui.window.Dialog
 import com.eliaskrr.fitmacros.R
 import com.eliaskrr.fitmacros.data.model.MealType
 import com.eliaskrr.fitmacros.domain.MacroCalculationResult
 import com.eliaskrr.fitmacros.domain.MissingField
 import com.eliaskrr.fitmacros.ui.components.SelectionActionBar
+import com.eliaskrr.fitmacros.ui.theme.BackgroundCard
+import com.eliaskrr.fitmacros.ui.theme.ButtonCancelColor
+import com.eliaskrr.fitmacros.ui.theme.ButtonConfirmColor
+import com.eliaskrr.fitmacros.ui.theme.DialogBackgroundColor
+import com.eliaskrr.fitmacros.ui.theme.DialogTextColor
+import com.eliaskrr.fitmacros.ui.theme.DialogTitleColor
+import com.eliaskrr.fitmacros.ui.theme.TextCardColor
 import kotlin.math.roundToInt
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -272,21 +278,14 @@ private fun EditQuantityDialog(
     onDismiss: () -> Unit,
     onConfirm: () -> Unit
 ) {
-    Dialog(onDismissRequest = onDismiss) {
-        Surface(
-            shape = RoundedCornerShape(24.dp),
-            tonalElevation = 6.dp,
-            color = MaterialTheme.colorScheme.surfaceVariant,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp)
-        ) {
-            Column(modifier = Modifier.padding(24.dp)) {
-                Text(
-                    text = stringResource(R.string.edit_quantity_for, state.nombre),
-                    style = MaterialTheme.typography.titleLarge
-                )
-                Spacer(modifier = Modifier.height(16.dp))
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        containerColor = DialogBackgroundColor,
+        titleContentColor = DialogTitleColor,
+        textContentColor = DialogTextColor,
+        title = { Text(text = stringResource(R.string.edit_quantity_for, state.nombre)) },
+        text = {
+            Column {
                 OutlinedTextField(
                     value = state.quantityText,
                     onValueChange = onQuantityChange,
@@ -298,11 +297,17 @@ private fun EditQuantityDialog(
                     supportingText = if (state.showError) {
                         { Text(stringResource(R.string.invalid_quantity)) }
                     } else null,
-                    shape = RoundedCornerShape(12.dp),
                     colors = OutlinedTextFieldDefaults.colors(
-                        focusedContainerColor = MaterialTheme.colorScheme.surface,
-                        unfocusedContainerColor = MaterialTheme.colorScheme.surface,
-                        disabledContainerColor = MaterialTheme.colorScheme.surface
+                        focusedContainerColor = BackgroundCard,
+                        unfocusedContainerColor = BackgroundCard,
+                        disabledContainerColor = BackgroundCard,
+                        cursorColor = TextCardColor,
+                        focusedBorderColor = TextCardColor.copy(alpha = 0.8f),
+                        unfocusedBorderColor = TextCardColor.copy(alpha = 0.5f),
+                        focusedLabelColor = TextCardColor.copy(alpha = 0.8f),
+                        unfocusedLabelColor = TextCardColor.copy(alpha = 0.5f),
+                        focusedTextColor = TextCardColor,
+                        unfocusedTextColor = TextCardColor
                     )
                 )
                 Spacer(modifier = Modifier.height(12.dp))
@@ -313,32 +318,25 @@ private fun EditQuantityDialog(
                     ),
                     style = MaterialTheme.typography.bodyMedium
                 )
-                Spacer(modifier = Modifier.height(24.dp))
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp, Alignment.End),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    TextButton(
-                        onClick = onDismiss,
-                        colors = ButtonDefaults.textButtonColors(
-                            containerColor = MaterialTheme.colorScheme.error,
-                            contentColor = MaterialTheme.colorScheme.onError
-                        ),
-                        shape = RoundedCornerShape(24.dp)
-                    ) {
-                        Text(text = stringResource(R.string.cancel))
-                    }
-                    Button(
-                        onClick = onConfirm,
-                        shape = RoundedCornerShape(24.dp)
-                    ) {
-                        Text(text = stringResource(R.string.save))
-                    }
-                }
+            }
+        },
+        dismissButton = {
+            Button(
+                onClick = onDismiss,
+                colors = ButtonDefaults.buttonColors(containerColor = ButtonCancelColor)
+            ) {
+                Text(stringResource(R.string.cancel))
+            }
+        },
+        confirmButton = {
+            Button(
+                onClick = onConfirm,
+                colors = ButtonDefaults.buttonColors(containerColor = ButtonConfirmColor)
+            ) {
+                Text(stringResource(R.string.save))
             }
         }
-    }
+    )
 }
 
 @Composable
