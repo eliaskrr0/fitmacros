@@ -24,12 +24,14 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TextFieldColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -47,6 +49,8 @@ import com.eliaskrr.fitmacros.data.model.QuantityUnit
 import com.eliaskrr.fitmacros.ui.theme.DialogBackgroundColor
 import com.eliaskrr.fitmacros.ui.theme.DialogTextColor
 import com.eliaskrr.fitmacros.ui.theme.DialogTitleColor
+import com.eliaskrr.fitmacros.ui.theme.TextFieldContainerColor
+import com.eliaskrr.fitmacros.ui.theme.TextGeneralColor
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -58,6 +62,19 @@ fun AddEditAlimentoScreen(
     var showDeleteDialog by remember { mutableStateOf(false) }
     val snackbarHostState = remember { SnackbarHostState() }
     val context = LocalContext.current
+    val textFieldColors = OutlinedTextFieldDefaults.colors(
+        focusedContainerColor = TextFieldContainerColor,
+        unfocusedContainerColor = TextFieldContainerColor,
+        disabledContainerColor = TextFieldContainerColor.copy(alpha = 0.6f),
+        focusedBorderColor = TextGeneralColor.copy(alpha = 0.6f),
+        unfocusedBorderColor = TextGeneralColor.copy(alpha = 0.3f),
+        focusedLabelColor = TextGeneralColor.copy(alpha = 0.9f),
+        unfocusedLabelColor = TextGeneralColor.copy(alpha = 0.7f),
+        focusedTextColor = TextGeneralColor,
+        unfocusedTextColor = TextGeneralColor,
+        disabledTextColor = TextGeneralColor.copy(alpha = 0.6f),
+        cursorColor = TextGeneralColor
+    )
 
     LaunchedEffect(uiState.isSaved) {
         if (uiState.isSaved) {
@@ -136,7 +153,8 @@ fun AddEditAlimentoScreen(
                 onValueChange = { viewModel.onValueChange(nombre = it) },
                 label = { Text(stringResource(R.string.user_name)) },
                 modifier = Modifier.fillMaxWidth(),
-                enabled = !uiState.isLoading
+                enabled = !uiState.isLoading,
+                colors = textFieldColors
             )
             Spacer(modifier = Modifier.height(8.dp))
             OutlinedTextField(
@@ -144,7 +162,8 @@ fun AddEditAlimentoScreen(
                 onValueChange = { viewModel.onValueChange(marca = it) },
                 label = { Text(stringResource(R.string.brand_optional)) },
                 modifier = Modifier.fillMaxWidth(),
-                enabled = !uiState.isLoading
+                enabled = !uiState.isLoading,
+                colors = textFieldColors
             )
             Spacer(modifier = Modifier.height(8.dp))
             OutlinedTextField(
@@ -153,7 +172,8 @@ fun AddEditAlimentoScreen(
                 label = { Text(stringResource(R.string.price_optional)) },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                 modifier = Modifier.fillMaxWidth(),
-                enabled = !uiState.isLoading
+                enabled = !uiState.isLoading,
+                colors = textFieldColors
             )
             Spacer(modifier = Modifier.height(8.dp))
             OutlinedTextField(
@@ -162,12 +182,14 @@ fun AddEditAlimentoScreen(
                 label = { Text(stringResource(R.string.base_quantity_label)) },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                 modifier = Modifier.fillMaxWidth(),
-                enabled = !uiState.isLoading
+                enabled = !uiState.isLoading,
+                colors = textFieldColors
             )
             Spacer(modifier = Modifier.height(8.dp))
             QuantityUnitDropdownField(
                 selectedUnit = uiState.unidadBase,
-                onUnitSelected = { viewModel.onValueChange(unidadBase = it) }
+                onUnitSelected = { viewModel.onValueChange(unidadBase = it) },
+                colors = textFieldColors
             )
             Spacer(modifier = Modifier.height(8.dp))
             OutlinedTextField(
@@ -176,7 +198,8 @@ fun AddEditAlimentoScreen(
                 label = { Text(stringResource(R.string.proteins)) },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                 modifier = Modifier.fillMaxWidth(),
-                enabled = !uiState.isLoading
+                enabled = !uiState.isLoading,
+                colors = textFieldColors
             )
             Spacer(modifier = Modifier.height(8.dp))
             OutlinedTextField(
@@ -185,7 +208,8 @@ fun AddEditAlimentoScreen(
                 label = { Text(stringResource(R.string.carbohydrates)) },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                 modifier = Modifier.fillMaxWidth(),
-                enabled = !uiState.isLoading
+                enabled = !uiState.isLoading,
+                colors = textFieldColors
             )
             Spacer(modifier = Modifier.height(8.dp))
             OutlinedTextField(
@@ -194,7 +218,8 @@ fun AddEditAlimentoScreen(
                 label = { Text(stringResource(R.string.fats)) },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                 modifier = Modifier.fillMaxWidth(),
-                enabled = !uiState.isLoading
+                enabled = !uiState.isLoading,
+                colors = textFieldColors
             )
             Spacer(modifier = Modifier.height(8.dp))
             OutlinedTextField(
@@ -202,7 +227,8 @@ fun AddEditAlimentoScreen(
                 onValueChange = {},
                 label = { Text(stringResource(R.string.calories)) },
                 readOnly = true,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                colors = textFieldColors
             )
             Spacer(modifier = Modifier.height(8.dp))
             OutlinedTextField(
@@ -211,7 +237,8 @@ fun AddEditAlimentoScreen(
                 label = { Text(stringResource(R.string.details_optional)) },
                 modifier = Modifier.fillMaxWidth(),
                 minLines = 3,
-                enabled = !uiState.isLoading
+                enabled = !uiState.isLoading,
+                colors = textFieldColors
             )
             Spacer(modifier = Modifier.height(16.dp))
             Button(
@@ -243,7 +270,8 @@ fun AddEditAlimentoScreen(
 @Composable
 private fun QuantityUnitDropdownField(
     selectedUnit: QuantityUnit,
-    onUnitSelected: (QuantityUnit) -> Unit
+    onUnitSelected: (QuantityUnit) -> Unit,
+    colors: TextFieldColors
 ) {
     var expanded by remember { mutableStateOf(false) }
     ExposedDropdownMenuBox(
@@ -258,7 +286,8 @@ private fun QuantityUnitDropdownField(
             modifier = Modifier
                 .menuAnchor()
                 .fillMaxWidth(),
-            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) }
+            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+            colors = colors
         )
         ExposedDropdownMenu(
             expanded = expanded,

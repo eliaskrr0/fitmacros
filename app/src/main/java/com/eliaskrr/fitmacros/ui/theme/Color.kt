@@ -16,6 +16,7 @@ val DialogTitleColor = TextCardColor // Color para el título de los diálogos.
 val DialogTextColor = TextCardColor.copy(alpha = 0.8f) // Color para el texto del contenido de los diálogos.
 val ButtonConfirmColor = Color(0xFF3A86F4) // Azul para botones de confirmación.
 val ButtonCancelColor = Color(0xFFE53935) // Rojo para botones de cancelación.
+val TextFieldContainerColor = Color(0xFF1F1F1F) // Fondo ligeramente más claro para campos de texto.
 
 
 // --- Tema Claro ---
