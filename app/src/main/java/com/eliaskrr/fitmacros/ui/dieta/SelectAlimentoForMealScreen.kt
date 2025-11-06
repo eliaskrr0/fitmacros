@@ -14,6 +14,7 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -25,7 +26,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -46,6 +46,11 @@ import com.eliaskrr.fitmacros.data.model.MealType
 import com.eliaskrr.fitmacros.data.model.QuantityUnit
 import com.eliaskrr.fitmacros.ui.alimento.AlimentoViewModel
 import com.eliaskrr.fitmacros.ui.theme.BackgroundCard
+import com.eliaskrr.fitmacros.ui.theme.ButtonCancelColor
+import com.eliaskrr.fitmacros.ui.theme.ButtonConfirmColor
+import com.eliaskrr.fitmacros.ui.theme.DialogBackgroundColor
+import com.eliaskrr.fitmacros.ui.theme.DialogTextColor
+import com.eliaskrr.fitmacros.ui.theme.DialogTitleColor
 import com.eliaskrr.fitmacros.ui.theme.TextCardColor
 import java.math.BigDecimal
 import java.math.RoundingMode
@@ -213,6 +218,9 @@ private fun QuantityDialog(
 ) {
     AlertDialog(
         onDismissRequest = onDismiss,
+        containerColor = DialogBackgroundColor,
+        titleContentColor = DialogTitleColor,
+        textContentColor = DialogTextColor,
         title = {
             Text(text = stringResource(R.string.select_quantity_for, alimento.nombre))
         },
@@ -226,8 +234,25 @@ private fun QuantityDialog(
                     singleLine = true,
                     keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Decimal),
                     isError = showError,
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedContainerColor = BackgroundCard,
+                        unfocusedContainerColor = BackgroundCard,
+                        disabledContainerColor = BackgroundCard,
+                        cursorColor = TextCardColor,
+                        focusedBorderColor = TextCardColor.copy(alpha = 0.8f),
+                        unfocusedBorderColor = TextCardColor.copy(alpha = 0.5f),
+                        focusedLabelColor = TextCardColor.copy(alpha = 0.8f),
+                        unfocusedLabelColor = TextCardColor.copy(alpha = 0.5f),
+                        focusedTextColor = TextCardColor,
+                        unfocusedTextColor = TextCardColor
+                    ),
                     supportingText = if (showError) {
-                        { Text(stringResource(R.string.invalid_quantity)) }
+                        {
+                            Text(
+                                text = stringResource(R.string.invalid_quantity),
+                                color = MaterialTheme.colorScheme.error
+                            )
+                        }
                     } else null
                 )
                 Spacer(modifier = Modifier.height(12.dp))
@@ -235,17 +260,30 @@ private fun QuantityDialog(
                     text = stringResource(
                         R.string.unit_label_with_value,
                         stringResource(alimento.unidadBase.labelRes)
-                    )
+                    ),
+                    color = DialogTextColor
                 )
             }
         },
         confirmButton = {
-            Button(onClick = onConfirm) {
+            Button(
+                onClick = onConfirm,
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = ButtonConfirmColor,
+                    contentColor = TextCardColor
+                )
+            ) {
                 Text(text = stringResource(R.string.add_to_meal, stringResource(mealType.stringRes)))
             }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss) {
+            Button(
+                onClick = onDismiss,
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = ButtonCancelColor,
+                    contentColor = TextCardColor
+                )
+            ) {
                 Text(text = stringResource(R.string.cancel))
             }
         }
