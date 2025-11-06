@@ -13,10 +13,13 @@ import com.eliaskrr.fitmacros.data.repository.UserDataRepository
 import com.eliaskrr.fitmacros.domain.MacroCalculator
 import com.eliaskrr.fitmacros.domain.MacroCalculationResult
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -38,6 +41,14 @@ data class MealItem(
     val grasas: Double
 )
 
+data class DietaDetailUiState(
+    val isSelectionMode: Boolean = false,
+    val selectedItems: Map<MealType, Set<Int>> = emptyMap()
+) {
+    val selectedCount: Int
+        get() = selectedItems.values.sumOf { it.size }
+}
+
 @HiltViewModel
 class DietaDetailViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
@@ -46,6 +57,9 @@ class DietaDetailViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val dietaId: Int = checkNotNull(savedStateHandle["dietaId"])
+
+    private val _uiState = MutableStateFlow(DietaDetailUiState())
+    val uiState: StateFlow<DietaDetailUiState> = _uiState.asStateFlow()
 
     val nutrientGoals: StateFlow<MacroCalculationResult> = userDataRepository.userData.map {
         MacroCalculator.calculate(it)
@@ -100,18 +114,47 @@ class DietaDetailViewModel @Inject constructor(
         }
     }
 
-    fun removeAlimentoFromDieta(alimentoId: Int, mealType: MealType) {
+    fun toggleSelection(mealType: MealType, alimentoId: Int) {
+        _uiState.update { state ->
+            val currentSelection = state.selectedItems[mealType].orEmpty().toMutableSet()
+            if (!currentSelection.add(alimentoId)) {
+                currentSelection.remove(alimentoId)
+            }
+            val newSelection = state.selectedItems.toMutableMap().apply {
+                if (currentSelection.isEmpty()) {
+                    remove(mealType)
+                } else {
+                    put(mealType, currentSelection)
+                }
+            }
+            state.copy(
+                isSelectionMode = newSelection.isNotEmpty(),
+                selectedItems = newSelection
+            )
+        }
+    }
+
+    fun clearSelection() {
+        _uiState.value = DietaDetailUiState()
+    }
+
+    fun deleteSelected() {
+        val currentState = _uiState.value
+        val selections = currentState.selectedItems
+        if (selections.isEmpty()) return
+
         viewModelScope.launch {
             runCatching {
-                Log.d(
-                    TAG,
-                    "Eliminando alimento $alimentoId de dieta $dietaId para $mealType"
-                )
-                dietaAlimentoRepository.delete(dietaId, alimentoId, mealType)
+                selections.forEach { (mealType, alimentoIds) ->
+                    alimentoIds.forEach { alimentoId ->
+                        dietaAlimentoRepository.delete(dietaId, alimentoId, mealType)
+                    }
+                }
             }.onSuccess {
-                Log.i(TAG, "Alimento $alimentoId eliminado de dieta $dietaId para $mealType")
+                Log.i(TAG, "Eliminados ${currentState.selectedCount} alimentos seleccionados de la dieta $dietaId")
+                clearSelection()
             }.onFailure { ex ->
-                Log.e(TAG, "Error al eliminar alimento $alimentoId de dieta $dietaId", ex)
+                Log.e(TAG, "Error al eliminar alimentos seleccionados de la dieta $dietaId", ex)
             }
         }
     }

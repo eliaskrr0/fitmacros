@@ -11,49 +11,63 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.outlined.RadioButtonUnchecked
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.runtime.remember
-import androidx.compose.ui.platform.LocalContext
 import androidx.annotation.StringRes
 import com.eliaskrr.fitmacros.R
 import com.eliaskrr.fitmacros.data.model.MealType
 import com.eliaskrr.fitmacros.domain.MacroCalculationResult
 import com.eliaskrr.fitmacros.domain.MissingField
+import com.eliaskrr.fitmacros.ui.components.SelectionActionBar
 import kotlin.math.roundToInt
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DietaDetailScreen(viewModel: DietaDetailViewModel, onAddAlimentoClick: (MealType) -> Unit, onNavigateUp: () -> Unit) {
     val nutrientGoals by viewModel.nutrientGoals.collectAsState()
+    val uiState by viewModel.uiState.collectAsState()
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text("Detalle de Dieta") }, // TODO: Poner el nombre de la dieta real
-                navigationIcon = {
-                    IconButton(onClick = onNavigateUp) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.back))
+            if (uiState.isSelectionMode) {
+                SelectionActionBar(
+                    selectedCount = uiState.selectedCount,
+                    onClearSelection = viewModel::clearSelection,
+                    onDeleteSelected = viewModel::deleteSelected
+                )
+            } else {
+                TopAppBar(
+                    title = { Text("Detalle de Dieta") }, // TODO: Poner el nombre de la dieta real
+                    navigationIcon = {
+                        IconButton(onClick = onNavigateUp) {
+                            Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.back))
+                        }
                     }
-                }
-            )
+                )
+            }
         }
     ) {
         LazyColumn(modifier = Modifier.padding(it).padding(16.dp)) {
@@ -62,16 +76,36 @@ fun DietaDetailScreen(viewModel: DietaDetailViewModel, onAddAlimentoClick: (Meal
                 Spacer(modifier = Modifier.height(24.dp))
             }
             item {
-                MealSection(mealType = MealType.BREAKFAST, viewModel = viewModel, onAddAlimentoClick = { onAddAlimentoClick(MealType.BREAKFAST) })
+                MealSection(
+                    mealType = MealType.BREAKFAST,
+                    viewModel = viewModel,
+                    uiState = uiState,
+                    onAddAlimentoClick = { onAddAlimentoClick(MealType.BREAKFAST) }
+                )
             }
             item {
-                MealSection(mealType = MealType.LUNCH, viewModel = viewModel, onAddAlimentoClick = { onAddAlimentoClick(MealType.LUNCH) })
+                MealSection(
+                    mealType = MealType.LUNCH,
+                    viewModel = viewModel,
+                    uiState = uiState,
+                    onAddAlimentoClick = { onAddAlimentoClick(MealType.LUNCH) }
+                )
             }
             item {
-                MealSection(mealType = MealType.AFTERNOON_SNACK, viewModel = viewModel, onAddAlimentoClick = { onAddAlimentoClick(MealType.AFTERNOON_SNACK) })
+                MealSection(
+                    mealType = MealType.AFTERNOON_SNACK,
+                    viewModel = viewModel,
+                    uiState = uiState,
+                    onAddAlimentoClick = { onAddAlimentoClick(MealType.AFTERNOON_SNACK) }
+                )
             }
             item {
-                MealSection(mealType = MealType.DINNER, viewModel = viewModel, onAddAlimentoClick = { onAddAlimentoClick(MealType.DINNER) })
+                MealSection(
+                    mealType = MealType.DINNER,
+                    viewModel = viewModel,
+                    uiState = uiState,
+                    onAddAlimentoClick = { onAddAlimentoClick(MealType.DINNER) }
+                )
             }
         }
     }
@@ -146,9 +180,11 @@ private fun MissingField.labelRes(): Int = when (this) {
 fun MealSection(
     mealType: MealType,
     viewModel: DietaDetailViewModel,
+    uiState: DietaDetailUiState,
     onAddAlimentoClick: () -> Unit
 ) {
     val mealData by viewModel.getMealData(mealType).collectAsState()
+    val selectedIds = uiState.selectedItems[mealType].orEmpty()
 
     Column(modifier = Modifier.padding(vertical = 8.dp)) {
         Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
@@ -182,9 +218,17 @@ fun MealSection(
         } else {
             Spacer(modifier = Modifier.height(8.dp))
             mealData.items.forEach { item ->
+                val isSelected = selectedIds.contains(item.alimento.id)
                 AlimentoInDietaItem(
                     item = item,
-                    onLongPress = { viewModel.removeAlimentoFromDieta(item.alimento.id, mealType) }
+                    isSelected = isSelected,
+                    selectionMode = uiState.isSelectionMode,
+                    onClick = {
+                        if (uiState.isSelectionMode) {
+                            viewModel.toggleSelection(mealType, item.alimento.id)
+                        }
+                    },
+                    onLongPress = { viewModel.toggleSelection(mealType, item.alimento.id) }
                 )
             }
         }
@@ -220,7 +264,13 @@ fun MealMacrosSummary(proteinas: Double, carbos: Double, grasas: Double) {
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun AlimentoInDietaItem(item: MealItem, onLongPress: () -> Unit) {
+fun AlimentoInDietaItem(
+    item: MealItem,
+    isSelected: Boolean,
+    selectionMode: Boolean,
+    onClick: () -> Unit,
+    onLongPress: () -> Unit
+) {
     val unitAbbreviation = stringResource(item.unidad.shortLabelRes)
     val quantityText = stringResource(R.string.quantity_with_unit, item.cantidad, unitAbbreviation)
     val macrosDetail = stringResource(
@@ -229,32 +279,52 @@ fun AlimentoInDietaItem(item: MealItem, onLongPress: () -> Unit) {
         item.carbos,
         item.grasas
     )
-    Row(
+    val backgroundColor = if (isSelected) {
+        MaterialTheme.colorScheme.primaryContainer
+    } else {
+        MaterialTheme.colorScheme.surface
+    }
+    Surface(
         modifier = Modifier
             .fillMaxWidth()
-            .combinedClickable(onClick = {}, onLongClick = onLongPress)
-            .padding(vertical = 6.dp),
-        verticalAlignment = Alignment.CenterVertically
+            .padding(vertical = 4.dp),
+        color = backgroundColor,
+        shape = RoundedCornerShape(12.dp)
     ) {
-        Column(modifier = Modifier.weight(1f)) {
-            Text(text = item.alimento.nombre, style = MaterialTheme.typography.bodyLarge)
-            Text(
-                text = quantityText,
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f)
-            )
-        }
-        Column(horizontalAlignment = Alignment.End) {
-            Text(
-                text = "${item.calorias.roundToInt()} kcal",
-                style = MaterialTheme.typography.bodyMedium,
-                fontWeight = FontWeight.SemiBold
-            )
-            Text(
-                text = macrosDetail,
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f)
-            )
+        Row(
+            modifier = Modifier
+                .combinedClickable(onClick = onClick, onLongClick = onLongPress)
+                .padding(horizontal = 16.dp, vertical = 12.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Column(modifier = Modifier.weight(1f)) {
+                Text(text = item.alimento.nombre, style = MaterialTheme.typography.bodyLarge)
+                Text(
+                    text = quantityText,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+            Column(horizontalAlignment = Alignment.End, modifier = Modifier.padding(end = if (selectionMode) 12.dp else 0.dp)) {
+                Text(
+                    text = "${item.calorias.roundToInt()} kcal",
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontWeight = FontWeight.SemiBold
+                )
+                Text(
+                    text = macrosDetail,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+            if (selectionMode) {
+                val icon = if (isSelected) Icons.Filled.CheckCircle else Icons.Outlined.RadioButtonUnchecked
+                Icon(
+                    imageVector = icon,
+                    contentDescription = null,
+                    tint = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
         }
     }
 }
