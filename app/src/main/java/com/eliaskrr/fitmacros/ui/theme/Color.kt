@@ -28,16 +28,6 @@ val md_theme_light_onPrimary = TextGeneralColor // Texto barra superior
 val md_theme_light_onBackground = TextGeneralColor  // Texto principal (casi negro)
 val md_theme_light_onSurface = TextGeneralColor // Texto barra inferior
 
-// --- Tema Oscuro ---
-val md_theme_dark_primary = PrimaryColor // Un azul más claro para el modo oscuro
-val md_theme_dark_onPrimary = PrimaryColor
-val md_theme_dark_secondary = PrimaryColor // La línea que fastball
-val md_theme_dark_background = PrimaryColor // Fondo oscuro estándar de Material
-val md_theme_dark_surface = PrimaryColor // Superficie ligeramente más clara
-val md_theme_dark_onBackground = PrimaryColor
-val md_theme_dark_onSurface = PrimaryColor
-
-
 // Colores para los Macronutrientes (acordes al nuevo tema)
 object NutrientColors {
     val Carbs = Color(0xFF084942)
