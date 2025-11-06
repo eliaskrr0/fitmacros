@@ -126,8 +126,10 @@ fun DietasScreen(viewModel: DietaViewModel, onDietaClick: (Int) -> Unit) {
     Scaffold(
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         floatingActionButton = {
-            FloatingActionButton(onClick = { showDialog = true }, enabled = !uiState.isSelectionMode) {
-                Icon(Icons.Filled.Add, contentDescription = stringResource(R.string.new_dieta_title))
+            if (!uiState.isSelectionMode) {
+                FloatingActionButton(onClick = { showDialog = true }) {
+                    Icon(Icons.Filled.Add, contentDescription = stringResource(R.string.new_dieta_title))
+                }
             }
         }
     ) { paddingValues ->
