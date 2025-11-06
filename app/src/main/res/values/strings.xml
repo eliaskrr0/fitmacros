@@ -68,6 +68,7 @@
     <string name="error_saving_alimento">No se pudo guardar el alimento. Revisa la información e inténtalo otra vez.</string>
     <string name="error_deleting_alimento">No se pudo eliminar el alimento. Inténtalo de nuevo.</string>
     <string name="error_loading_alimentos">No se pudieron cargar los alimentos. Inténtalo de nuevo.</string>
+    <string name="alimentos_deleted_message">Alimentos eliminados</string>
 
     <!-- Dietas Screen -->
     <string name="new_dieta_title">Nueva Dieta</string>
@@ -86,6 +87,9 @@
     <string name="meal_without_foods">Todavía no hay alimentos en esta comida</string>
     <string name="food_macros_detail">P: %1$.1f g · C: %2$.1f g · G: %3$.1f g</string>
     <string name="search_alimento">Buscar alimento…</string>
+    <string name="selected_count">%1$d seleccionados</string>
+    <string name="clear_selection">Cancelar selección</string>
+    <string name="delete_selected">Eliminar seleccionados</string>
     <string name="missing_user_data_generic">Completa tus datos para ver tus objetivos nutricionales.</string>
     <string name="missing_user_data">Completa los campos: %1$s para ver tus objetivos nutricionales.</string>
     <string name="missing_field_weight">peso</string>

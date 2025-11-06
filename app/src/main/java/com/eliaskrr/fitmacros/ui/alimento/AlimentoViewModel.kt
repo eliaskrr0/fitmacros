@@ -39,7 +39,7 @@ class AlimentoViewModel @Inject constructor(
 
     fun onSearchQueryChange(query: String) {
         _searchQuery.value = query
-        _uiState.update { it.copy(errorMessage = null) }
+        _uiState.update { it.copy(errorMessage = null, selectedAlimentos = emptySet()) }
     }
 
     fun insert(alimento: Alimento) = viewModelScope.launch {
@@ -72,6 +72,52 @@ class AlimentoViewModel @Inject constructor(
         }
     }
 
+    fun toggleSelection(alimentoId: Int) {
+        _uiState.update { state ->
+            val updatedSelection = state.selectedAlimentos.toMutableSet().also { selection ->
+                if (!selection.add(alimentoId)) {
+                    selection.remove(alimentoId)
+                }
+            }
+            state.copy(selectedAlimentos = updatedSelection)
+        }
+    }
+
+    fun clearSelection() {
+        _uiState.update { it.copy(selectedAlimentos = emptySet()) }
+    }
+
+    fun deleteSelected() = viewModelScope.launch {
+        val selectedIds = _uiState.value.selectedAlimentos
+        if (selectedIds.isEmpty()) return@launch
+
+        val alimentosToDelete = _uiState.value.alimentos.filter { it.id in selectedIds }
+        var hadError = false
+
+        alimentosToDelete.forEach { alimento ->
+            try {
+                Log.d(TAG, "Eliminando alimento seleccionado ${alimento.nombre} (id=${alimento.id})")
+                repository.delete(alimento)
+            } catch (ex: Exception) {
+                hadError = true
+                Log.e(TAG, "Error eliminando alimento seleccionado ${alimento.nombre} (id=${alimento.id})", ex)
+            }
+        }
+
+        _uiState.update {
+            it.copy(
+                selectedAlimentos = emptySet(),
+                errorMessage = if (hadError) R.string.error_deleting_alimento else null
+            )
+        }
+
+        if (hadError) {
+            _events.emit(AlimentoEvent.ShowMessage(R.string.error_deleting_alimento))
+        } else if (alimentosToDelete.isNotEmpty()) {
+            _events.emit(AlimentoEvent.ShowMessage(R.string.alimentos_deleted_message))
+        }
+    }
+
     private fun observeAlimentos() {
         viewModelScope.launch {
             _searchQuery.collectLatest { query ->
@@ -97,11 +143,15 @@ class AlimentoViewModel @Inject constructor(
                         _events.emit(AlimentoEvent.ShowMessage(R.string.error_loading_alimentos))
                     }
                     .collect { alimentos ->
-                        _uiState.update {
-                            it.copy(
+                        _uiState.update { state ->
+                            val filteredSelection = state.selectedAlimentos.filter { id ->
+                                alimentos.any { alimento -> alimento.id == id }
+                            }.toSet()
+                            state.copy(
                                 alimentos = alimentos,
                                 isLoading = false,
-                                errorMessage = null
+                                errorMessage = null,
+                                selectedAlimentos = filteredSelection
                             )
                         }
                     }
@@ -121,8 +171,12 @@ class AlimentoViewModel @Inject constructor(
     data class AlimentosUiState(
         val alimentos: List<Alimento> = emptyList(),
         val isLoading: Boolean = false,
-        val errorMessage: Int? = null
-    )
+        val errorMessage: Int? = null,
+        val selectedAlimentos: Set<Int> = emptySet()
+    ) {
+        val isSelectionMode: Boolean
+            get() = selectedAlimentos.isNotEmpty()
+    }
 
     sealed interface AlimentoEvent {
         data class ShowMessage(val messageRes: Int) : AlimentoEvent

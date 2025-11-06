@@ -4,7 +4,8 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -13,17 +14,23 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.outlined.RadioButtonUnchecked
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -48,6 +55,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.semantics.Role
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -58,6 +66,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.eliaskrr.fitmacros.R
 import com.eliaskrr.fitmacros.data.model.Alimento
 import com.eliaskrr.fitmacros.data.model.MealType
 import com.eliaskrr.fitmacros.ui.alimento.AddEditAlimentoScreen
@@ -256,14 +265,21 @@ fun AlimentosScreen(
     }
 
     Column {
+        if (uiState.isSelectionMode) {
+            SelectionActionBar(
+                selectedCount = uiState.selectedAlimentos.size,
+                onClearSelection = viewModel::clearSelection,
+                onDeleteSelected = viewModel::deleteSelected
+            )
+        }
         OutlinedTextField(
             value = searchQuery,
             onValueChange = viewModel::onSearchQueryChange,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp),
-            label = { Text("Buscar alimento...") },
-            leadingIcon = { Icon(Icons.Default.Search, contentDescription = "Buscar") },
+            label = { Text(stringResource(R.string.search_alimento)) },
+            leadingIcon = { Icon(Icons.Filled.Search, contentDescription = stringResource(R.string.search_alimento)) },
             singleLine = true,
             enabled = !uiState.isLoading,
             colors = OutlinedTextFieldDefaults.colors(
@@ -296,23 +312,58 @@ fun AlimentosScreen(
         }
         LazyColumn {
             items(uiState.alimentos) { alimento ->
-                AlimentoItem(alimento = alimento, onClick = { onAlimentoClick(alimento) })
+                val isSelected = uiState.selectedAlimentos.contains(alimento.id)
+                AlimentoItem(
+                    alimento = alimento,
+                    isSelected = isSelected,
+                    selectionMode = uiState.isSelectionMode,
+                    onClick = {
+                        if (uiState.isSelectionMode) {
+                            viewModel.toggleSelection(alimento.id)
+                        } else {
+                            onAlimentoClick(alimento)
+                        }
+                    },
+                    onLongClick = { viewModel.toggleSelection(alimento.id) }
+                )
             }
         }
     }
 }
 
 @Composable
-fun AlimentoItem(alimento: Alimento, onClick: () -> Unit) {
+fun AlimentoItem(
+    alimento: Alimento,
+    isSelected: Boolean,
+    selectionMode: Boolean,
+    onClick: () -> Unit,
+    onLongClick: () -> Unit
+) {
+    val containerColor = if (isSelected) {
+        MaterialTheme.colorScheme.primaryContainer
+    } else {
+        BackgroundCard
+    }
+    val contentColor = if (isSelected) {
+        MaterialTheme.colorScheme.onPrimaryContainer
+    } else {
+        TextCardColor
+    }
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 8.dp)
-            .clickable(onClick = onClick),
+            .combinedClickable(
+                onClick = onClick,
+                onLongClick = onLongClick,
+                role = Role.Button
+            ),
         colors = CardDefaults.cardColors(
-            containerColor = BackgroundCard,
-            contentColor = TextCardColor
-        )
+            containerColor = containerColor,
+            contentColor = contentColor
+        ),
+        border = if (isSelected) BorderStroke(1.dp, MaterialTheme.colorScheme.primary) else null
     ) {
         Row(
             modifier = Modifier
@@ -331,7 +382,7 @@ fun AlimentoItem(alimento: Alimento, onClick: () -> Unit) {
                     Text(
                         text = it,
                         style = MaterialTheme.typography.bodySmall,
-                        color = TextCardColor.copy(alpha = 0.8f)
+                        color = contentColor.copy(alpha = 0.8f)
                     )
                 }
             }
@@ -348,6 +399,39 @@ fun AlimentoItem(alimento: Alimento, onClick: () -> Unit) {
                     Text(text = "G: ${String.format("%.1f", alimento.grasas)}g", fontSize = 12.sp)
                 }
             }
+            if (selectionMode) {
+                Spacer(modifier = Modifier.width(16.dp))
+                Icon(
+                    imageVector = if (isSelected) Icons.Filled.CheckCircle else Icons.Outlined.RadioButtonUnchecked,
+                    contentDescription = null
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun SelectionActionBar(
+    selectedCount: Int,
+    onClearSelection: () -> Unit,
+    onDeleteSelected: () -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 12.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        IconButton(onClick = onClearSelection) {
+            Icon(imageVector = Icons.Filled.Close, contentDescription = stringResource(R.string.clear_selection))
+        }
+        Text(
+            text = stringResource(R.string.selected_count, selectedCount),
+            style = MaterialTheme.typography.titleMedium,
+            modifier = Modifier.weight(1f)
+        )
+        IconButton(onClick = onDeleteSelected) {
+            Icon(imageVector = Icons.Filled.Delete, contentDescription = stringResource(R.string.delete_selected))
         }
     }
 }
