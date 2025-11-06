@@ -22,6 +22,15 @@ interface DietaAlimentoDao {
 
     @Query(
         """
+        UPDATE tb_dieta_alimentos
+        SET cantidad = :cantidad
+        WHERE dietaId = :dietaId AND alimentoId = :alimentoId AND mealType = :mealType
+        """
+    )
+    suspend fun updateCantidad(dietaId: Int, alimentoId: Int, mealType: MealType, cantidad: Double)
+
+    @Query(
+        """
         SELECT a.*, da.cantidad AS cantidad, da.unidad AS unidad FROM tb_alimentos a
         INNER JOIN tb_dieta_alimentos da ON a.id = da.alimentoId
         WHERE da.dietaId = :dietaId AND da.mealType = :mealType

@@ -85,6 +85,7 @@
     <string name="dinner">Cena</string>
     <string name="select_alimento_instruction">Selecciona un alimento para %1$s</string>
     <string name="select_quantity_for">¿Cuánta cantidad vas a consumir de %1$s?</string>
+    <string name="edit_quantity_for">Editar cantidad de %1$s</string>
     <string name="add_to_meal">Añadir a %1$s</string>
     <string name="meal_macros_summary">P: %1$.1f g   C: %2$.1f g   G: %3$.1f g</string>
     <string name="meal_without_foods">Todavía no hay alimentos en esta comida</string>

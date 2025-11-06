@@ -43,11 +43,21 @@ data class MealItem(
 
 data class DietaDetailUiState(
     val isSelectionMode: Boolean = false,
-    val selectedItems: Map<MealType, Set<Int>> = emptyMap()
+    val selectedItems: Map<MealType, Set<Int>> = emptyMap(),
+    val editQuantityState: EditQuantityState? = null
 ) {
     val selectedCount: Int
         get() = selectedItems.values.sumOf { it.size }
 }
+
+data class EditQuantityState(
+    val mealType: MealType,
+    val alimentoId: Int,
+    val nombre: String,
+    val unidad: QuantityUnit,
+    val quantityText: String,
+    val showError: Boolean = false
+)
 
 @HiltViewModel
 class DietaDetailViewModel @Inject constructor(
@@ -159,6 +169,68 @@ class DietaDetailViewModel @Inject constructor(
         }
     }
 
+    fun startEditQuantity(mealType: MealType, item: MealItem) {
+        _uiState.update { state ->
+            state.copy(
+                editQuantityState = EditQuantityState(
+                    mealType = mealType,
+                    alimentoId = item.alimento.id,
+                    nombre = item.alimento.nombre,
+                    unidad = item.unidad,
+                    quantityText = formatQuantity(item.cantidad)
+                )
+            )
+        }
+    }
+
+    fun updateEditQuantity(value: String) {
+        _uiState.update { state ->
+            val editState = state.editQuantityState ?: return@update state
+            state.copy(editQuantityState = editState.copy(quantityText = value, showError = false))
+        }
+    }
+
+    fun dismissEditQuantity() {
+        _uiState.update { state -> state.copy(editQuantityState = null) }
+    }
+
+    fun confirmEditQuantity() {
+        val editState = _uiState.value.editQuantityState ?: return
+        val normalized = editState.quantityText.replace(',', '.').toDoubleOrNull()
+        if (normalized == null || normalized <= 0.0) {
+            _uiState.update { state ->
+                state.copy(editQuantityState = editState.copy(showError = true))
+            }
+            return
+        }
+
+        viewModelScope.launch {
+            runCatching {
+                dietaAlimentoRepository.updateCantidad(
+                    dietaId = dietaId,
+                    alimentoId = editState.alimentoId,
+                    mealType = editState.mealType,
+                    cantidad = normalized
+                )
+            }.onSuccess {
+                Log.i(
+                    TAG,
+                    "Cantidad actualizada para alimento ${editState.alimentoId} en dieta $dietaId (${editState.mealType}) a $normalized"
+                )
+                dismissEditQuantity()
+            }.onFailure { ex ->
+                Log.e(
+                    TAG,
+                    "Error al actualizar cantidad del alimento ${editState.alimentoId} en dieta $dietaId",
+                    ex
+                )
+                _uiState.update { state ->
+                    state.copy(editQuantityState = editState.copy(showError = true))
+                }
+            }
+        }
+    }
+
     companion object {
         private const val TAG = "DietaDetailVM"
     }
@@ -176,4 +248,11 @@ private fun DietaAlimentoWithAlimento.toMealItem(): MealItem {
         carbos = alimento.carbos * factor,
         grasas = alimento.grasas * factor
     )
+}
+
+private fun formatQuantity(value: Double): String {
+    return java.math.BigDecimal.valueOf(value)
+        .setScale(2, java.math.RoundingMode.HALF_UP)
+        .stripTrailingZeros()
+        .toPlainString()
 }

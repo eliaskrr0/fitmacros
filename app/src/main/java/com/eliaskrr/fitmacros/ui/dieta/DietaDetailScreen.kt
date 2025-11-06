@@ -1,8 +1,8 @@
 package com.eliaskrr.fitmacros.ui.dieta
 
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -16,11 +16,15 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.outlined.RadioButtonUnchecked
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -34,8 +38,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.material3.TextButton
 import androidx.annotation.StringRes
 import com.eliaskrr.fitmacros.R
 import com.eliaskrr.fitmacros.data.model.MealType
@@ -49,6 +55,15 @@ import kotlin.math.roundToInt
 fun DietaDetailScreen(viewModel: DietaDetailViewModel, onAddAlimentoClick: (MealType) -> Unit, onNavigateUp: () -> Unit) {
     val nutrientGoals by viewModel.nutrientGoals.collectAsState()
     val uiState by viewModel.uiState.collectAsState()
+
+    uiState.editQuantityState?.let { editState ->
+        EditQuantityDialog(
+            state = editState,
+            onQuantityChange = viewModel::updateEditQuantity,
+            onDismiss = viewModel::dismissEditQuantity,
+            onConfirm = viewModel::confirmEditQuantity
+        )
+    }
 
     Scaffold(
         topBar = {
@@ -226,6 +241,8 @@ fun MealSection(
                     onClick = {
                         if (uiState.isSelectionMode) {
                             viewModel.toggleSelection(mealType, item.alimento.id)
+                        } else {
+                            viewModel.startEditQuantity(mealType, item)
                         }
                     },
                     onLongPress = { viewModel.toggleSelection(mealType, item.alimento.id) }
@@ -243,6 +260,55 @@ fun MealSection(
         )
         HorizontalDivider(modifier = Modifier.padding(top = 4.dp, bottom = 16.dp))
     }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun EditQuantityDialog(
+    state: EditQuantityState,
+    onQuantityChange: (String) -> Unit,
+    onDismiss: () -> Unit,
+    onConfirm: () -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = {
+            Text(text = stringResource(R.string.edit_quantity_for, state.nombre))
+        },
+        text = {
+            Column {
+                OutlinedTextField(
+                    value = state.quantityText,
+                    onValueChange = onQuantityChange,
+                    modifier = Modifier.fillMaxWidth(),
+                    label = { Text(stringResource(R.string.quantity)) },
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Decimal),
+                    isError = state.showError,
+                    supportingText = if (state.showError) {
+                        { Text(stringResource(R.string.invalid_quantity)) }
+                    } else null
+                )
+                Spacer(modifier = Modifier.height(12.dp))
+                Text(
+                    text = stringResource(
+                        R.string.unit_label_with_value,
+                        stringResource(state.unidad.labelRes)
+                    )
+                )
+            }
+        },
+        confirmButton = {
+            Button(onClick = onConfirm) {
+                Text(text = stringResource(R.string.save))
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text(text = stringResource(R.string.cancel))
+            }
+        }
+    )
 }
 
 @Composable

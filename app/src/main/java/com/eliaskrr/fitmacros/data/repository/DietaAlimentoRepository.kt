@@ -55,6 +55,23 @@ class DietaAlimentoRepository(private val dietaAlimentoDao: DietaAlimentoDao) {
         }
     }
 
+    suspend fun updateCantidad(dietaId: Int, alimentoId: Int, mealType: MealType, cantidad: Double) {
+        try {
+            dietaAlimentoDao.updateCantidad(dietaId, alimentoId, mealType, cantidad)
+            Log.i(
+                TAG,
+                "Actualizada cantidad de alimento $alimentoId en dieta $dietaId ($mealType) a $cantidad"
+            )
+        } catch (ex: Exception) {
+            Log.e(
+                TAG,
+                "Error al actualizar cantidad de alimento $alimentoId en dieta $dietaId ($mealType)",
+                ex
+            )
+            throw ex
+        }
+    }
+
     companion object {
         private const val TAG = "DietaAlimentoRepo"
     }
