@@ -324,11 +324,19 @@ class AddEditAlimentoViewModel @Inject constructor(
     private fun sanitizeSeparators(value: String): String {
         val trimmed = value.trim()
         if (trimmed.isEmpty()) return ""
-        val groupingSeparator = decimalSymbols.groupingSeparator
+
         val decimalSeparator = decimalSymbols.decimalSeparator
-        val withoutGrouping = trimmed.replace(groupingSeparator.toString(), "")
-        return withoutGrouping
-            .replace(',', decimalSeparator)
-            .replace('.', decimalSeparator)
+        val groupingSeparator = decimalSymbols.groupingSeparator
+
+        return buildString(trimmed.length) {
+            trimmed.forEach { char ->
+                when {
+                    char == decimalSeparator -> append(char)
+                    char == ',' || char == '.' -> append(decimalSeparator)
+                    char == groupingSeparator && groupingSeparator != decimalSeparator -> Unit
+                    else -> append(char)
+                }
+            }
+        }
     }
 }
