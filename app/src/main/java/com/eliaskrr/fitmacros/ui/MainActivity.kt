@@ -334,10 +334,10 @@ fun AlimentosScreen(
 @Composable
 fun AlimentoItem(
     alimento: Alimento,
-    isSelected: Boolean,
-    selectionMode: Boolean,
+    isSelected: Boolean = false,
+    selectionMode: Boolean = false,
     onClick: () -> Unit,
-    onLongClick: () -> Unit
+    onLongClick: () -> Unit = {}
 ) {
     val containerColor = if (isSelected) {
         MaterialTheme.colorScheme.primaryContainer
