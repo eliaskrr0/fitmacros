@@ -298,13 +298,33 @@ class AddEditAlimentoViewModel @Inject constructor(
         val trimmed = value.trim()
         if (trimmed.isEmpty()) return ""
 
-        val decimal = parseDecimal(trimmed) ?: return ""
+        val sanitized = sanitizeSeparators(trimmed)
+        if (sanitized.isEmpty()) return ""
+
+        val decimalSeparator = decimalSymbols.decimalSeparator
+
+        if (sanitized.last() == decimalSeparator && isValidNumericPrefix(sanitized.dropLast(1), allowNegative)) {
+            return sanitized
+        }
+
+        val decimal = parseDecimal(sanitized) ?: return if (isValidNumericPrefix(sanitized, allowNegative)) {
+            sanitized
+        } else {
+            ""
+        }
+
         if (!allowNegative && decimal < BigDecimal.ZERO) return ""
 
-        return decimal
+        val normalized = decimal
             .setScale(scale, RoundingMode.HALF_UP)
             .stripTrailingZeros()
             .toPlainString()
+
+        return if (decimalSeparator == '.') {
+            normalized
+        } else {
+            normalized.replace('.', decimalSeparator)
+        }
     }
 
     private fun parseDecimal(value: String): BigDecimal? {
@@ -338,5 +358,25 @@ class AddEditAlimentoViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    private fun isValidNumericPrefix(value: String, allowNegative: Boolean): Boolean {
+        if (value.isEmpty()) return true
+
+        var startIndex = 0
+        val minusSign = decimalSymbols.minusSign
+
+        if (value.first() == '-' || value.first() == minusSign) {
+            if (!allowNegative) return false
+            startIndex = 1
+        }
+
+        if (startIndex >= value.length) return false
+
+        for (index in startIndex until value.length) {
+            if (!value[index].isDigit()) return false
+        }
+
+        return true
     }
 }
