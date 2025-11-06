@@ -1,6 +1,8 @@
 package com.eliaskrr.fitmacros.ui.dieta
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -180,7 +182,10 @@ fun MealSection(
         } else {
             Spacer(modifier = Modifier.height(8.dp))
             mealData.items.forEach { item ->
-                AlimentoInDietaItem(item)
+                AlimentoInDietaItem(
+                    item = item,
+                    onLongPress = { viewModel.removeAlimentoFromDieta(item.alimento.id, mealType) }
+                )
             }
         }
 
@@ -213,8 +218,9 @@ fun MealMacrosSummary(proteinas: Double, carbos: Double, grasas: Double) {
     )
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun AlimentoInDietaItem(item: MealItem) {
+fun AlimentoInDietaItem(item: MealItem, onLongPress: () -> Unit) {
     val unitAbbreviation = stringResource(item.unidad.shortLabelRes)
     val quantityText = stringResource(R.string.quantity_with_unit, item.cantidad, unitAbbreviation)
     val macrosDetail = stringResource(
@@ -226,6 +232,7 @@ fun AlimentoInDietaItem(item: MealItem) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
+            .combinedClickable(onClick = {}, onLongClick = onLongPress)
             .padding(vertical = 6.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {

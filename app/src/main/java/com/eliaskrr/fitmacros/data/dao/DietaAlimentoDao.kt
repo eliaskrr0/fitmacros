@@ -16,6 +16,11 @@ interface DietaAlimentoDao {
     suspend fun insert(dietaAlimento: DietaAlimento)
 
     @Query(
+        "DELETE FROM tb_dieta_alimentos WHERE dietaId = :dietaId AND alimentoId = :alimentoId AND mealType = :mealType"
+    )
+    suspend fun delete(dietaId: Int, alimentoId: Int, mealType: MealType)
+
+    @Query(
         """
         SELECT a.*, da.cantidad AS cantidad, da.unidad AS unidad FROM tb_alimentos a
         INNER JOIN tb_dieta_alimentos da ON a.id = da.alimentoId

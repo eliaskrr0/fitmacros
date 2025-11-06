@@ -100,6 +100,22 @@ class DietaDetailViewModel @Inject constructor(
         }
     }
 
+    fun removeAlimentoFromDieta(alimentoId: Int, mealType: MealType) {
+        viewModelScope.launch {
+            runCatching {
+                Log.d(
+                    TAG,
+                    "Eliminando alimento $alimentoId de dieta $dietaId para $mealType"
+                )
+                dietaAlimentoRepository.delete(dietaId, alimentoId, mealType)
+            }.onSuccess {
+                Log.i(TAG, "Alimento $alimentoId eliminado de dieta $dietaId para $mealType")
+            }.onFailure { ex ->
+                Log.e(TAG, "Error al eliminar alimento $alimentoId de dieta $dietaId", ex)
+            }
+        }
+    }
+
     companion object {
         private const val TAG = "DietaDetailVM"
     }

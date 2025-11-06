@@ -38,6 +38,23 @@ class DietaAlimentoRepository(private val dietaAlimentoDao: DietaAlimentoDao) {
         return dietaAlimentoDao.getTotalCaloriasForMeal(dietaId, mealType)
     }
 
+    suspend fun delete(dietaId: Int, alimentoId: Int, mealType: MealType) {
+        try {
+            dietaAlimentoDao.delete(dietaId, alimentoId, mealType)
+            Log.i(
+                TAG,
+                "Alimento $alimentoId eliminado de la dieta $dietaId en $mealType"
+            )
+        } catch (ex: Exception) {
+            Log.e(
+                TAG,
+                "Error al eliminar alimento $alimentoId de la dieta $dietaId en $mealType",
+                ex
+            )
+            throw ex
+        }
+    }
+
     companion object {
         private const val TAG = "DietaAlimentoRepo"
     }
