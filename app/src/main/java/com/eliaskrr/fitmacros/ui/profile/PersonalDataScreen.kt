@@ -12,6 +12,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.DropdownMenuItem
@@ -21,6 +22,7 @@ import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -43,7 +45,10 @@ import com.eliaskrr.fitmacros.R
 import com.eliaskrr.fitmacros.data.model.ActivityRate
 import com.eliaskrr.fitmacros.data.model.TypeTarget
 import com.eliaskrr.fitmacros.data.repository.UserData
+import com.eliaskrr.fitmacros.ui.theme.ButtonConfirmColor
 import com.eliaskrr.fitmacros.ui.theme.Dimens
+import com.eliaskrr.fitmacros.ui.theme.TextFieldContainerColor
+import com.eliaskrr.fitmacros.ui.theme.TextGeneralColor
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -84,6 +89,20 @@ fun PersonalDataScreen(userData: UserData, onSave: (UserData) -> Unit, onNavigat
         }
     }
 
+    val textFieldColors = OutlinedTextFieldDefaults.colors(
+        focusedContainerColor = TextFieldContainerColor,
+        unfocusedContainerColor = TextFieldContainerColor,
+        disabledContainerColor = TextFieldContainerColor.copy(alpha = 0.6f),
+        focusedBorderColor = TextGeneralColor.copy(alpha = 0.6f),
+        unfocusedBorderColor = TextGeneralColor.copy(alpha = 0.3f),
+        focusedLabelColor = TextGeneralColor.copy(alpha = 0.9f),
+        unfocusedLabelColor = TextGeneralColor.copy(alpha = 0.7f),
+        focusedTextColor = TextGeneralColor,
+        unfocusedTextColor = TextGeneralColor,
+        disabledTextColor = TextGeneralColor.copy(alpha = 0.6f),
+        cursorColor = TextGeneralColor
+    )
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -107,7 +126,8 @@ fun PersonalDataScreen(userData: UserData, onSave: (UserData) -> Unit, onNavigat
                 onValueChange = { nombre = it },
                 label = { Text(stringResource(R.string.user_name)) },
                 modifier = Modifier.fillMaxWidth(),
-                singleLine = true
+                singleLine = true,
+                colors = textFieldColors
             )
             Spacer(modifier = Modifier.height(Dimens.Medium))
 
@@ -124,7 +144,10 @@ fun PersonalDataScreen(userData: UserData, onSave: (UserData) -> Unit, onNavigat
                     label = { Text(stringResource(R.string.user_sex)) },
                     readOnly = true,
                     trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedSex) },
-                    modifier = Modifier.fillMaxWidth().menuAnchor()
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .menuAnchor(),
+                    colors = textFieldColors
                 )
                 ExposedDropdownMenu(
                     expanded = expandedSex,
@@ -156,7 +179,8 @@ fun PersonalDataScreen(userData: UserData, onSave: (UserData) -> Unit, onNavigat
                         Icon(Icons.Default.CalendarToday, contentDescription = stringResource(R.string.calendar))
                     }
                 },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                colors = textFieldColors
             )
             Spacer(modifier = Modifier.height(Dimens.Medium))
 
@@ -166,7 +190,8 @@ fun PersonalDataScreen(userData: UserData, onSave: (UserData) -> Unit, onNavigat
                 label = { Text(stringResource(R.string.height_cm)) },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                colors = textFieldColors
             )
             Spacer(modifier = Modifier.height(Dimens.Medium))
 
@@ -176,7 +201,8 @@ fun PersonalDataScreen(userData: UserData, onSave: (UserData) -> Unit, onNavigat
                 label = { Text(stringResource(R.string.weight_kg)) },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                colors = textFieldColors
             )
             Spacer(modifier = Modifier.height(Dimens.Medium))
 
@@ -193,7 +219,10 @@ fun PersonalDataScreen(userData: UserData, onSave: (UserData) -> Unit, onNavigat
                     label = { Text(stringResource(R.string.user_target)) },
                     readOnly = true,
                     trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedTarget) },
-                    modifier = Modifier.fillMaxWidth().menuAnchor()
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .menuAnchor(),
+                    colors = textFieldColors
                 )
                 ExposedDropdownMenu(
                     expanded = expandedTarget,
@@ -226,7 +255,10 @@ fun PersonalDataScreen(userData: UserData, onSave: (UserData) -> Unit, onNavigat
                     label = { Text(stringResource(R.string.user_activity_level)) },
                     readOnly = true,
                     trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedActivity) },
-                    modifier = Modifier.fillMaxWidth().menuAnchor()
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .menuAnchor(),
+                    colors = textFieldColors
                 )
                 ExposedDropdownMenu(
                     expanded = expandedActivity,
@@ -248,7 +280,11 @@ fun PersonalDataScreen(userData: UserData, onSave: (UserData) -> Unit, onNavigat
             
             Button(
                 onClick = { onSave(UserData(nombre, sexo, fechaNacimiento, altura, peso, objetivo, activityRate)) },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = ButtonConfirmColor,
+                    contentColor = TextGeneralColor
+                )
             ) {
                 Text(stringResource(R.string.save))
             }
