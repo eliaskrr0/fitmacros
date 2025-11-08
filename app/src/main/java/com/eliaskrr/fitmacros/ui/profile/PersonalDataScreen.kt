@@ -49,6 +49,7 @@ import com.eliaskrr.fitmacros.data.model.ActivityRate
 import com.eliaskrr.fitmacros.data.model.TypeTarget
 import com.eliaskrr.fitmacros.data.repository.UserData
 import com.eliaskrr.fitmacros.ui.theme.ButtonConfirmColor
+import com.eliaskrr.fitmacros.ui.theme.ButtonCancelColor
 import com.eliaskrr.fitmacros.ui.theme.Dimens
 import com.eliaskrr.fitmacros.ui.theme.DialogBackgroundColor
 import com.eliaskrr.fitmacros.ui.theme.TextFieldContainerColor
@@ -140,11 +141,15 @@ fun PersonalDataScreen(userData: UserData, onSave: (UserData) -> Unit, onNavigat
             onDismissRequest = { showDatePicker = false },
             confirmButton = {
                 TextButton(
-                    onClick = { showDatePicker = false }
+                    onClick = { showDatePicker = false },
+                    colors = ButtonDefaults.textButtonColors(contentColor = ButtonConfirmColor)
                 ) { Text(stringResource(R.string.accept)) }
             },
             dismissButton = {
-                TextButton(onClick = { showDatePicker = false }) { Text(stringResource(R.string.cancel)) }
+                TextButton(
+                    onClick = { showDatePicker = false },
+                    colors = ButtonDefaults.textButtonColors(contentColor = ButtonCancelColor)
+                ) { Text(stringResource(R.string.cancel)) }
             },
             colors = datePickerColors
         ) {
