@@ -25,6 +25,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SelectableDates
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
@@ -42,7 +43,6 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.OffsetMapping
 import androidx.compose.ui.text.input.TransformedText
 import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.unit.dp
 import com.eliaskrr.fitmacros.R
 import com.eliaskrr.fitmacros.data.model.ActivityRate
 import com.eliaskrr.fitmacros.data.model.TypeTarget
@@ -53,24 +53,39 @@ import com.eliaskrr.fitmacros.ui.theme.TextFieldContainerColor
 import com.eliaskrr.fitmacros.ui.theme.TextGeneralColor
 import java.text.ParseException
 import java.text.SimpleDateFormat
+import java.time.Instant
+import java.time.Period
+import java.time.ZoneId
 import java.util.Date
 import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PersonalDataScreen(userData: UserData, onSave: (UserData) -> Unit, onNavigateUp: () -> Unit) {
+    val locale = remember { Locale.getDefault() }
+    val dateFormatter = remember(locale) { SimpleDateFormat("ddMMyyyy", locale) }
     var nombre by remember { mutableStateOf(userData.nombre) }
     var sexo by remember { mutableStateOf(userData.sexo) }
-    var fechaNacimiento by remember { mutableStateOf(userData.fechaNacimiento) }
+    var fechaNacimiento by remember {
+        mutableStateOf(
+            userData.fechaNacimiento.takeIf { rawDate ->
+                val millis = rawDate.toMillis(dateFormatter)
+                millis != null && isAgeAllowed(millis)
+            } ?: ""
+        )
+    }
     var altura by remember { mutableStateOf(userData.altura) }
     var peso by remember { mutableStateOf(userData.peso) }
     var objetivo by remember { mutableStateOf(userData.objetivo) }
     var activityRate by remember { mutableStateOf(userData.activityRate) }
-
-    val locale = remember { Locale.getDefault() }
-    val dateFormatter = remember(locale) { SimpleDateFormat("ddMMyyyy", locale) }
+    val selectableBirthDates = remember {
+        object : SelectableDates {
+            override fun isSelectableDate(utcTimeMillis: Long): Boolean = isAgeAllowed(utcTimeMillis)
+        }
+    }
     val datePickerState = rememberDatePickerState(
-        initialSelectedDateMillis = fechaNacimiento.toMillis(dateFormatter)
+        initialSelectedDateMillis = fechaNacimiento.toMillis(dateFormatter),
+        selectableDates = selectableBirthDates
     )
     var showDatePicker by remember { mutableStateOf(false) }
     var initialDateOnOpen by remember { mutableStateOf<Long?>(null) }
@@ -114,6 +129,10 @@ fun PersonalDataScreen(userData: UserData, onSave: (UserData) -> Unit, onNavigat
         ) {
             DatePicker(state = datePickerState)
         }
+    }
+
+    val userAge = fechaNacimiento.toMillis(dateFormatter)?.let { birthMillis ->
+        ageInYears(birthMillis)?.takeIf { it in 0..100 }
     }
 
     val textFieldColors = OutlinedTextFieldDefaults.colors(
@@ -211,6 +230,13 @@ fun PersonalDataScreen(userData: UserData, onSave: (UserData) -> Unit, onNavigat
                     .clickable { showDatePicker = true },
                 colors = textFieldColors
             )
+            if (userAge != null) {
+                Spacer(modifier = Modifier.height(Dimens.Small))
+                Text(
+                    text = stringResource(R.string.user_age_years, userAge),
+                    color = TextGeneralColor
+                )
+            }
             Spacer(modifier = Modifier.height(Dimens.Medium))
 
             OutlinedTextField(
@@ -361,6 +387,18 @@ private fun String.toMillis(formatter: SimpleDateFormat): Long? {
     } catch (_: ParseException) {
         null
     }
+}
+
+private fun ageInYears(birthMillis: Long, nowMillis: Long = System.currentTimeMillis()): Int? {
+    val birthDate = Instant.ofEpochMilli(birthMillis).atZone(ZoneId.systemDefault()).toLocalDate()
+    val today = Instant.ofEpochMilli(nowMillis).atZone(ZoneId.systemDefault()).toLocalDate()
+    if (birthDate.isAfter(today)) return null
+    return Period.between(birthDate, today).years
+}
+
+private fun isAgeAllowed(birthMillis: Long, nowMillis: Long = System.currentTimeMillis()): Boolean {
+    val age = ageInYears(birthMillis, nowMillis) ?: return false
+    return age in 0..100
 }
 
 private fun sanitizeDecimalInput(rawInput: String): String {
