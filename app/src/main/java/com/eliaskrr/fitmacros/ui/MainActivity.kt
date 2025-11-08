@@ -83,6 +83,7 @@ import com.eliaskrr.fitmacros.ui.navigation.AppScreen
 import com.eliaskrr.fitmacros.ui.navigation.NavItem
 import com.eliaskrr.fitmacros.ui.opciones.AboutScreen
 import com.eliaskrr.fitmacros.ui.opciones.ExportScreen
+import com.eliaskrr.fitmacros.ui.opciones.NotificationsScreen
 import com.eliaskrr.fitmacros.ui.opciones.OptionsScreen
 import com.eliaskrr.fitmacros.ui.profile.PersonalDataScreen
 import com.eliaskrr.fitmacros.ui.profile.ProfileScreen
@@ -243,6 +244,9 @@ fun MainScreen(
                     onNavigateUp = { navController.navigateUp() },
                     onDietaSelected = onExportDieta
                 )
+            }
+            composable(AppScreen.Notifications.route) {
+                NotificationsScreen(onNavigateUp = { navController.navigateUp() })
             }
             composable(
                 route = AppScreen.AddEditAlimento.route,

@@ -22,7 +22,7 @@ val TextFieldContainerColor = Color(0xFF1F1F1F) // Fondo ligeramente más claro 
 // --- Tema Claro ---
 val md_theme_light_primary = PrimaryColor // Borde superior e inferior
 val md_theme_light_background = PrimaryColor // Borde internp
-val md_theme_light_secondary = Color(0xFFFDFDFD)
+val md_theme_light_secondary = Color(0xFF151515)
 val md_theme_light_surface = Color(0xFF000000) // Blanco puro para las tarjetas
 val md_theme_light_onPrimary = TextGeneralColor // Texto barra superior
 val md_theme_light_onBackground = TextGeneralColor  // Texto principal (casi negro)
