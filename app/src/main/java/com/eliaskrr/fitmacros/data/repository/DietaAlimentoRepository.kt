@@ -26,6 +26,11 @@ class DietaAlimentoRepository(private val dietaAlimentoDao: DietaAlimentoDao) {
         }
     }
 
+    fun getAlimentosForDieta(dietaId: Int): Flow<List<DietaAlimentoWithAlimento>> {
+        Log.d(TAG, "Cargando todos los alimentos para la dieta $dietaId")
+        return dietaAlimentoDao.getAlimentosForDieta(dietaId)
+    }
+
     fun getAlimentosForDietaAndMeal(
         dietaId: Int,
         mealType: MealType

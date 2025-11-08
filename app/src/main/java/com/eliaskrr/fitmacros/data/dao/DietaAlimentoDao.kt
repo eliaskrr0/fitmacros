@@ -33,6 +33,15 @@ interface DietaAlimentoDao {
         """
         SELECT a.*, da.cantidad AS cantidad, da.unidad AS unidad FROM tb_alimentos a
         INNER JOIN tb_dieta_alimentos da ON a.id = da.alimentoId
+        WHERE da.dietaId = :dietaId
+    """
+    )
+    fun getAlimentosForDieta(dietaId: Int): Flow<List<DietaAlimentoWithAlimento>>
+
+    @Query(
+        """
+        SELECT a.*, da.cantidad AS cantidad, da.unidad AS unidad FROM tb_alimentos a
+        INNER JOIN tb_dieta_alimentos da ON a.id = da.alimentoId
         WHERE da.dietaId = :dietaId AND da.mealType = :mealType
     """
     )

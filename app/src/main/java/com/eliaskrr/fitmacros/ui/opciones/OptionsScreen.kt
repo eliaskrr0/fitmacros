@@ -46,7 +46,7 @@ fun OptionsScreen(navController: NavController) {
         Option(
             title = "Notificaciones y Recordatorios",
             icon = Icons.Default.Notifications,
-            onClick = { /* TODO: Implementar */ }
+            onClick = { navController.navigate(AppScreen.Notifications.route) }
         ),
         Option(
             title = "Acerca de",
@@ -56,7 +56,7 @@ fun OptionsScreen(navController: NavController) {
         Option(
             title = "Exportar Datos",
             icon = Icons.Default.UploadFile,
-            onClick = { /* TODO: Implementar */ }
+            onClick = { navController.navigate(AppScreen.Export.route) }
         )
     )
 

@@ -1,8 +1,10 @@
 package com.eliaskrr.fitmacros.ui
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -55,6 +57,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.semantics.Role
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
@@ -66,6 +69,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.eliaskrr.fitmacros.R
 import com.eliaskrr.fitmacros.data.model.Alimento
+import com.eliaskrr.fitmacros.data.model.Dieta
 import com.eliaskrr.fitmacros.data.model.MealType
 import com.eliaskrr.fitmacros.ui.alimento.AddEditAlimentoScreen
 import com.eliaskrr.fitmacros.ui.alimento.AddEditAlimentoViewModel
@@ -78,6 +82,7 @@ import com.eliaskrr.fitmacros.ui.dieta.SelectAlimentoForMealScreen
 import com.eliaskrr.fitmacros.ui.navigation.AppScreen
 import com.eliaskrr.fitmacros.ui.navigation.NavItem
 import com.eliaskrr.fitmacros.ui.opciones.AboutScreen
+import com.eliaskrr.fitmacros.ui.opciones.ExportScreen
 import com.eliaskrr.fitmacros.ui.opciones.OptionsScreen
 import com.eliaskrr.fitmacros.ui.profile.PersonalDataScreen
 import com.eliaskrr.fitmacros.ui.profile.ProfileScreen
@@ -88,6 +93,8 @@ import com.eliaskrr.fitmacros.ui.theme.FitMacrosTheme
 import com.eliaskrr.fitmacros.ui.theme.TextCardColor
 import androidx.hilt.navigation.compose.hiltViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
+import java.io.OutputStream
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -96,13 +103,55 @@ class MainActivity : ComponentActivity() {
     private val profileViewModel: ProfileViewModel by viewModels()
     private val dietaViewModel: DietaViewModel by viewModels()
 
+    private var fileSaverCallback: ((OutputStream) -> Unit)? = null
+
+    private val fileSaverLauncher = registerForActivityResult(
+        ActivityResultContracts.CreateDocument("text/csv")
+    ) { uri ->
+        uri?.let { contentResolver.openOutputStream(it)?.use { stream -> fileSaverCallback?.invoke(stream) } }
+    }
+
+    private fun exportDietaToCsv(dieta: Dieta) {
+        lifecycleScope.launch {
+            val alimentosDeLaDieta = dietaViewModel.getAlimentosOfDieta(dieta.id)
+
+            fileSaverCallback = { outputStream ->
+                val writer = outputStream.bufferedWriter()
+                writer.write("Alimento,Marca,Cantidad,Unidad,Calorías,Proteínas,Carbohidratos,Grasas\n")
+                alimentosDeLaDieta.forEach { dietaAlimento ->
+                    val alimento = dietaAlimento.alimento
+                    writer.write(
+                        "${alimento.nombre}," +
+                                "${alimento.marca ?: ""}," +
+                                "${dietaAlimento.cantidad}," +
+                                "${dietaAlimento.unidad}," +
+                                "${alimento.calorias}," +
+                                "${alimento.proteinas}," +
+                                "${alimento.carbos}," +
+                                "${alimento.grasas}\n"
+                    )
+                }
+                writer.flush()
+                runOnUiThread {
+                    Toast.makeText(this@MainActivity, "Dieta exportada con éxito", Toast.LENGTH_SHORT).show()
+                }
+            }
+            fileSaverLauncher.launch("${dieta.nombre}.csv")
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         installSplashScreen()
         setContent {
             FitMacrosTheme {
                 Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-                    MainScreen(alimentoViewModel = alimentoViewModel, profileViewModel = profileViewModel, dietaViewModel = dietaViewModel)
+                    MainScreen(
+                        alimentoViewModel = alimentoViewModel,
+                        profileViewModel = profileViewModel,
+                        dietaViewModel = dietaViewModel,
+                        onExportDieta = ::exportDietaToCsv
+                    )
                 }
             }
         }
@@ -111,7 +160,12 @@ class MainActivity : ComponentActivity() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainScreen(alimentoViewModel: AlimentoViewModel, profileViewModel: ProfileViewModel, dietaViewModel: DietaViewModel) {
+fun MainScreen(
+    alimentoViewModel: AlimentoViewModel,
+    profileViewModel: ProfileViewModel,
+    dietaViewModel: DietaViewModel,
+    onExportDieta: (Dieta) -> Unit
+) {
     val navController = rememberNavController()
     val navItems = listOf(NavItem.Profile, NavItem.Alimentos, NavItem.Dietas, NavItem.Opciones)
 
@@ -119,25 +173,31 @@ fun MainScreen(alimentoViewModel: AlimentoViewModel, profileViewModel: ProfileVi
     val currentDestination = navBackStackEntry?.destination
     val snackbarHostState = remember { SnackbarHostState() }
 
+    val showBottomBar = navItems.any { it.route == currentDestination?.route }
+
     Scaffold(
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         topBar = {
-            CenterAlignedTopAppBar(
-                title = { Text("FitMacros", color = MaterialTheme.colorScheme.onPrimary) },
-                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primary
+            if (showBottomBar) {
+                CenterAlignedTopAppBar(
+                    title = { Text("FitMacros", color = MaterialTheme.colorScheme.onPrimary) },
+                    colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                        containerColor = MaterialTheme.colorScheme.primary
+                    )
                 )
-            )
+            }
         },
         bottomBar = {
-            NavigationBar(containerColor = MaterialTheme.colorScheme.primary) {
-                navItems.forEach { screen ->
-                    NavigationBarItem(
-                        label = { Text(screen.label) },
-                        icon = { Icon(screen.icon, contentDescription = screen.label) },
-                        selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true,
-                        onClick = { navigateToScreen(navController, screen.route) }
-                    )
+            if (showBottomBar) {
+                NavigationBar(containerColor = MaterialTheme.colorScheme.primary) {
+                    navItems.forEach { screen ->
+                        NavigationBarItem(
+                            label = { Text(screen.label) },
+                            icon = { Icon(screen.icon, contentDescription = screen.label) },
+                            selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true,
+                            onClick = { navigateToScreen(navController, screen.route) }
+                        )
+                    }
                 }
             }
         },
@@ -176,7 +236,14 @@ fun MainScreen(alimentoViewModel: AlimentoViewModel, profileViewModel: ProfileVi
                 ) 
             }
             composable(AppScreen.Opciones.route) { OptionsScreen(navController = navController) }
-            composable(AppScreen.About.route) { AboutScreen() }
+            composable(AppScreen.About.route) { AboutScreen(onNavigateUp = { navController.navigateUp() }) }
+            composable(AppScreen.Export.route) {
+                ExportScreen(
+                    dietaViewModel = dietaViewModel,
+                    onNavigateUp = { navController.navigateUp() },
+                    onDietaSelected = onExportDieta
+                )
+            }
             composable(
                 route = AppScreen.AddEditAlimento.route,
                 arguments = listOf(navArgument("alimentoId") { type = NavType.IntType; defaultValue = -1 })

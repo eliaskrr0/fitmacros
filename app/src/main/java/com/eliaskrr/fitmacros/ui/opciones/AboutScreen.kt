@@ -12,15 +12,21 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Code
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -29,41 +35,65 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.eliaskrr.fitmacros.ui.theme.BackgroundCard
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AboutScreen() {
-    LazyColumn(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
-        item {
-            InfoCard(
-                title = "Información de la App",
-                icon = Icons.Default.Info,
-                items = mapOf("Versión" to "1.0.0.0", "Nombre" to "FitMacros")
-            )
-        }
-        item {
-            InfoCard(
-                title = "Desarrollador",
-                icon = Icons.Default.Person,
-                items = mapOf("Nombre" to "Ilyasse Essadak Samaali")
-            )
-        }
-        item {
-            InfoCard(
-                title = "Librerías",
-                icon = Icons.Default.Code,
-                items = mapOf(
-                    "Android Jetpack" to "Compose, Room, ViewModel, Navigation, DataStore",
-                    "Inyección de Dependencias" to "Dagger Hilt",
-                    "Lenguaje" to "Kotlin"
+fun AboutScreen(onNavigateUp: () -> Unit) {
+    Scaffold(
+        topBar = {
+            CenterAlignedTopAppBar(
+                title = { Text("Acerca de") },
+                navigationIcon = {
+                    IconButton(onClick = onNavigateUp) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Volver"
+                        )
+                    }
+                },
+                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    titleContentColor = MaterialTheme.colorScheme.onPrimary,
+                    navigationIconContentColor = MaterialTheme.colorScheme.onPrimary
                 )
             )
         }
+    ) { innerPadding ->
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+                .padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            item {
+                InfoCard(
+                    title = "Información de la App",
+                    icon = Icons.Default.Info,
+                    items = mapOf("Versión" to "1.0.0.0", "Nombre" to "FitMacros")
+                )
+            }
+            item {
+                InfoCard(
+                    title = "Desarrollador",
+                    icon = Icons.Default.Person,
+                    items = mapOf("Nombre" to "Ilyasse Essadak Samaali")
+                )
+            }
+            item {
+                InfoCard(
+                    title = "Librerías",
+                    icon = Icons.Default.Code,
+                    items = mapOf(
+                        "Android Jetpack" to "Compose, Room, ViewModel, Navigation, DataStore",
+                        "Inyección de Dependencias" to "Dagger Hilt",
+                        "Lenguaje" to "Kotlin"
+                    )
+                )
+            }
+        }
     }
 }
+
 
 @Composable
 private fun InfoCard(title: String, icon: ImageVector, items: Map<String, String>) {

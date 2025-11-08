@@ -5,6 +5,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.eliaskrr.fitmacros.R
 import com.eliaskrr.fitmacros.data.model.Dieta
+import com.eliaskrr.fitmacros.data.model.DietaAlimentoWithAlimento
+import com.eliaskrr.fitmacros.data.repository.DietaAlimentoRepository
 import com.eliaskrr.fitmacros.data.repository.DietaRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -14,14 +16,15 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class DietaViewModel @Inject constructor(
-    private val repository: DietaRepository
+    private val dietaRepository: DietaRepository,
+    private val dietaAlimentoRepository: DietaAlimentoRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(DietasUiState(isLoading = true))
@@ -34,10 +37,14 @@ class DietaViewModel @Inject constructor(
         observeDietas()
     }
 
+    suspend fun getAlimentosOfDieta(dietaId: Int): List<DietaAlimentoWithAlimento> {
+        return dietaAlimentoRepository.getAlimentosForDieta(dietaId).first()
+    }
+
     fun insert(dieta: Dieta) = viewModelScope.launch {
         runCatching {
             Log.d(TAG, "Solicitando inserción de dieta ${dieta.nombre}")
-            repository.insert(dieta)
+            dietaRepository.insert(dieta)
         }.onFailure { ex ->
             Log.e(TAG, "Error solicitando inserción de dieta ${dieta.nombre}", ex)
         }
@@ -64,7 +71,7 @@ class DietaViewModel @Inject constructor(
 
         runCatching {
             Log.d(TAG, "Solicitando eliminación de dietas: ${selectedIds.joinToString()}")
-            repository.deleteDietas(selectedIds)
+            dietaRepository.deleteDietas(selectedIds)
         }.onSuccess {
             _uiState.update { it.copy(selectedDietas = emptySet(), errorMessage = null) }
             _events.emit(DietaEvent.ShowMessage(R.string.dietas_deleted_message))
@@ -77,7 +84,7 @@ class DietaViewModel @Inject constructor(
 
     private fun observeDietas() {
         viewModelScope.launch {
-            repository.allDietas
+            dietaRepository.allDietas
                 .catch { ex ->
                     Log.e(TAG, "Error cargando dietas", ex)
                     _uiState.update {
