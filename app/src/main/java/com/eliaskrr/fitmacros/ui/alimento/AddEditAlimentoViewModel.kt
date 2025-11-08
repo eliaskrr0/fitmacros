@@ -58,8 +58,8 @@ class AddEditAlimentoViewModel @Inject constructor(
 
     private val alimentoId: Int? = savedStateHandle["alimentoId"]
 
-    private val decimalSymbols: DecimalFormatSymbols = DecimalFormatSymbols.getInstance(Locale.getDefault())
-    private val numberFormat: NumberFormat = NumberFormat.getNumberInstance(Locale.getDefault()).apply {
+    private val decimalSymbols: DecimalFormatSymbols = DecimalFormatSymbols.getInstance(Locale("es"))
+    private val numberFormat: NumberFormat = NumberFormat.getNumberInstance(Locale("es")).apply {
         isGroupingUsed = false
     }
 
