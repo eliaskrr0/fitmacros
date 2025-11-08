@@ -68,23 +68,23 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.eliaskrr.fitmacros.R
-import com.eliaskrr.fitmacros.data.model.Alimento
-import com.eliaskrr.fitmacros.data.model.Dieta
+import com.eliaskrr.fitmacros.data.model.Food
+import com.eliaskrr.fitmacros.data.model.Diet
 import com.eliaskrr.fitmacros.data.model.MealType
-import com.eliaskrr.fitmacros.ui.alimento.AddEditAlimentoScreen
-import com.eliaskrr.fitmacros.ui.alimento.AddEditAlimentoViewModel
-import com.eliaskrr.fitmacros.ui.alimento.AlimentoViewModel
-import com.eliaskrr.fitmacros.ui.dieta.DietaDetailScreen
-import com.eliaskrr.fitmacros.ui.dieta.DietaDetailViewModel
-import com.eliaskrr.fitmacros.ui.dieta.DietasScreen
-import com.eliaskrr.fitmacros.ui.dieta.DietaViewModel
-import com.eliaskrr.fitmacros.ui.dieta.SelectAlimentoForMealScreen
+import com.eliaskrr.fitmacros.ui.food.AddEditAlimentoScreen
+import com.eliaskrr.fitmacros.ui.food.AddEditAlimentoViewModel
+import com.eliaskrr.fitmacros.ui.food.AlimentoViewModel
+import com.eliaskrr.fitmacros.ui.diet.DietaDetailScreen
+import com.eliaskrr.fitmacros.ui.diet.DietaDetailViewModel
+import com.eliaskrr.fitmacros.ui.diet.DietasScreen
+import com.eliaskrr.fitmacros.ui.diet.DietViewModel
+import com.eliaskrr.fitmacros.ui.diet.SelectAlimentoForMealScreen
 import com.eliaskrr.fitmacros.ui.navigation.AppScreen
 import com.eliaskrr.fitmacros.ui.navigation.NavItem
-import com.eliaskrr.fitmacros.ui.opciones.AboutScreen
-import com.eliaskrr.fitmacros.ui.opciones.ExportScreen
-import com.eliaskrr.fitmacros.ui.opciones.NotificationsScreen
-import com.eliaskrr.fitmacros.ui.opciones.OptionsScreen
+import com.eliaskrr.fitmacros.ui.setting.AboutScreen
+import com.eliaskrr.fitmacros.ui.setting.ExportScreen
+import com.eliaskrr.fitmacros.ui.setting.NotificationsScreen
+import com.eliaskrr.fitmacros.ui.setting.OptionsScreen
 import com.eliaskrr.fitmacros.ui.profile.PersonalDataScreen
 import com.eliaskrr.fitmacros.ui.profile.ProfileScreen
 import com.eliaskrr.fitmacros.ui.profile.ProfileViewModel
@@ -102,7 +102,7 @@ class MainActivity : ComponentActivity() {
 
     private val alimentoViewModel: AlimentoViewModel by viewModels()
     private val profileViewModel: ProfileViewModel by viewModels()
-    private val dietaViewModel: DietaViewModel by viewModels()
+    private val dietViewModel: DietViewModel by viewModels()
 
     private var fileSaverCallback: ((OutputStream) -> Unit)? = null
 
@@ -112,15 +112,15 @@ class MainActivity : ComponentActivity() {
         uri?.let { contentResolver.openOutputStream(it)?.use { stream -> fileSaverCallback?.invoke(stream) } }
     }
 
-    private fun exportDietaToCsv(dieta: Dieta) {
+    private fun exportDietaToCsv(diet: Diet) {
         lifecycleScope.launch {
-            val alimentosDeLaDieta = dietaViewModel.getAlimentosOfDieta(dieta.id)
+            val alimentosDeLaDieta = dietViewModel.getAlimentosOfDieta(diet.id)
 
             fileSaverCallback = { outputStream ->
                 val writer = outputStream.bufferedWriter()
                 writer.write("Alimento,Marca,Cantidad,Unidad,Calorías,Proteínas,Carbohidratos,Grasas\n")
                 alimentosDeLaDieta.forEach { dietaAlimento ->
-                    val alimento = dietaAlimento.alimento
+                    val alimento = dietaAlimento.food
                     writer.write(
                         "${alimento.nombre}," +
                                 "${alimento.marca ?: ""}," +
@@ -137,7 +137,7 @@ class MainActivity : ComponentActivity() {
                     Toast.makeText(this@MainActivity, "Dieta exportada con éxito", Toast.LENGTH_SHORT).show()
                 }
             }
-            fileSaverLauncher.launch("${dieta.nombre}.csv")
+            fileSaverLauncher.launch("${diet.nombre}.csv")
         }
     }
 
@@ -150,7 +150,7 @@ class MainActivity : ComponentActivity() {
                     MainScreen(
                         alimentoViewModel = alimentoViewModel,
                         profileViewModel = profileViewModel,
-                        dietaViewModel = dietaViewModel,
+                        dietViewModel = dietViewModel,
                         onExportDieta = ::exportDietaToCsv
                     )
                 }
@@ -164,8 +164,8 @@ class MainActivity : ComponentActivity() {
 fun MainScreen(
     alimentoViewModel: AlimentoViewModel,
     profileViewModel: ProfileViewModel,
-    dietaViewModel: DietaViewModel,
-    onExportDieta: (Dieta) -> Unit
+    dietViewModel: DietViewModel,
+    onExportDieta: (Diet) -> Unit
 ) {
     val navController = rememberNavController()
     val navItems = listOf(NavItem.Profile, NavItem.Alimentos, NavItem.Dietas, NavItem.Opciones)
@@ -230,7 +230,7 @@ fun MainScreen(
             }
             composable(AppScreen.Dietas.route) { 
                 DietasScreen(
-                    viewModel = dietaViewModel,
+                    viewModel = dietViewModel,
                     onDietaClick = { dietaId ->
                         navController.navigate(AppScreen.DietaDetail.createRoute(dietaId))
                     }
@@ -240,7 +240,7 @@ fun MainScreen(
             composable(AppScreen.About.route) { AboutScreen(onNavigateUp = { navController.navigateUp() }) }
             composable(AppScreen.Export.route) {
                 ExportScreen(
-                    dietaViewModel = dietaViewModel,
+                    dietViewModel = dietViewModel,
                     onNavigateUp = { navController.navigateUp() },
                     onDietaSelected = onExportDieta
                 )
@@ -320,7 +320,7 @@ fun navigateToScreen(navController: NavHostController, route: String) {
 @Composable
 fun AlimentosScreen(
     viewModel: AlimentoViewModel,
-    onAlimentoClick: (Alimento) -> Unit,
+    onAlimentoClick: (Food) -> Unit,
     snackbarHostState: SnackbarHostState
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -383,10 +383,10 @@ fun AlimentosScreen(
             )
         }
         LazyColumn {
-            items(uiState.alimentos) { alimento ->
+            items(uiState.foods) { alimento ->
                 val isSelected = uiState.selectedAlimentos.contains(alimento.id)
                 AlimentoItem(
-                    alimento = alimento,
+                    food = alimento,
                     isSelected = isSelected,
                     selectionMode = uiState.isSelectionMode,
                     onClick = {
@@ -406,7 +406,7 @@ fun AlimentosScreen(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun AlimentoItem(
-    alimento: Alimento,
+    food: Food,
     isSelected: Boolean = false,
     selectionMode: Boolean = false,
     onClick: () -> Unit,
@@ -446,11 +446,11 @@ fun AlimentoItem(
         ) {
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = alimento.nombre,
+                    text = food.nombre,
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold
                 )
-                alimento.marca?.let {
+                food.marca?.let {
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
                         text = it,
@@ -461,15 +461,15 @@ fun AlimentoItem(
             }
             Column(horizontalAlignment = Alignment.End) {
                 Text(
-                    text = "${String.format("%.1f", alimento.calorias)} kcal",
+                    text = "${String.format("%.1f", food.calorias)} kcal",
                     style = MaterialTheme.typography.bodyLarge,
                     fontWeight = FontWeight.SemiBold
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Text(text = "P: ${String.format("%.1f", alimento.proteinas)}g", fontSize = 12.sp)
-                    Text(text = "C: ${String.format("%.1f", alimento.carbos)}g", fontSize = 12.sp)
-                    Text(text = "G: ${String.format("%.1f", alimento.grasas)}g", fontSize = 12.sp)
+                    Text(text = "P: ${String.format("%.1f", food.proteinas)}g", fontSize = 12.sp)
+                    Text(text = "C: ${String.format("%.1f", food.carbos)}g", fontSize = 12.sp)
+                    Text(text = "G: ${String.format("%.1f", food.grasas)}g", fontSize = 12.sp)
                 }
             }
             if (selectionMode) {

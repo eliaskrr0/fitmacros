@@ -2,13 +2,13 @@ package com.eliaskrr.fitmacros.di
 
 import android.content.Context
 import androidx.room.Room
-import com.eliaskrr.fitmacros.data.dao.AlimentoDao
-import com.eliaskrr.fitmacros.data.dao.DietaAlimentoDao
-import com.eliaskrr.fitmacros.data.dao.DietaDao
-import com.eliaskrr.fitmacros.data.database.AppDatabase
-import com.eliaskrr.fitmacros.data.repository.AlimentoRepository
-import com.eliaskrr.fitmacros.data.repository.DietaAlimentoRepository
-import com.eliaskrr.fitmacros.data.repository.DietaRepository
+import com.eliaskrr.fitmacros.data.dao.FoodDao
+import com.eliaskrr.fitmacros.data.dao.DietFoodDao
+import com.eliaskrr.fitmacros.data.dao.DietDao
+import com.eliaskrr.fitmacros.data.db.AppDatabase
+import com.eliaskrr.fitmacros.data.repository.FoodRepository
+import com.eliaskrr.fitmacros.data.repository.DietFoodRepository
+import com.eliaskrr.fitmacros.data.repository.DietRepository
 import com.eliaskrr.fitmacros.data.repository.UserDataRepository
 import dagger.Module
 import dagger.Provides
@@ -33,29 +33,29 @@ object AppModule {
             .build()
 
     @Provides
-    fun provideAlimentoDao(database: AppDatabase): AlimentoDao = database.alimentoDao()
+    fun provideAlimentoDao(database: AppDatabase): FoodDao = database.alimentoDao()
 
     @Provides
-    fun provideDietaDao(database: AppDatabase): DietaDao = database.dietaDao()
+    fun provideDietaDao(database: AppDatabase): DietDao = database.dietaDao()
 
     @Provides
-    fun provideDietaAlimentoDao(database: AppDatabase): DietaAlimentoDao = database.dietaAlimentoDao()
-
-    @Provides
-    @Singleton
-    fun provideAlimentoRepository(alimentoDao: AlimentoDao): AlimentoRepository =
-        AlimentoRepository(alimentoDao)
+    fun provideDietaAlimentoDao(database: AppDatabase): DietFoodDao = database.dietaAlimentoDao()
 
     @Provides
     @Singleton
-    fun provideDietaRepository(dietaDao: DietaDao): DietaRepository =
-        DietaRepository(dietaDao)
+    fun provideAlimentoRepository(foodDao: FoodDao): FoodRepository =
+        FoodRepository(foodDao)
+
+    @Provides
+    @Singleton
+    fun provideDietaRepository(dietaDao: DietDao): DietRepository =
+        DietRepository(dietaDao)
 
     @Provides
     @Singleton
     fun provideDietaAlimentoRepository(
-        dietaAlimentoDao: DietaAlimentoDao
-    ): DietaAlimentoRepository = DietaAlimentoRepository(dietaAlimentoDao)
+        dietFoodDao: DietFoodDao
+    ): DietFoodRepository = DietFoodRepository(dietFoodDao)
 
     @Provides
     @Singleton

@@ -1,22 +1,9 @@
 package com.eliaskrr.fitmacros.ui.navigation
 
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AppRegistration
 import androidx.compose.material.icons.filled.Book
-import androidx.compose.material.icons.filled.BreakfastDining
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.outlined.Book
-import androidx.compose.material.icons.outlined.EditCalendar
-import androidx.compose.material.icons.outlined.Fastfood
-import androidx.compose.material.icons.outlined.FitnessCenter
 import androidx.compose.material.icons.outlined.Flatware
-import androidx.compose.material.icons.rounded.FitnessCenter
-import androidx.compose.material.icons.rounded.PersonOutline
-import androidx.compose.material.icons.sharp.AppRegistration
-import androidx.compose.material.icons.sharp.BreakfastDining
-import androidx.compose.material.icons.sharp.Egg
-import androidx.compose.material.icons.sharp.EggAlt
 import androidx.compose.material.icons.sharp.Person
 import androidx.compose.ui.graphics.vector.ImageVector
 
