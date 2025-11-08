@@ -16,6 +16,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
+import androidx.compose.material3.DatePickerDefaults
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
@@ -49,8 +50,10 @@ import com.eliaskrr.fitmacros.data.model.TypeTarget
 import com.eliaskrr.fitmacros.data.repository.UserData
 import com.eliaskrr.fitmacros.ui.theme.ButtonConfirmColor
 import com.eliaskrr.fitmacros.ui.theme.Dimens
+import com.eliaskrr.fitmacros.ui.theme.DialogBackgroundColor
 import com.eliaskrr.fitmacros.ui.theme.TextFieldContainerColor
 import com.eliaskrr.fitmacros.ui.theme.TextGeneralColor
+import com.eliaskrr.fitmacros.ui.theme.TextCardColor
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -111,6 +114,27 @@ fun PersonalDataScreen(userData: UserData, onSave: (UserData) -> Unit, onNavigat
         }
     }
 
+    val datePickerColors = DatePickerDefaults.colors(
+        containerColor = DialogBackgroundColor,
+        titleContentColor = TextCardColor,
+        headlineContentColor = TextCardColor,
+        weekdayContentColor = TextCardColor.copy(alpha = 0.75f),
+        subheadContentColor = TextCardColor.copy(alpha = 0.75f),
+        navigationContentColor = TextCardColor,
+        yearContentColor = TextCardColor.copy(alpha = 0.8f),
+        disabledYearContentColor = TextCardColor.copy(alpha = 0.3f),
+        currentYearContentColor = ButtonConfirmColor,
+        selectedYearContentColor = TextGeneralColor,
+        selectedYearContainerColor = ButtonConfirmColor,
+        dayContentColor = TextCardColor,
+        disabledDayContentColor = TextCardColor.copy(alpha = 0.3f),
+        selectedDayContentColor = TextGeneralColor,
+        selectedDayContainerColor = ButtonConfirmColor,
+        todayContentColor = ButtonConfirmColor,
+        todayDateBorderColor = ButtonConfirmColor,
+        dividerColor = TextCardColor.copy(alpha = 0.2f)
+    )
+
     if (showDatePicker) {
         DatePickerDialog(
             onDismissRequest = { showDatePicker = false },
@@ -121,9 +145,14 @@ fun PersonalDataScreen(userData: UserData, onSave: (UserData) -> Unit, onNavigat
             },
             dismissButton = {
                 TextButton(onClick = { showDatePicker = false }) { Text(stringResource(R.string.cancel)) }
-            }
+            },
+            colors = datePickerColors
         ) {
-            DatePicker(state = datePickerState)
+            DatePicker(
+                state = datePickerState,
+                colors = datePickerColors,
+                showModeToggle = false
+            )
         }
     }
 
