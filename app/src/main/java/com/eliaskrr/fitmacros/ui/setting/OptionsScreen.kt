@@ -26,7 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.eliaskrr.fitmacros.ui.navigation.AppScreen
+import com.eliaskrr.fitmacros.ui.AppScreen
 import com.eliaskrr.fitmacros.ui.theme.BackgroundCard
 
 private data class Option(

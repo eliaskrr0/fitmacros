@@ -1,10 +1,10 @@
-package com.eliaskrr.fitmacros.data.repository
+package com.eliaskrr.fitmacros.data.repository.nutrition
 
 import android.util.Log
-import com.eliaskrr.fitmacros.data.dao.DietFoodDao
-import com.eliaskrr.fitmacros.data.model.DietFood
-import com.eliaskrr.fitmacros.data.model.RegisterDietFood
-import com.eliaskrr.fitmacros.data.model.MealType
+import com.eliaskrr.fitmacros.data.dao.nutrition.DietFoodDao
+import com.eliaskrr.fitmacros.data.entity.nutrition.DietFood
+import com.eliaskrr.fitmacros.data.entity.nutrition.Meal
+import com.eliaskrr.fitmacros.data.entity.nutrition.type.MealType
 import kotlinx.coroutines.flow.Flow
 
 class DietFoodRepository(private val dietFoodDao: DietFoodDao) {
@@ -26,7 +26,7 @@ class DietFoodRepository(private val dietFoodDao: DietFoodDao) {
         }
     }
 
-    fun getAlimentosForDieta(dietaId: Int): Flow<List<RegisterDietFood>> {
+    fun getAlimentosForDieta(dietaId: Int): Flow<List<Meal>> {
         Log.d(TAG, "Cargando todos los alimentos para la dieta $dietaId")
         return dietFoodDao.getAlimentosForDieta(dietaId)
     }
@@ -34,7 +34,7 @@ class DietFoodRepository(private val dietFoodDao: DietFoodDao) {
     fun getAlimentosForDietaAndMeal(
         dietaId: Int,
         mealType: MealType
-    ): Flow<List<RegisterDietFood>> {
+    ): Flow<List<Meal>> {
         Log.d(TAG, "Cargando alimentos para dieta $dietaId y comida $mealType")
         return dietFoodDao.getAlimentosForDietaAndMeal(dietaId, mealType)
     }

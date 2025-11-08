@@ -1,4 +1,4 @@
-package com.eliaskrr.fitmacros.data.model
+package com.eliaskrr.fitmacros.data.entity.nutrition.type
 
 import com.eliaskrr.fitmacros.R
 

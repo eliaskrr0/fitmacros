@@ -4,8 +4,8 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.eliaskrr.fitmacros.R
-import com.eliaskrr.fitmacros.data.model.Food
-import com.eliaskrr.fitmacros.data.repository.FoodRepository
+import com.eliaskrr.fitmacros.data.entity.nutrition.Food
+import com.eliaskrr.fitmacros.data.repository.nutrition.FoodRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,7 +20,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class AlimentoViewModel @Inject constructor(
+class FoodViewModel @Inject constructor(
     private val repository: FoodRepository
 ) : ViewModel() {
 
@@ -48,7 +48,7 @@ class AlimentoViewModel @Inject constructor(
             repository.insert(food)
         } catch (ex: Exception) {
             Log.e(TAG, "Error solicitando inserción de ${food.nombre}", ex)
-            notifyError(R.string.error_saving_alimento)
+            notifyError(R.string.error_saving_food)
         }
     }
 
@@ -58,7 +58,7 @@ class AlimentoViewModel @Inject constructor(
             repository.update(food)
         } catch (ex: Exception) {
             Log.e(TAG, "Error solicitando actualización de ${food.nombre} (id=${food.id})", ex)
-            notifyError(R.string.error_saving_alimento)
+            notifyError(R.string.error_saving_food)
         }
     }
 
@@ -68,7 +68,7 @@ class AlimentoViewModel @Inject constructor(
             repository.delete(food)
         } catch (ex: Exception) {
             Log.e(TAG, "Error solicitando eliminación de ${food.nombre} (id=${food.id})", ex)
-            notifyError(R.string.error_deleting_alimento)
+            notifyError(R.string.error_deleting_food)
         }
     }
 
@@ -107,14 +107,14 @@ class AlimentoViewModel @Inject constructor(
         _uiState.update {
             it.copy(
                 selectedAlimentos = emptySet(),
-                errorMessage = if (hadError) R.string.error_deleting_alimento else null
+                errorMessage = if (hadError) R.string.error_deleting_food else null
             )
         }
 
         if (hadError) {
-            _events.emit(AlimentoEvent.ShowMessage(R.string.error_deleting_alimento))
+            _events.emit(AlimentoEvent.ShowMessage(R.string.error_deleting_food))
         } else if (alimentosToDelete.isNotEmpty()) {
-            _events.emit(AlimentoEvent.ShowMessage(R.string.alimentos_deleted_message))
+            _events.emit(AlimentoEvent.ShowMessage(R.string.food_deleted_message))
         }
     }
 
@@ -137,10 +137,10 @@ class AlimentoViewModel @Inject constructor(
                             it.copy(
                                 isLoading = false,
                                 foods = emptyList(),
-                                errorMessage = R.string.error_loading_alimentos
+                                errorMessage = R.string.error_loading_foods
                             )
                         }
-                        _events.emit(AlimentoEvent.ShowMessage(R.string.error_loading_alimentos))
+                        _events.emit(AlimentoEvent.ShowMessage(R.string.error_loading_foods))
                     }
                     .collect { alimentos ->
                         _uiState.update { state ->

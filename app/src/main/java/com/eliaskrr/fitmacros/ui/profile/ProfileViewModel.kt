@@ -3,8 +3,8 @@ package com.eliaskrr.fitmacros.ui.profile
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.eliaskrr.fitmacros.data.repository.UserData
-import com.eliaskrr.fitmacros.data.repository.UserDataRepository
+import com.eliaskrr.fitmacros.data.repository.user.UserData
+import com.eliaskrr.fitmacros.data.repository.user.UserDataRepository
 import com.eliaskrr.fitmacros.domain.MacroCalculator
 import com.eliaskrr.fitmacros.domain.MacroCalculationResult
 import dagger.hilt.android.lifecycle.HiltViewModel

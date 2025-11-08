@@ -1,7 +1,9 @@
-package com.eliaskrr.fitmacros.data.model
+package com.eliaskrr.fitmacros.data.entity.nutrition
 
 import androidx.room.Entity
 import androidx.room.ForeignKey
+import com.eliaskrr.fitmacros.data.entity.nutrition.type.QuantityUnit
+import com.eliaskrr.fitmacros.data.entity.nutrition.type.MealType
 
 @Entity(
     tableName = "tb_dieta_alimentos",

@@ -4,12 +4,13 @@ import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.eliaskrr.fitmacros.data.model.DietFood
-import com.eliaskrr.fitmacros.data.model.RegisterDietFood
-import com.eliaskrr.fitmacros.data.model.MealType
-import com.eliaskrr.fitmacros.data.model.QuantityUnit
-import com.eliaskrr.fitmacros.data.repository.DietFoodRepository
-import com.eliaskrr.fitmacros.data.repository.UserDataRepository
+import com.eliaskrr.fitmacros.data.entity.nutrition.DietFood
+import com.eliaskrr.fitmacros.data.entity.nutrition.Meal
+import com.eliaskrr.fitmacros.data.entity.nutrition.type.MealType
+import com.eliaskrr.fitmacros.data.entity.nutrition.type.QuantityUnit
+import com.eliaskrr.fitmacros.data.entity.nutrition.Food
+import com.eliaskrr.fitmacros.data.repository.nutrition.DietFoodRepository
+import com.eliaskrr.fitmacros.data.repository.user.UserDataRepository
 import com.eliaskrr.fitmacros.domain.MacroCalculator
 import com.eliaskrr.fitmacros.domain.MacroCalculationResult
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -32,7 +33,7 @@ data class MealData(
 )
 
 data class MealItem(
-    val food: com.eliaskrr.fitmacros.data.model.Food,
+    val food: Food,
     val cantidad: Double,
     val unidad: QuantityUnit,
     val calorias: Double,
@@ -236,7 +237,7 @@ class DietaDetailViewModel @Inject constructor(
     }
 }
 
-private fun RegisterDietFood.toMealItem(): MealItem {
+private fun Meal.toMealItem(): MealItem {
     val baseQuantity = food.cantidadBase.takeIf { it > 0.0 } ?: 100.0
     val factor = cantidad / baseQuantity
     return MealItem(

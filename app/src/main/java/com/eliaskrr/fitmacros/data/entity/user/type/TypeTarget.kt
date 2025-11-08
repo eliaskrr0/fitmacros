@@ -1,4 +1,4 @@
-package com.eliaskrr.fitmacros.data.model
+package com.eliaskrr.fitmacros.data.entity.user.type
 
 enum class TypeTarget(val description: String, val multiplier: Double) {
     GAIN_WEIGHT_AGGRESSIVELY("Ganar 0,5% de peso", 1.05),

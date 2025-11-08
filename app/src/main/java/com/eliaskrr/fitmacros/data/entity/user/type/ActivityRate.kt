@@ -1,4 +1,4 @@
-package com.eliaskrr.fitmacros.data.model
+package com.eliaskrr.fitmacros.data.entity.user.type
 
 enum class ActivityRate(val description: String, val value: Double) {
     SEDENTARY("Sedentario", 1.20),

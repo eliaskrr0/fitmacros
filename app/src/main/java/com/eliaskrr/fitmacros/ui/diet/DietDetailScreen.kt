@@ -45,7 +45,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.annotation.StringRes
 import com.eliaskrr.fitmacros.R
-import com.eliaskrr.fitmacros.data.model.MealType
+import com.eliaskrr.fitmacros.data.entity.nutrition.type.MealType
 import com.eliaskrr.fitmacros.domain.MacroCalculationResult
 import com.eliaskrr.fitmacros.domain.MissingField
 import com.eliaskrr.fitmacros.ui.components.SelectionActionBar
@@ -262,7 +262,7 @@ fun MealSection(
         }
 
         Text(
-            text = stringResource(R.string.add_alimento).uppercase(),
+            text = stringResource(R.string.add_food).uppercase(),
             color = MaterialTheme.colorScheme.onBackground,
             fontWeight = FontWeight.Bold,
             modifier = Modifier

@@ -8,7 +8,7 @@
     <string name="save">Guardar</string>
     <string name="delete">Borrar</string>
     <string name="create">Crear</string>
-    <string name="add_alimento">Añadir Alimento</string>
+    <string name="add_food">Añadir Alimento</string>
 
     <!-- Gráfica macronutrientes -->
     <string name="macronutrients">Macronutrientes</string>
@@ -28,28 +28,28 @@
     <string name="placeholder_nodata">-</string>
 
     <!-- Títulos -->
-    <string name="add_alimento_title">Nuevo alimento</string>
-    <string name="edit_alimento_title">Editar alimento</string>
-    <string name="new_dieta_title">Nueva dieta</string>
+    <string name="add_food_title">Nuevo alimento</string>
+    <string name="edit_food_title">Editar alimento</string>
+    <string name="new_diet_title">Nueva dieta</string>
     <string name="dieta_name">Nombre de la dieta</string>
     <string name="edit_data">Editar datos</string>
     <string name="delete_confirmation_title">Confirmar borrado</string>
 
 
     <!-- Mensajes de error -->
-    <string name="error_loading_alimento">No se pudo cargar el alimento. Inténtalo de nuevo.</string>
-    <string name="error_saving_alimento">No se pudo guardar el alimento. Revisa la información e inténtalo otra vez.</string>
-    <string name="error_deleting_alimento">No se pudo eliminar el alimento. Inténtalo de nuevo.</string>
-    <string name="error_loading_alimentos">No se pudieron cargar los alimentos. Inténtalo de nuevo.</string>
-    <string name="error_loading_dietas">No se pudieron cargar las dietas. Inténtalo de nuevo.</string>
-    <string name="error_deleting_dieta">No se pudieron eliminar las dietas seleccionadas. Inténtalo de nuevo.</string>
+    <string name="error_loading_fodd">No se pudo cargar el alimento. Inténtalo de nuevo.</string>
+    <string name="error_saving_food">No se pudo guardar el alimento. Revisa la información e inténtalo otra vez.</string>
+    <string name="error_deleting_food">No se pudo eliminar el alimento. Inténtalo de nuevo.</string>
+    <string name="error_loading_foods">No se pudieron cargar los alimentos. Inténtalo de nuevo.</string>
+    <string name="error_loading_diets">No se pudieron cargar las dietas. Inténtalo de nuevo.</string>
+    <string name="error_deleting_diet">No se pudieron eliminar las dietas seleccionadas. Inténtalo de nuevo.</string>
 
     <!-- Mensajes de avisos -->
     <string name="meal_without_foods">¡Agrega alimentos para poder empezar!</string>
     <string name="missing_user_data_generic">Completa tus datos para ver tus objetivos nutricionales.</string>
     <string name="missing_user_data">Completa los campos: %1$s para ver tus objetivos nutricionales.</string>
     <string name="dietas_deleted_message">Dietas eliminadas</string>
-    <string name="alimentos_deleted_message">Alimentos eliminados</string>
+    <string name="food_deleted_message">Alimentos eliminados</string>
     <string name="delete_confirmation_message">¿Estás seguro de que quieres borrar este alimento?</string>
     <string name="invalid_quantity">Introduce una cantidad válida mayor que cero</string>
 
@@ -92,13 +92,13 @@
     <string name="lunch">Comida</string>
     <string name="afternoon_snack">Almuerzo</string>
     <string name="dinner">Cena</string>
-    <string name="select_alimento_instruction">Selecciona un alimento para %1$s</string>
+    <string name="select_food_instruction">Selecciona un alimento para %1$s</string>
     <string name="select_quantity_for">¿Cuánta cantidad vas a consumir de %1$s?</string>
     <string name="edit_quantity_for">Editar cantidad de %1$s</string>
     <string name="add_to_meal">Añadir a %1$s</string>
     <string name="meal_macros_summary">P: %1$.1f g   C: %2$.1f g   G: %3$.1f g</string>
     <string name="food_macros_detail">P: %1$.1f g · C: %2$.1f g · G: %3$.1f g</string>
-    <string name="search_alimento">Buscar alimento…</string>
+    <string name="search_food">Buscar alimento…</string>
     <string name="selected_count">%1$d seleccionados</string>
     <string name="clear_selection">Cancelar selección</string>
 

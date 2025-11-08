@@ -68,19 +68,17 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.eliaskrr.fitmacros.R
-import com.eliaskrr.fitmacros.data.model.Food
-import com.eliaskrr.fitmacros.data.model.Diet
-import com.eliaskrr.fitmacros.data.model.MealType
+import com.eliaskrr.fitmacros.data.entity.nutrition.Food
+import com.eliaskrr.fitmacros.data.entity.nutrition.Diet
+import com.eliaskrr.fitmacros.data.entity.nutrition.type.MealType
 import com.eliaskrr.fitmacros.ui.food.AddEditAlimentoScreen
 import com.eliaskrr.fitmacros.ui.food.AddEditAlimentoViewModel
-import com.eliaskrr.fitmacros.ui.food.AlimentoViewModel
+import com.eliaskrr.fitmacros.ui.food.FoodViewModel
 import com.eliaskrr.fitmacros.ui.diet.DietaDetailScreen
 import com.eliaskrr.fitmacros.ui.diet.DietaDetailViewModel
 import com.eliaskrr.fitmacros.ui.diet.DietasScreen
 import com.eliaskrr.fitmacros.ui.diet.DietViewModel
 import com.eliaskrr.fitmacros.ui.diet.SelectAlimentoForMealScreen
-import com.eliaskrr.fitmacros.ui.navigation.AppScreen
-import com.eliaskrr.fitmacros.ui.navigation.NavItem
 import com.eliaskrr.fitmacros.ui.setting.AboutScreen
 import com.eliaskrr.fitmacros.ui.setting.ExportScreen
 import com.eliaskrr.fitmacros.ui.setting.NotificationsScreen
@@ -100,7 +98,7 @@ import java.io.OutputStream
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-    private val alimentoViewModel: AlimentoViewModel by viewModels()
+    private val foodViewModel: FoodViewModel by viewModels()
     private val profileViewModel: ProfileViewModel by viewModels()
     private val dietViewModel: DietViewModel by viewModels()
 
@@ -148,7 +146,7 @@ class MainActivity : ComponentActivity() {
             FitMacrosTheme {
                 Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
                     MainScreen(
-                        alimentoViewModel = alimentoViewModel,
+                        foodViewModel = foodViewModel,
                         profileViewModel = profileViewModel,
                         dietViewModel = dietViewModel,
                         onExportDieta = ::exportDietaToCsv
@@ -162,13 +160,13 @@ class MainActivity : ComponentActivity() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(
-    alimentoViewModel: AlimentoViewModel,
+    foodViewModel: FoodViewModel,
     profileViewModel: ProfileViewModel,
     dietViewModel: DietViewModel,
     onExportDieta: (Diet) -> Unit
 ) {
     val navController = rememberNavController()
-    val navItems = listOf(NavItem.Profile, NavItem.Alimentos, NavItem.Dietas, NavItem.Opciones)
+    val navItems = listOf(NavItem.Profile, NavItem.Food, NavItem.Diet, NavItem.Setting)
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
@@ -203,8 +201,8 @@ fun MainScreen(
             }
         },
         floatingActionButton = {
-            if (currentDestination?.route == AppScreen.Alimentos.route) {
-                FloatingActionButton(onClick = { navController.navigate(AppScreen.AddEditAlimento.createRoute(null)) }) {
+            if (currentDestination?.route == AppScreen.Food.route) {
+                FloatingActionButton(onClick = { navController.navigate(AppScreen.AddEditFood.createRoute(null)) }) {
                     Icon(Icons.Filled.Add, contentDescription = "Añadir Alimento")
                 }
             }
@@ -221,14 +219,14 @@ fun MainScreen(
                     onEditClick = { navController.navigate("personal_data") }
                 ) 
             }
-            composable(AppScreen.Alimentos.route) {
+            composable(AppScreen.Food.route) {
                 AlimentosScreen(
-                    viewModel = alimentoViewModel,
-                    onAlimentoClick = { navController.navigate(AppScreen.AddEditAlimento.createRoute(it.id)) },
+                    viewModel = foodViewModel,
+                    onAlimentoClick = { navController.navigate(AppScreen.AddEditFood.createRoute(it.id)) },
                     snackbarHostState = snackbarHostState
                 )
             }
-            composable(AppScreen.Dietas.route) { 
+            composable(AppScreen.Diet.route) {
                 DietasScreen(
                     viewModel = dietViewModel,
                     onDietaClick = { dietaId ->
@@ -236,7 +234,7 @@ fun MainScreen(
                     }
                 ) 
             }
-            composable(AppScreen.Opciones.route) { OptionsScreen(navController = navController) }
+            composable(AppScreen.Setting.route) { OptionsScreen(navController = navController) }
             composable(AppScreen.About.route) { AboutScreen(onNavigateUp = { navController.navigateUp() }) }
             composable(AppScreen.Export.route) {
                 ExportScreen(
@@ -249,7 +247,7 @@ fun MainScreen(
                 NotificationsScreen(onNavigateUp = { navController.navigateUp() })
             }
             composable(
-                route = AppScreen.AddEditAlimento.route,
+                route = AppScreen.AddEditFood.route,
                 arguments = listOf(navArgument("alimentoId") { type = NavType.IntType; defaultValue = -1 })
             ) {
                 val addEditViewModel: AddEditAlimentoViewModel = hiltViewModel()
@@ -294,7 +292,7 @@ fun MainScreen(
                 val mealType = runCatching { MealType.valueOf(mealTypeArg) }.getOrDefault(MealType.BREAKFAST)
                 val detailViewModel: DietaDetailViewModel = hiltViewModel()
                 SelectAlimentoForMealScreen(
-                    alimentoViewModel = alimentoViewModel,
+                    foodViewModel = foodViewModel,
                     mealType = mealType,
                     onAlimentoSelected = { alimento, cantidad, unidad ->
                         detailViewModel.addAlimentoToDieta(alimento.id, mealType, cantidad, unidad)
@@ -319,7 +317,7 @@ fun navigateToScreen(navController: NavHostController, route: String) {
 
 @Composable
 fun AlimentosScreen(
-    viewModel: AlimentoViewModel,
+    viewModel: FoodViewModel,
     onAlimentoClick: (Food) -> Unit,
     snackbarHostState: SnackbarHostState
 ) {
@@ -330,7 +328,7 @@ fun AlimentosScreen(
     LaunchedEffect(viewModel) {
         viewModel.events.collect { event ->
             when (event) {
-                is AlimentoViewModel.AlimentoEvent.ShowMessage ->
+                is FoodViewModel.AlimentoEvent.ShowMessage ->
                     snackbarHostState.showSnackbar(context.getString(event.messageRes))
             }
         }
@@ -350,8 +348,8 @@ fun AlimentosScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp),
-            label = { Text(stringResource(R.string.search_alimento)) },
-            leadingIcon = { Icon(Icons.Filled.Search, contentDescription = stringResource(R.string.search_alimento)) },
+            label = { Text(stringResource(R.string.search_food)) },
+            leadingIcon = { Icon(Icons.Filled.Search, contentDescription = stringResource(R.string.search_food)) },
             singleLine = true,
             enabled = !uiState.isLoading,
             colors = OutlinedTextFieldDefaults.colors(

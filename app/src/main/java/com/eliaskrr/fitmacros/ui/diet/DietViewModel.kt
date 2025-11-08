@@ -4,10 +4,10 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.eliaskrr.fitmacros.R
-import com.eliaskrr.fitmacros.data.model.Diet
-import com.eliaskrr.fitmacros.data.model.RegisterDietFood
-import com.eliaskrr.fitmacros.data.repository.DietFoodRepository
-import com.eliaskrr.fitmacros.data.repository.DietRepository
+import com.eliaskrr.fitmacros.data.entity.nutrition.Diet
+import com.eliaskrr.fitmacros.data.entity.nutrition.Meal
+import com.eliaskrr.fitmacros.data.repository.nutrition.DietFoodRepository
+import com.eliaskrr.fitmacros.data.repository.nutrition.DietRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -37,7 +37,7 @@ class DietViewModel @Inject constructor(
         observeDietas()
     }
 
-    suspend fun getAlimentosOfDieta(dietaId: Int): List<RegisterDietFood> {
+    suspend fun getAlimentosOfDieta(dietaId: Int): List<Meal> {
         return dietFoodRepository.getAlimentosForDieta(dietaId).first()
     }
 
@@ -77,8 +77,8 @@ class DietViewModel @Inject constructor(
             _events.emit(DietaEvent.ShowMessage(R.string.dietas_deleted_message))
         }.onFailure { ex ->
             Log.e(TAG, "Error solicitando eliminación de dietas: ${selectedIds.joinToString()}", ex)
-            _uiState.update { it.copy(errorMessage = R.string.error_deleting_dieta) }
-            _events.emit(DietaEvent.ShowMessage(R.string.error_deleting_dieta))
+            _uiState.update { it.copy(errorMessage = R.string.error_deleting_diet) }
+            _events.emit(DietaEvent.ShowMessage(R.string.error_deleting_diet))
         }
     }
 
@@ -91,10 +91,10 @@ class DietViewModel @Inject constructor(
                         it.copy(
                             isLoading = false,
                             diets = emptyList(),
-                            errorMessage = R.string.error_loading_dietas
+                            errorMessage = R.string.error_loading_diets
                         )
                     }
-                    _events.emit(DietaEvent.ShowMessage(R.string.error_loading_dietas))
+                    _events.emit(DietaEvent.ShowMessage(R.string.error_loading_diets))
                 }
                 .collect { dietas ->
                     _uiState.update { state ->

@@ -27,7 +27,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.eliaskrr.fitmacros.R
-import com.eliaskrr.fitmacros.data.model.Food
+import com.eliaskrr.fitmacros.data.entity.nutrition.Food
 import com.eliaskrr.fitmacros.ui.theme.BackgroundCard
 import com.eliaskrr.fitmacros.ui.theme.TextCardColor
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -85,7 +85,7 @@ fun SelectAlimentoScreen(
             OutlinedTextField(
                 value = searchQuery,
                 onValueChange = { query -> viewModel.onSearchQueryChange(query) },
-                label = { Text(stringResource(R.string.search_alimento)) },
+                label = { Text(stringResource(R.string.search_food)) },
                 modifier = Modifier.fillMaxWidth()
             )
             LazyColumn(modifier = Modifier.padding(top = 16.dp)) {

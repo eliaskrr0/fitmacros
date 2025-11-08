@@ -46,7 +46,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.eliaskrr.fitmacros.R
-import com.eliaskrr.fitmacros.data.model.QuantityUnit
+import com.eliaskrr.fitmacros.data.entity.nutrition.type.QuantityUnit
 import com.eliaskrr.fitmacros.ui.theme.ButtonConfirmColor
 import com.eliaskrr.fitmacros.ui.theme.DialogBackgroundColor
 import com.eliaskrr.fitmacros.ui.theme.DialogTextColor
@@ -124,7 +124,7 @@ fun AddEditAlimentoScreen(
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         topBar = {
             TopAppBar(
-                title = { Text(if (uiState.id == 0) stringResource(R.string.add_alimento_title) else stringResource(R.string.edit_alimento_title)) },
+                title = { Text(if (uiState.id == 0) stringResource(R.string.add_food_title) else stringResource(R.string.edit_food_title)) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateUp) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.back))

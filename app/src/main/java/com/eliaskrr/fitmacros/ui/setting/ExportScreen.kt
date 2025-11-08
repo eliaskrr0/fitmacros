@@ -29,7 +29,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.eliaskrr.fitmacros.data.model.Diet
+import com.eliaskrr.fitmacros.data.entity.nutrition.Diet
 import com.eliaskrr.fitmacros.ui.diet.DietViewModel
 import com.eliaskrr.fitmacros.ui.theme.BackgroundCard
 

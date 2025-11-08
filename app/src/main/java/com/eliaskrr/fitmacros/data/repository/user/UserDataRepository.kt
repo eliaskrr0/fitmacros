@@ -1,4 +1,4 @@
-package com.eliaskrr.fitmacros.data.repository
+package com.eliaskrr.fitmacros.data.repository.user
 
 import android.content.Context
 import android.util.Log

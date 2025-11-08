@@ -1,7 +1,7 @@
 package com.eliaskrr.fitmacros.domain
 
-import com.eliaskrr.fitmacros.data.model.ActivityRate
-import com.eliaskrr.fitmacros.data.repository.UserData
+import com.eliaskrr.fitmacros.data.entity.user.type.ActivityRate
+import com.eliaskrr.fitmacros.data.repository.user.UserData
 import java.time.LocalDate
 import java.time.Period
 import java.time.format.DateTimeFormatter

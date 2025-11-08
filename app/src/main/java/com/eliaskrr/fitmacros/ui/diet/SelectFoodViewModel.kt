@@ -4,11 +4,11 @@ import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.eliaskrr.fitmacros.data.model.Food
-import com.eliaskrr.fitmacros.data.model.DietFood
-import com.eliaskrr.fitmacros.data.model.MealType
-import com.eliaskrr.fitmacros.data.repository.FoodRepository
-import com.eliaskrr.fitmacros.data.repository.DietFoodRepository
+import com.eliaskrr.fitmacros.data.entity.nutrition.Food
+import com.eliaskrr.fitmacros.data.entity.nutrition.DietFood
+import com.eliaskrr.fitmacros.data.entity.nutrition.type.MealType
+import com.eliaskrr.fitmacros.data.repository.nutrition.FoodRepository
+import com.eliaskrr.fitmacros.data.repository.nutrition.DietFoodRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow

@@ -1,8 +1,8 @@
-package com.eliaskrr.fitmacros.data.repository
+package com.eliaskrr.fitmacros.data.repository.nutrition
 
 import android.util.Log
-import com.eliaskrr.fitmacros.data.dao.DietDao
-import com.eliaskrr.fitmacros.data.model.Diet
+import com.eliaskrr.fitmacros.data.dao.nutrition.DietDao
+import com.eliaskrr.fitmacros.data.entity.nutrition.Diet
 import kotlinx.coroutines.flow.Flow
 
 class DietRepository(private val dietaDao: DietDao) {

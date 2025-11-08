@@ -1,8 +1,8 @@
-package com.eliaskrr.fitmacros.data.repository
+package com.eliaskrr.fitmacros.data.repository.nutrition
 
 import android.util.Log
-import com.eliaskrr.fitmacros.data.dao.FoodDao
-import com.eliaskrr.fitmacros.data.model.Food
+import com.eliaskrr.fitmacros.data.dao.nutrition.FoodDao
+import com.eliaskrr.fitmacros.data.entity.nutrition.Food
 import kotlinx.coroutines.flow.Flow
 
 class FoodRepository(private val foodDao: FoodDao) {

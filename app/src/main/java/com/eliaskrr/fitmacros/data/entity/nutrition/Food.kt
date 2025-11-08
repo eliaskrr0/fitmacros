@@ -1,10 +1,11 @@
-package com.eliaskrr.fitmacros.data.model
+package com.eliaskrr.fitmacros.data.entity.nutrition
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.eliaskrr.fitmacros.data.entity.nutrition.type.QuantityUnit
 
-@Entity(tableName = "tb_alimentos")
+@Entity(tableName = "tb_food")
 data class Food(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,

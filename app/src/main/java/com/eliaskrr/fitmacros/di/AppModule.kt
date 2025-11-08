@@ -2,14 +2,14 @@ package com.eliaskrr.fitmacros.di
 
 import android.content.Context
 import androidx.room.Room
-import com.eliaskrr.fitmacros.data.dao.FoodDao
-import com.eliaskrr.fitmacros.data.dao.DietFoodDao
-import com.eliaskrr.fitmacros.data.dao.DietDao
+import com.eliaskrr.fitmacros.data.dao.nutrition.FoodDao
+import com.eliaskrr.fitmacros.data.dao.nutrition.DietFoodDao
+import com.eliaskrr.fitmacros.data.dao.nutrition.DietDao
 import com.eliaskrr.fitmacros.data.db.AppDatabase
-import com.eliaskrr.fitmacros.data.repository.FoodRepository
-import com.eliaskrr.fitmacros.data.repository.DietFoodRepository
-import com.eliaskrr.fitmacros.data.repository.DietRepository
-import com.eliaskrr.fitmacros.data.repository.UserDataRepository
+import com.eliaskrr.fitmacros.data.repository.nutrition.FoodRepository
+import com.eliaskrr.fitmacros.data.repository.nutrition.DietFoodRepository
+import com.eliaskrr.fitmacros.data.repository.nutrition.DietRepository
+import com.eliaskrr.fitmacros.data.repository.user.UserDataRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

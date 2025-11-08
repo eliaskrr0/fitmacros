@@ -5,9 +5,9 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.eliaskrr.fitmacros.R
-import com.eliaskrr.fitmacros.data.model.Food
-import com.eliaskrr.fitmacros.data.model.QuantityUnit
-import com.eliaskrr.fitmacros.data.repository.FoodRepository
+import com.eliaskrr.fitmacros.data.entity.nutrition.Food
+import com.eliaskrr.fitmacros.data.entity.nutrition.type.QuantityUnit
+import com.eliaskrr.fitmacros.data.repository.nutrition.FoodRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -100,13 +100,13 @@ class AddEditAlimentoViewModel @Inject constructor(
                     }
                 } else {
                     Log.w(TAG, "No se encontró el alimento con id $id")
-                    _uiState.update { it.copy(isLoading = false, errorMessage = R.string.error_loading_alimento) }
-                    _events.emit(AddEditAlimentoEvent.ShowMessage(R.string.error_loading_alimento))
+                    _uiState.update { it.copy(isLoading = false, errorMessage = R.string.error_loading_fodd) }
+                    _events.emit(AddEditAlimentoEvent.ShowMessage(R.string.error_loading_fodd))
                 }
             } catch (ex: Exception) {
                 Log.e(TAG, "Error cargando alimento con id $id", ex)
-                _uiState.update { it.copy(isLoading = false, errorMessage = R.string.error_loading_alimento) }
-                _events.emit(AddEditAlimentoEvent.ShowMessage(R.string.error_loading_alimento))
+                _uiState.update { it.copy(isLoading = false, errorMessage = R.string.error_loading_fodd) }
+                _events.emit(AddEditAlimentoEvent.ShowMessage(R.string.error_loading_fodd))
             }
         }
     }
@@ -208,8 +208,8 @@ class AddEditAlimentoViewModel @Inject constructor(
                 }
             } catch (ex: Exception) {
                 Log.e(TAG, "Error al guardar alimento ${food.nombre}", ex)
-                _uiState.update { it.copy(isLoading = false, errorMessage = R.string.error_saving_alimento) }
-                _events.emit(AddEditAlimentoEvent.ShowMessage(R.string.error_saving_alimento))
+                _uiState.update { it.copy(isLoading = false, errorMessage = R.string.error_saving_food) }
+                _events.emit(AddEditAlimentoEvent.ShowMessage(R.string.error_saving_food))
             }
         }
     }
@@ -237,8 +237,8 @@ class AddEditAlimentoViewModel @Inject constructor(
                     _uiState.update { it.copy(isSaved = true, isLoading = false, errorMessage = null) }
                 } catch (ex: Exception) {
                     Log.e(TAG, "Error al eliminar alimento ${foodToDelete.nombre} (id=${foodToDelete.id})", ex)
-                    _uiState.update { it.copy(isLoading = false, errorMessage = R.string.error_deleting_alimento) }
-                    _events.emit(AddEditAlimentoEvent.ShowMessage(R.string.error_deleting_alimento))
+                    _uiState.update { it.copy(isLoading = false, errorMessage = R.string.error_deleting_food) }
+                    _events.emit(AddEditAlimentoEvent.ShowMessage(R.string.error_deleting_food))
                 }
             }
         }

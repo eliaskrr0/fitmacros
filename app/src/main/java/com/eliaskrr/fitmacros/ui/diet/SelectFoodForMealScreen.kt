@@ -41,10 +41,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.eliaskrr.fitmacros.R
-import com.eliaskrr.fitmacros.data.model.Food
-import com.eliaskrr.fitmacros.data.model.MealType
-import com.eliaskrr.fitmacros.data.model.QuantityUnit
-import com.eliaskrr.fitmacros.ui.food.AlimentoViewModel
+import com.eliaskrr.fitmacros.data.entity.nutrition.Food
+import com.eliaskrr.fitmacros.data.entity.nutrition.type.MealType
+import com.eliaskrr.fitmacros.data.entity.nutrition.type.QuantityUnit
+import com.eliaskrr.fitmacros.ui.food.FoodViewModel
 import com.eliaskrr.fitmacros.ui.theme.BackgroundCard
 import com.eliaskrr.fitmacros.ui.theme.TextCardColor
 import java.math.BigDecimal
@@ -53,13 +53,13 @@ import java.math.RoundingMode
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SelectAlimentoForMealScreen(
-    alimentoViewModel: AlimentoViewModel,
+    foodViewModel: FoodViewModel,
     mealType: MealType,
     onAlimentoSelected: (Food, Double, QuantityUnit) -> Unit,
     onNavigateUp: () -> Unit
 ) {
-    val alimentosUiState by alimentoViewModel.uiState.collectAsState()
-    val searchQuery by alimentoViewModel.searchQuery.collectAsState()
+    val alimentosUiState by foodViewModel.uiState.collectAsState()
+    val searchQuery by foodViewModel.searchQuery.collectAsState()
     val context = LocalContext.current
     val snackbarHostState = remember { SnackbarHostState() }
 
@@ -68,13 +68,13 @@ fun SelectAlimentoForMealScreen(
     var showError by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
-        alimentoViewModel.onSearchQueryChange("")
+        foodViewModel.onSearchQueryChange("")
     }
 
-    LaunchedEffect(alimentoViewModel) {
-        alimentoViewModel.events.collect { event ->
+    LaunchedEffect(foodViewModel) {
+        foodViewModel.events.collect { event ->
             when (event) {
-                is AlimentoViewModel.AlimentoEvent.ShowMessage ->
+                is FoodViewModel.AlimentoEvent.ShowMessage ->
                     snackbarHostState.showSnackbar(context.getString(event.messageRes))
             }
         }
@@ -135,18 +135,18 @@ fun SelectAlimentoForMealScreen(
                 .fillMaxSize()
         ) {
             Text(
-                text = stringResource(R.string.select_alimento_instruction, stringResource(mealType.stringRes)),
+                text = stringResource(R.string.select_food_instruction, stringResource(mealType.stringRes)),
                 style = MaterialTheme.typography.bodyMedium,
                 modifier = Modifier
                     .padding(horizontal = 16.dp, vertical = 8.dp)
             )
             OutlinedTextField(
                 value = searchQuery,
-                onValueChange = alimentoViewModel::onSearchQueryChange,
+                onValueChange = foodViewModel::onSearchQueryChange,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp),
-                label = { Text(stringResource(R.string.search_alimento)) },
+                label = { Text(stringResource(R.string.search_food)) },
                 leadingIcon = { Icon(imageVector = Icons.Filled.Search, contentDescription = null) },
                 singleLine = true,
                 enabled = !alimentosUiState.isLoading,

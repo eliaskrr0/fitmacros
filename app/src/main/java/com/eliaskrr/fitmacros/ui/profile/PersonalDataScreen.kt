@@ -45,9 +45,9 @@ import androidx.compose.ui.text.input.OffsetMapping
 import androidx.compose.ui.text.input.TransformedText
 import androidx.compose.ui.text.input.VisualTransformation
 import com.eliaskrr.fitmacros.R
-import com.eliaskrr.fitmacros.data.model.ActivityRate
-import com.eliaskrr.fitmacros.data.model.TypeTarget
-import com.eliaskrr.fitmacros.data.repository.UserData
+import com.eliaskrr.fitmacros.data.entity.user.type.ActivityRate
+import com.eliaskrr.fitmacros.data.entity.user.type.TypeTarget
+import com.eliaskrr.fitmacros.data.repository.user.UserData
 import com.eliaskrr.fitmacros.ui.theme.ButtonConfirmColor
 import com.eliaskrr.fitmacros.ui.theme.ButtonCancelColor
 import com.eliaskrr.fitmacros.ui.theme.Dimens

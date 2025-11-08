@@ -44,7 +44,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import com.eliaskrr.fitmacros.R
-import com.eliaskrr.fitmacros.data.model.Diet
+import com.eliaskrr.fitmacros.data.entity.nutrition.Diet
 import com.eliaskrr.fitmacros.ui.components.SelectionActionBar
 import com.eliaskrr.fitmacros.ui.theme.BackgroundCard
 import com.eliaskrr.fitmacros.ui.theme.ButtonCancelColor
@@ -77,7 +77,7 @@ fun DietasScreen(viewModel: DietViewModel, onDietaClick: (Int) -> Unit) {
             containerColor = DialogBackgroundColor,
             titleContentColor = DialogTitleColor,
             textContentColor = DialogTextColor,
-            title = { Text(stringResource(R.string.new_dieta_title)) },
+            title = { Text(stringResource(R.string.new_diet_title)) },
             text = {
                 OutlinedTextField(
                     value = newDietaName,
@@ -128,7 +128,7 @@ fun DietasScreen(viewModel: DietViewModel, onDietaClick: (Int) -> Unit) {
         floatingActionButton = {
             if (!uiState.isSelectionMode) {
                 FloatingActionButton(onClick = { showDialog = true }) {
-                    Icon(Icons.Filled.Add, contentDescription = stringResource(R.string.new_dieta_title))
+                    Icon(Icons.Filled.Add, contentDescription = stringResource(R.string.new_diet_title))
                 }
             }
         }

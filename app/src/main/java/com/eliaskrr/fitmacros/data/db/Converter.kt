@@ -1,8 +1,8 @@
 package com.eliaskrr.fitmacros.data.db
 
 import androidx.room.TypeConverter
-import com.eliaskrr.fitmacros.data.model.MealType
-import com.eliaskrr.fitmacros.data.model.QuantityUnit
+import com.eliaskrr.fitmacros.data.entity.nutrition.type.MealType
+import com.eliaskrr.fitmacros.data.entity.nutrition.type.QuantityUnit
 
 class Converter {
     @TypeConverter
