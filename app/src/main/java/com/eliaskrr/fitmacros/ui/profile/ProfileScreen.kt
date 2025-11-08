@@ -51,11 +51,16 @@ import com.eliaskrr.fitmacros.ui.theme.BackgroundCard
 import com.eliaskrr.fitmacros.ui.theme.Dimens
 import com.eliaskrr.fitmacros.ui.theme.NutrientColors
 import com.eliaskrr.fitmacros.ui.theme.TextCardColor
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 @Composable
 fun ProfileScreen(viewModel: ProfileViewModel, onEditClick: () -> Unit) {
     val userData by viewModel.userData.collectAsState()
     val calculationResult by viewModel.calculationResult.collectAsState()
+    val locale = remember { Locale.getDefault() }
+    val dateFormatter = remember(locale) { SimpleDateFormat("ddMMyyyy", locale) }
+    val userAge = userData.fechaNacimiento.toMillis(dateFormatter)?.let { ageInYears(it) }?.takeIf { it in 0..100 }
 
     Column(
         modifier = Modifier
@@ -77,6 +82,11 @@ fun ProfileScreen(viewModel: ProfileViewModel, onEditClick: () -> Unit) {
                     Spacer(modifier = Modifier.height(Dimens.Large))
                     ProfileDataRow(label = stringResource(R.string.user_name), value = userData.nombre.ifBlank { stringResource(R.string.placeholder_nodata) })
                     ProfileDataRow(label = stringResource(R.string.user_sex), value = userData.sexo.ifBlank { stringResource(R.string.placeholder_nodata) })
+                    ProfileDataRow(
+                        label = stringResource(R.string.user_age),
+                        value = userAge?.let { stringResource(R.string.user_age_value, it) }
+                            ?: stringResource(R.string.placeholder_nodata)
+                    )
                     ProfileDataRow(label = stringResource(R.string.user_height), value = "${userData.altura.ifBlank { stringResource(R.string.placeholder_nodata) }} ${stringResource(R.string.unit_cm)}")
                     ProfileDataRow(label = stringResource(R.string.user_weight), value = "${userData.peso.ifBlank { stringResource(R.string.placeholder_nodata) }} ${stringResource(R.string.unit_kg)}")
                     ProfileDataRow(label = stringResource(R.string.user_target), value = userData.objetivo.ifBlank { stringResource(R.string.placeholder_nodata) })
