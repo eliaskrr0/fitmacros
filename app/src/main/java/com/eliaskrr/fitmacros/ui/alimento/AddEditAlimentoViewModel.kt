@@ -21,7 +21,6 @@ import kotlinx.coroutines.launch
 import java.math.BigDecimal
 import java.math.RoundingMode
 import java.text.DecimalFormatSymbols
-import java.text.NumberFormat
 import java.util.Locale
 import javax.inject.Inject
 
@@ -59,10 +58,6 @@ class AddEditAlimentoViewModel @Inject constructor(
     private val alimentoId: Int? = savedStateHandle["alimentoId"]
 
     private val decimalSymbols: DecimalFormatSymbols = DecimalFormatSymbols.getInstance(Locale("es"))
-    private val numberFormat: NumberFormat = NumberFormat.getNumberInstance(Locale("es")).apply {
-        isGroupingUsed = false
-    }
-
     init {
         // El valor por defecto de alimentoId es -1, así que solo cargamos si es un ID válido
         if (alimentoId != null && alimentoId != -1) {
@@ -123,11 +118,11 @@ class AddEditAlimentoViewModel @Inject constructor(
         detalles: String? = null
     ) {
         _uiState.update { currentState ->
-            val updatedProteinas = proteinas?.let { normalizeDecimalInput(it) } ?: currentState.proteinas
-            val updatedCarbos = carbos?.let { normalizeDecimalInput(it) } ?: currentState.carbos
-            val updatedGrasas = grasas?.let { normalizeDecimalInput(it) } ?: currentState.grasas
-            val updatedPrecio = precio?.let { normalizeDecimalInput(it, allowNegative = false) } ?: currentState.precio
-            val updatedCantidadBase = cantidadBase?.let { normalizeDecimalInput(it) } ?: currentState.cantidadBase
+            val updatedProteinas = proteinas ?: currentState.proteinas
+            val updatedCarbos = carbos ?: currentState.carbos
+            val updatedGrasas = grasas ?: currentState.grasas
+            val updatedPrecio = precio ?: currentState.precio
+            val updatedCantidadBase = cantidadBase ?: currentState.cantidadBase
 
             val calculatedCalories = calculateCalories(updatedProteinas, updatedCarbos, updatedGrasas)
 
@@ -158,7 +153,7 @@ class AddEditAlimentoViewModel @Inject constructor(
                 Alimento(
                     id = 0,
                     nombre = state.nombre,
-                    precio = parseDecimal(state.precio)?.toDouble(),
+                    precio = parseDecimal(state.precio, allowNegative = false)?.toDouble(),
                     marca = state.marca.ifEmpty { null },
                     proteinas = parseMacroInput(state.proteinas),
                     carbos = parseMacroInput(state.carbos),
@@ -173,7 +168,7 @@ class AddEditAlimentoViewModel @Inject constructor(
                 Alimento(
                     id = state.id,
                     nombre = state.nombre,
-                    precio = parseDecimal(state.precio)?.toDouble(),
+                    precio = parseDecimal(state.precio, allowNegative = false)?.toDouble(),
                     marca = state.marca.ifEmpty { null },
                     proteinas = parseMacroInput(state.proteinas),
                     carbos = parseMacroInput(state.carbos),
@@ -286,97 +281,42 @@ class AddEditAlimentoViewModel @Inject constructor(
     }
 
     private fun parseQuantity(value: String): Double {
-        val parsed = parseDecimal(value)?.toDouble()
+        val parsed = parseDecimal(value, allowNegative = false)?.toDouble()
         return if (parsed != null && parsed > 0.0) parsed else 100.0
     }
-
-    private fun normalizeDecimalInput(
-        value: String,
-        scale: Int = 2,
-        allowNegative: Boolean = false
-    ): String {
-        val trimmed = value.trim()
-        if (trimmed.isEmpty()) return ""
-
-        val sanitized = sanitizeSeparators(trimmed)
-        if (sanitized.isEmpty()) return ""
-
-        val decimalSeparator = decimalSymbols.decimalSeparator
-
-        if (sanitized.last() == decimalSeparator && isValidNumericPrefix(sanitized.dropLast(1), allowNegative)) {
-            return sanitized
-        }
-
-        val decimal = parseDecimal(sanitized) ?: return if (isValidNumericPrefix(sanitized, allowNegative)) {
-            sanitized
-        } else {
-            ""
-        }
-
-        if (!allowNegative && decimal < BigDecimal.ZERO) return ""
-
-        val normalized = decimal
-            .setScale(scale, RoundingMode.HALF_UP)
-            .stripTrailingZeros()
-            .toPlainString()
-
-        return if (decimalSeparator == '.') {
-            normalized
-        } else {
-            normalized.replace('.', decimalSeparator)
-        }
+    private fun parseDecimal(value: String, allowNegative: Boolean = true): BigDecimal? {
+        val sanitized = sanitizeDecimalForParsing(value, allowNegative) ?: return null
+        return runCatching { BigDecimal(sanitized) }.getOrNull()
     }
 
-    private fun parseDecimal(value: String): BigDecimal? {
-        if (value.isBlank()) return null
-        val sanitized = sanitizeSeparators(value)
-        if (sanitized.isEmpty()) return null
-        val number = runCatching { numberFormat.parse(sanitized) }.getOrNull() ?: return null
-        return when (number) {
-            is Long -> BigDecimal.valueOf(number.toLong())
-            is Int -> BigDecimal.valueOf(number.toLong())
-            is Double -> BigDecimal.valueOf(number)
-            is Float -> BigDecimal.valueOf(number.toDouble())
-            else -> BigDecimal.valueOf(number.toDouble())
-        }
-    }
-
-    private fun sanitizeSeparators(value: String): String {
+    private fun sanitizeDecimalForParsing(value: String, allowNegative: Boolean): String? {
         val trimmed = value.trim()
-        if (trimmed.isEmpty()) return ""
+        if (trimmed.isEmpty()) return null
 
         val decimalSeparator = decimalSymbols.decimalSeparator
-        val groupingSeparator = decimalSymbols.groupingSeparator
+        val minusSign = decimalSymbols.minusSign
+        val builder = StringBuilder(trimmed.length)
 
-        return buildString(trimmed.length) {
-            trimmed.forEach { char ->
-                when {
-                    char == decimalSeparator -> append(char)
-                    char == ',' || char == '.' -> append(decimalSeparator)
-                    char == groupingSeparator && groupingSeparator != decimalSeparator -> Unit
-                    else -> append(char)
+        var hasDecimal = false
+
+        trimmed.forEachIndexed { index, char ->
+            when {
+                char.isDigit() -> builder.append(char)
+                !hasDecimal && (char == '.' || char == ',' || char == decimalSeparator) -> {
+                    builder.append('.')
+                    hasDecimal = true
                 }
+                allowNegative && builder.isEmpty() && index == 0 && (char == '-' || char == minusSign) -> {
+                    builder.append('-')
+                }
+                else -> Unit
             }
         }
-    }
 
-    private fun isValidNumericPrefix(value: String, allowNegative: Boolean): Boolean {
-        if (value.isEmpty()) return true
-
-        var startIndex = 0
-        val minusSign = decimalSymbols.minusSign
-
-        if (value.first() == '-' || value.first() == minusSign) {
-            if (!allowNegative) return false
-            startIndex = 1
+        if (builder.isEmpty() || builder.toString() == "-" || builder.toString() == "." || builder.toString() == "-." ) {
+            return null
         }
 
-        if (startIndex >= value.length) return false
-
-        for (index in startIndex until value.length) {
-            if (!value[index].isDigit()) return false
-        }
-
-        return true
+        return builder.toString()
     }
 }
