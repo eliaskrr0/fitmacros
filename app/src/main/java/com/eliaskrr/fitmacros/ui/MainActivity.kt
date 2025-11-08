@@ -174,7 +174,7 @@ fun MainScreen(alimentoViewModel: AlimentoViewModel, profileViewModel: ProfileVi
                     }
                 ) 
             }
-            composable(AppScreen.Opciones.route) { OptionsScreen() }
+            composable(AppScreen.Opciones.route) { OptionsScreen(navController = navController) }
             composable(
                 route = AppScreen.AddEditAlimento.route,
                 arguments = listOf(navArgument("alimentoId") { type = NavType.IntType; defaultValue = -1 })
@@ -409,4 +409,3 @@ fun AlimentoItem(
         }
     }
 }
-
