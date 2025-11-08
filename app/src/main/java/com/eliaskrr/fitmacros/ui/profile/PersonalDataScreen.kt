@@ -1,5 +1,6 @@
 package com.eliaskrr.fitmacros.ui.profile
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -29,6 +30,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -49,6 +51,7 @@ import com.eliaskrr.fitmacros.ui.theme.ButtonConfirmColor
 import com.eliaskrr.fitmacros.ui.theme.Dimens
 import com.eliaskrr.fitmacros.ui.theme.TextFieldContainerColor
 import com.eliaskrr.fitmacros.ui.theme.TextGeneralColor
+import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -64,8 +67,19 @@ fun PersonalDataScreen(userData: UserData, onSave: (UserData) -> Unit, onNavigat
     var objetivo by remember { mutableStateOf(userData.objetivo) }
     var activityRate by remember { mutableStateOf(userData.activityRate) }
 
-    val datePickerState = rememberDatePickerState()
+    val locale = remember { Locale.getDefault() }
+    val dateFormatter = remember(locale) { SimpleDateFormat("ddMMyyyy", locale) }
+    val datePickerState = rememberDatePickerState(
+        initialSelectedDateMillis = fechaNacimiento.toMillis(dateFormatter)
+    )
     var showDatePicker by remember { mutableStateOf(false) }
+
+    LaunchedEffect(fechaNacimiento) {
+        val selectedMillis = fechaNacimiento.toMillis(dateFormatter)
+        if (selectedMillis != null && selectedMillis != datePickerState.selectedDateMillis) {
+            datePickerState.selectedDateMillis = selectedMillis
+        }
+    }
 
     if (showDatePicker) {
         DatePickerDialog(
@@ -74,8 +88,7 @@ fun PersonalDataScreen(userData: UserData, onSave: (UserData) -> Unit, onNavigat
                 TextButton(
                     onClick = {
                         datePickerState.selectedDateMillis?.let {
-                            val formatter = SimpleDateFormat("ddMMyyyy", Locale.getDefault())
-                            fechaNacimiento = formatter.format(Date(it))
+                            fechaNacimiento = dateFormatter.format(Date(it))
                         }
                         showDatePicker = false
                     }
@@ -169,17 +182,19 @@ fun PersonalDataScreen(userData: UserData, onSave: (UserData) -> Unit, onNavigat
 
             OutlinedTextField(
                 value = fechaNacimiento,
-                onValueChange = { fechaNacimiento = it.filter { char -> char.isDigit() }.take(8) },
+                onValueChange = {},
                 label = { Text(stringResource(R.string.birthdate)) },
                 placeholder = { Text(stringResource(R.string.birthdate_placeholder)) },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 visualTransformation = DateVisualTransformation(),
+                readOnly = true,
                 trailingIcon = {
                     IconButton(onClick = { showDatePicker = true }) {
                         Icon(Icons.Default.CalendarToday, contentDescription = stringResource(R.string.calendar))
                     }
                 },
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { showDatePicker = true },
                 colors = textFieldColors
             )
             Spacer(modifier = Modifier.height(Dimens.Medium))
@@ -322,5 +337,14 @@ class DateVisualTransformation : VisualTransformation {
         }
 
         return TransformedText(AnnotatedString(out), offsetMapping)
+    }
+}
+
+private fun String.toMillis(formatter: SimpleDateFormat): Long? {
+    if (isBlank()) return null
+    return try {
+        formatter.parse(this)?.time
+    } catch (_: ParseException) {
+        null
     }
 }
