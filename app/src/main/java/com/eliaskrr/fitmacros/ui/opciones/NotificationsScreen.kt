@@ -114,11 +114,17 @@ fun NotificationsScreen(
                         ReminderTimeSelector(label = "Desayuno", time = viewModel.breakfastTime.format(timeFormatter)) {
                             viewModel.onTimePickerRequested(ReminderType.BREAKFAST)
                         }
-                        HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
+                        HorizontalDivider(
+                            modifier = Modifier.padding(horizontal = 16.dp),
+                            color = MaterialTheme.colorScheme.tertiary
+                        )
                         ReminderTimeSelector(label = "Almuerzo", time = viewModel.lunchTime.format(timeFormatter)) {
                             viewModel.onTimePickerRequested(ReminderType.LUNCH)
                         }
-                        HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
+                        HorizontalDivider(
+                            modifier = Modifier.padding(horizontal = 16.dp),
+                            color = MaterialTheme.colorScheme.tertiary
+                        )
                         ReminderTimeSelector(label = "Cena", time = viewModel.dinnerTime.format(timeFormatter)) {
                             viewModel.onTimePickerRequested(ReminderType.DINNER)
                         }
@@ -138,7 +144,10 @@ fun NotificationsScreen(
                         ) {
                             viewModel.onDayPickerRequested()
                         }
-                        HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
+                        HorizontalDivider(
+                            modifier = Modifier.padding(horizontal = 16.dp),
+                            color = MaterialTheme.colorScheme.tertiary
+                        )
                         ReminderTimeSelector(
                             label = "Hora",
                             time = viewModel.weighInTime.format(timeFormatter)
@@ -181,7 +190,9 @@ private fun NotificationCard(title: String, description: String, content: @Compo
             }
             AnimatedVisibility(visible = isEnabled) {
                 Column {
-                    HorizontalDivider()
+                    HorizontalDivider(
+                        color = MaterialTheme.colorScheme.tertiary
+                    )
                     content()
                 }
             }

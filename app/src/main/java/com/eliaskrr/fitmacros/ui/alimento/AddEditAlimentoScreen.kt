@@ -52,7 +52,7 @@ import com.eliaskrr.fitmacros.ui.theme.DialogBackgroundColor
 import com.eliaskrr.fitmacros.ui.theme.DialogTextColor
 import com.eliaskrr.fitmacros.ui.theme.DialogTitleColor
 import com.eliaskrr.fitmacros.ui.theme.TextFieldContainerColor
-import com.eliaskrr.fitmacros.ui.theme.TextGeneralColor
+import com.eliaskrr.fitmacros.ui.theme.TextPrimaryColor
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -68,14 +68,14 @@ fun AddEditAlimentoScreen(
         focusedContainerColor = TextFieldContainerColor,
         unfocusedContainerColor = TextFieldContainerColor,
         disabledContainerColor = TextFieldContainerColor.copy(alpha = 0.6f),
-        focusedBorderColor = TextGeneralColor.copy(alpha = 0.6f),
-        unfocusedBorderColor = TextGeneralColor.copy(alpha = 0.3f),
-        focusedLabelColor = TextGeneralColor.copy(alpha = 0.9f),
-        unfocusedLabelColor = TextGeneralColor.copy(alpha = 0.7f),
-        focusedTextColor = TextGeneralColor,
-        unfocusedTextColor = TextGeneralColor,
-        disabledTextColor = TextGeneralColor.copy(alpha = 0.6f),
-        cursorColor = TextGeneralColor
+        focusedBorderColor = TextPrimaryColor.copy(alpha = 0.6f),
+        unfocusedBorderColor = TextPrimaryColor.copy(alpha = 0.3f),
+        focusedLabelColor = TextPrimaryColor.copy(alpha = 0.9f),
+        unfocusedLabelColor = TextPrimaryColor.copy(alpha = 0.7f),
+        focusedTextColor = TextPrimaryColor,
+        unfocusedTextColor = TextPrimaryColor,
+        disabledTextColor = TextPrimaryColor.copy(alpha = 0.6f),
+        cursorColor = TextPrimaryColor
     )
 
     LaunchedEffect(uiState.isSaved) {
@@ -249,7 +249,7 @@ fun AddEditAlimentoScreen(
                 enabled = !uiState.isLoading,
                 colors = ButtonDefaults.buttonColors(
                     containerColor = ButtonConfirmColor,
-                    contentColor = TextGeneralColor
+                    contentColor = TextPrimaryColor
                 )
             ) {
                 if (uiState.isLoading) {

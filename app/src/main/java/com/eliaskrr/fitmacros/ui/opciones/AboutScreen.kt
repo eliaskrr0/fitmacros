@@ -109,7 +109,9 @@ private fun InfoCard(title: String, icon: ImageVector, items: Map<String, String
                 Text(text = title, style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
             }
             Spacer(modifier = Modifier.height(16.dp))
-            HorizontalDivider()
+            HorizontalDivider(
+                color = MaterialTheme.colorScheme.tertiary
+            )
             Spacer(modifier = Modifier.height(16.dp))
 
             items.entries.forEachIndexed { index, entry ->

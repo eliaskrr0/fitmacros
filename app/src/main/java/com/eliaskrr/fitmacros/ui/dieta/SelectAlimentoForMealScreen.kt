@@ -146,7 +146,7 @@ fun SelectAlimentoForMealScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp),
-                label = { Text(stringResource(R.string.search_food_placeholder)) },
+                label = { Text(stringResource(R.string.search_alimento)) },
                 leadingIcon = { Icon(imageVector = Icons.Filled.Search, contentDescription = null) },
                 singleLine = true,
                 enabled = !alimentosUiState.isLoading,

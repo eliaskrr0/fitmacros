@@ -41,20 +41,20 @@ abstract class AppDatabase : RoomDatabase() {
         }
 
         private val MIGRATION_1_2 = object : Migration(1, 2) {
-            override fun migrate(database: SupportSQLiteDatabase) {
-                database.execSQL("ALTER TABLE tb_alimentos ADD COLUMN precio REAL")
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE tb_alimentos ADD COLUMN precio REAL")
             }
         }
 
         private val MIGRATION_2_3 = object : Migration(2, 3) {
-            override fun migrate(database: SupportSQLiteDatabase) {
-                database.execSQL("ALTER TABLE tb_alimentos ADD COLUMN marca TEXT")
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE tb_alimentos ADD COLUMN marca TEXT")
             }
         }
 
         private val MIGRATION_3_4 = object : Migration(3, 4) {
-            override fun migrate(database: SupportSQLiteDatabase) {
-                database.execSQL(
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL(
                     """
                     CREATE TABLE IF NOT EXISTS tb_dietas (
                         id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
@@ -63,7 +63,7 @@ abstract class AppDatabase : RoomDatabase() {
                     """.trimIndent()
                 )
 
-                database.execSQL(
+                db.execSQL(
                     """
                     CREATE TABLE IF NOT EXISTS tb_dieta_alimentos (
                         dietaId INTEGER NOT NULL,
@@ -81,18 +81,18 @@ abstract class AppDatabase : RoomDatabase() {
         }
 
         private val MIGRATION_4_5 = object : Migration(4, 5) {
-            override fun migrate(database: SupportSQLiteDatabase) {
-                database.execSQL("ALTER TABLE tb_alimentos ADD COLUMN cantidad_base REAL NOT NULL DEFAULT 100.0")
-                database.execSQL("ALTER TABLE tb_alimentos ADD COLUMN unidad_base TEXT NOT NULL DEFAULT 'GRAMS'")
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE tb_alimentos ADD COLUMN cantidad_base REAL NOT NULL DEFAULT 100.0")
+                db.execSQL("ALTER TABLE tb_alimentos ADD COLUMN unidad_base TEXT NOT NULL DEFAULT 'GRAMS'")
             }
         }
 
         private val MIGRATION_5_6 = object : Migration(5, 6) {
-            override fun migrate(database: SupportSQLiteDatabase) {
-                database.execSQL("ALTER TABLE tb_alimentos ADD COLUMN fecha_creacion INTEGER NOT NULL DEFAULT 0")
-                database.execSQL("ALTER TABLE tb_alimentos ADD COLUMN fecha_actualizacion INTEGER NOT NULL DEFAULT 0")
-                database.execSQL("ALTER TABLE tb_alimentos ADD COLUMN detalles TEXT")
-                database.execSQL(
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE tb_alimentos ADD COLUMN fecha_creacion INTEGER NOT NULL DEFAULT 0")
+                db.execSQL("ALTER TABLE tb_alimentos ADD COLUMN fecha_actualizacion INTEGER NOT NULL DEFAULT 0")
+                db.execSQL("ALTER TABLE tb_alimentos ADD COLUMN detalles TEXT")
+                db.execSQL(
                     """
                     UPDATE tb_alimentos
                     SET fecha_creacion = CASE
@@ -101,7 +101,7 @@ abstract class AppDatabase : RoomDatabase() {
                     END
                     """.trimIndent()
                 )
-                database.execSQL(
+                db.execSQL(
                     """
                     UPDATE tb_alimentos
                     SET fecha_actualizacion = CASE

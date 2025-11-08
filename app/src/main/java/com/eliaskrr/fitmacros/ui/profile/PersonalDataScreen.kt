@@ -53,7 +53,7 @@ import com.eliaskrr.fitmacros.ui.theme.ButtonCancelColor
 import com.eliaskrr.fitmacros.ui.theme.Dimens
 import com.eliaskrr.fitmacros.ui.theme.DialogBackgroundColor
 import com.eliaskrr.fitmacros.ui.theme.TextFieldContainerColor
-import com.eliaskrr.fitmacros.ui.theme.TextGeneralColor
+import com.eliaskrr.fitmacros.ui.theme.TextPrimaryColor
 import com.eliaskrr.fitmacros.ui.theme.TextCardColor
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -125,11 +125,11 @@ fun PersonalDataScreen(userData: UserData, onSave: (UserData) -> Unit, onNavigat
         yearContentColor = TextCardColor.copy(alpha = 0.8f),
         disabledYearContentColor = TextCardColor.copy(alpha = 0.3f),
         currentYearContentColor = ButtonConfirmColor,
-        selectedYearContentColor = TextGeneralColor,
+        selectedYearContentColor = TextPrimaryColor,
         selectedYearContainerColor = ButtonConfirmColor,
         dayContentColor = TextCardColor,
         disabledDayContentColor = TextCardColor.copy(alpha = 0.3f),
-        selectedDayContentColor = TextGeneralColor,
+        selectedDayContentColor = TextPrimaryColor,
         selectedDayContainerColor = ButtonConfirmColor,
         todayContentColor = ButtonConfirmColor,
         todayDateBorderColor = ButtonConfirmColor,
@@ -169,14 +169,14 @@ fun PersonalDataScreen(userData: UserData, onSave: (UserData) -> Unit, onNavigat
         focusedContainerColor = TextFieldContainerColor,
         unfocusedContainerColor = TextFieldContainerColor,
         disabledContainerColor = TextFieldContainerColor.copy(alpha = 0.6f),
-        focusedBorderColor = TextGeneralColor.copy(alpha = 0.6f),
-        unfocusedBorderColor = TextGeneralColor.copy(alpha = 0.3f),
-        focusedLabelColor = TextGeneralColor.copy(alpha = 0.9f),
-        unfocusedLabelColor = TextGeneralColor.copy(alpha = 0.7f),
-        focusedTextColor = TextGeneralColor,
-        unfocusedTextColor = TextGeneralColor,
-        disabledTextColor = TextGeneralColor.copy(alpha = 0.6f),
-        cursorColor = TextGeneralColor
+        focusedBorderColor = TextPrimaryColor.copy(alpha = 0.6f),
+        unfocusedBorderColor = TextPrimaryColor.copy(alpha = 0.3f),
+        focusedLabelColor = TextPrimaryColor.copy(alpha = 0.9f),
+        unfocusedLabelColor = TextPrimaryColor.copy(alpha = 0.7f),
+        focusedTextColor = TextPrimaryColor,
+        unfocusedTextColor = TextPrimaryColor,
+        disabledTextColor = TextPrimaryColor.copy(alpha = 0.6f),
+        cursorColor = TextPrimaryColor
     )
 
     Scaffold(
@@ -264,7 +264,7 @@ fun PersonalDataScreen(userData: UserData, onSave: (UserData) -> Unit, onNavigat
                 Spacer(modifier = Modifier.height(Dimens.Small))
                 Text(
                     text = stringResource(R.string.user_age_years, userAge),
-                    color = TextGeneralColor
+                    color = TextPrimaryColor
                 )
             }
             Spacer(modifier = Modifier.height(Dimens.Medium))
@@ -368,7 +368,7 @@ fun PersonalDataScreen(userData: UserData, onSave: (UserData) -> Unit, onNavigat
                 modifier = Modifier.fillMaxWidth(),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = ButtonConfirmColor,
-                    contentColor = TextGeneralColor
+                    contentColor = TextPrimaryColor
                 )
             ) {
                 Text(stringResource(R.string.save))
