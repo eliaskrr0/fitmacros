@@ -73,6 +73,7 @@ fun PersonalDataScreen(userData: UserData, onSave: (UserData) -> Unit, onNavigat
         initialSelectedDateMillis = fechaNacimiento.toMillis(dateFormatter)
     )
     var showDatePicker by remember { mutableStateOf(false) }
+    var initialDateOnOpen by remember { mutableStateOf<Long?>(null) }
 
     LaunchedEffect(fechaNacimiento) {
         val selectedMillis = fechaNacimiento.toMillis(dateFormatter)
@@ -81,17 +82,30 @@ fun PersonalDataScreen(userData: UserData, onSave: (UserData) -> Unit, onNavigat
         }
     }
 
+    LaunchedEffect(showDatePicker) {
+        if (showDatePicker) {
+            initialDateOnOpen = datePickerState.selectedDateMillis
+        } else {
+            initialDateOnOpen = null
+        }
+    }
+
+    LaunchedEffect(showDatePicker, datePickerState.selectedDateMillis) {
+        if (showDatePicker) {
+            val selectedMillis = datePickerState.selectedDateMillis
+            if (selectedMillis != null && selectedMillis != initialDateOnOpen) {
+                fechaNacimiento = dateFormatter.format(Date(selectedMillis))
+                showDatePicker = false
+            }
+        }
+    }
+
     if (showDatePicker) {
         DatePickerDialog(
             onDismissRequest = { showDatePicker = false },
             confirmButton = {
                 TextButton(
-                    onClick = {
-                        datePickerState.selectedDateMillis?.let {
-                            fechaNacimiento = dateFormatter.format(Date(it))
-                        }
-                        showDatePicker = false
-                    }
+                    onClick = { showDatePicker = false }
                 ) { Text(stringResource(R.string.accept)) }
             },
             dismissButton = {
