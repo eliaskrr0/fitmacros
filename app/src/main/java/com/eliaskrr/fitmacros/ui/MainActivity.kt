@@ -77,6 +77,7 @@ import com.eliaskrr.fitmacros.ui.dieta.DietaViewModel
 import com.eliaskrr.fitmacros.ui.dieta.SelectAlimentoForMealScreen
 import com.eliaskrr.fitmacros.ui.navigation.AppScreen
 import com.eliaskrr.fitmacros.ui.navigation.NavItem
+import com.eliaskrr.fitmacros.ui.opciones.AboutScreen
 import com.eliaskrr.fitmacros.ui.opciones.OptionsScreen
 import com.eliaskrr.fitmacros.ui.profile.PersonalDataScreen
 import com.eliaskrr.fitmacros.ui.profile.ProfileScreen
@@ -175,6 +176,7 @@ fun MainScreen(alimentoViewModel: AlimentoViewModel, profileViewModel: ProfileVi
                 ) 
             }
             composable(AppScreen.Opciones.route) { OptionsScreen(navController = navController) }
+            composable(AppScreen.About.route) { AboutScreen() }
             composable(
                 route = AppScreen.AddEditAlimento.route,
                 arguments = listOf(navArgument("alimentoId") { type = NavType.IntType; defaultValue = -1 })

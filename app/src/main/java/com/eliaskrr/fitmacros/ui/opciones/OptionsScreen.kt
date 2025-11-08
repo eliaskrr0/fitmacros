@@ -51,7 +51,7 @@ fun OptionsScreen(navController: NavController) {
         Option(
             title = "Acerca de",
             icon = Icons.Default.Info,
-            onClick = { /* TODO: Implementar */ }
+            onClick = { navController.navigate(AppScreen.About.route) }
         ),
         Option(
             title = "Exportar Datos",
