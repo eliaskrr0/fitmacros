@@ -226,11 +226,11 @@ fun PersonalDataScreen(userData: UserData, onSave: (UserData) -> Unit, onNavigat
 
             OutlinedTextField(
                 value = peso,
-                onValueChange = { peso = it },
+                onValueChange = { peso = sanitizeDecimalInput(it) },
                 label = { Text(stringResource(R.string.weight_kg)) },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                 colors = textFieldColors
             )
             Spacer(modifier = Modifier.height(Dimens.Medium))
@@ -361,4 +361,23 @@ private fun String.toMillis(formatter: SimpleDateFormat): Long? {
     } catch (_: ParseException) {
         null
     }
+}
+
+private fun sanitizeDecimalInput(rawInput: String): String {
+    if (rawInput.isEmpty()) return ""
+    val normalized = rawInput.replace(',', '.')
+    val builder = StringBuilder(normalized.length)
+    var dotUsed = false
+
+    normalized.forEach { char ->
+        when {
+            char.isDigit() -> builder.append(char)
+            char == '.' && !dotUsed -> {
+                builder.append(char)
+                dotUsed = true
+            }
+        }
+    }
+
+    return builder.toString()
 }
