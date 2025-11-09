@@ -72,7 +72,6 @@
     <string name="birthdate">Fecha de Nacimiento</string>
     <string name="birthdate_placeholder">DD/MM/AAAA</string>
     <string name="user_age_value">%1$d años</string>
-    <string name="user_age_years">Edad: %1$d años</string>
     <string name="height_cm">Altura (cm)</string>
     <string name="weight_kg">Peso (kg)</string>
     <string name="sex_male">Hombre</string>
