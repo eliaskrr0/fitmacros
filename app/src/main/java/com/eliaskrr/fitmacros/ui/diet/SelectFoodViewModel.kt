@@ -28,7 +28,7 @@ class SelectFoodViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
-    val dietaId: Int = checkNotNull(savedStateHandle["dietaId"])
+    val dietId: Int = checkNotNull(savedStateHandle["dietId"])
     val mealType: MealType = MealType.valueOf(checkNotNull(savedStateHandle["mealType"]))
 
     private val _searchQuery = MutableStateFlow("")
@@ -57,13 +57,13 @@ class SelectFoodViewModel @Inject constructor(
         _searchQuery.value = query
     }
 
-    fun addAlimentoToDieta(alimentoId: Int, cantidad: Double) {
+    fun addAlimentoToDieta(foodId: Int, amount: Double) {
         viewModelScope.launch {
             val dietFood = DietFood(
-                dietaId = dietaId,
-                alimentoId = alimentoId,
+                dietId = dietId,
+                foodId = foodId,
                 mealType = mealType,
-                cantidad = cantidad
+                amount = amount
             )
             dietFoodRepository.insert(dietFood)
             _isSaved.value = true // Para disparar la navegación hacia atrás

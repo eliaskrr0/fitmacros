@@ -12,9 +12,9 @@ class DietRepository(private val dietaDao: DietDao) {
     suspend fun insert(diet: Diet) {
         try {
             dietaDao.insert(diet)
-            Log.i(TAG, "Dieta insertada: ${diet.nombre} (id=${diet.id})")
+            Log.i(TAG, "Dieta insertada: ${diet.name} (id=${diet.id})")
         } catch (ex: Exception) {
-            Log.e(TAG, "Error al insertar dieta ${diet.nombre}", ex)
+            Log.e(TAG, "Error al insertar dieta ${diet.name}", ex)
             throw ex
         }
     }

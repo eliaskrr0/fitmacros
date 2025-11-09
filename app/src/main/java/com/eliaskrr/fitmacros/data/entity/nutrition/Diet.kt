@@ -7,5 +7,5 @@ import androidx.room.PrimaryKey
 data class Diet(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
-    val nombre: String
+    val name: String
 )

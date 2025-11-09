@@ -101,7 +101,7 @@ fun SelectAlimentoForMealScreen(
                     showError = true
                     return@QuantityDialog
                 }
-                onAlimentoSelected(selectedFood!!, normalized, selectedFood!!.unidadBase)
+                onAlimentoSelected(selectedFood!!, normalized, selectedFood!!.unitBase)
                 selectedFood = null
                 quantityText = "100"
                 showError = false
@@ -184,7 +184,7 @@ fun SelectAlimentoForMealScreen(
                         food = alimento,
                         onClick = {
                             selectedFood = alimento
-                            quantityText = formatQuantity(alimento.cantidadBase)
+                            quantityText = formatQuantity(alimento.amountBase)
                         }
                     )
                 }
@@ -214,7 +214,7 @@ private fun QuantityDialog(
     AlertDialog(
         onDismissRequest = onDismiss,
         title = {
-            Text(text = stringResource(R.string.select_quantity_for, food.nombre))
+            Text(text = stringResource(R.string.select_quantity_for, food.name))
         },
         text = {
             Column {
@@ -234,7 +234,7 @@ private fun QuantityDialog(
                 Text(
                     text = stringResource(
                         R.string.unit_label_with_value,
-                        stringResource(food.unidadBase.labelRes)
+                        stringResource(food.unitBase.labelRes)
                     )
                 )
             }

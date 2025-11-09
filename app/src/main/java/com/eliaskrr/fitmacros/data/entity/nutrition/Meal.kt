@@ -5,6 +5,6 @@ import com.eliaskrr.fitmacros.data.entity.nutrition.type.QuantityUnit
 
 data class Meal(
 	@Embedded val food: Food,
-	val cantidad: Double,
-	val unidad: QuantityUnit
+	val amount: Double,
+	val unit: QuantityUnit
 )

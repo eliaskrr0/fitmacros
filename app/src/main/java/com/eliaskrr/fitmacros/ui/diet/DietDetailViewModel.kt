@@ -26,20 +26,20 @@ import javax.inject.Inject
 
 data class MealData(
     val items: List<MealItem> = emptyList(),
-    val totalCalorias: Double = 0.0,
-    val totalProteinas: Double = 0.0,
-    val totalCarbos: Double = 0.0,
-    val totalGrasas: Double = 0.0
+    val totalCalories: Double = 0.0,
+    val totalProteins: Double = 0.0,
+    val totalCarbs: Double = 0.0,
+    val totalFats: Double = 0.0
 )
 
 data class MealItem(
     val food: Food,
-    val cantidad: Double,
-    val unidad: QuantityUnit,
-    val calorias: Double,
-    val proteinas: Double,
-    val carbos: Double,
-    val grasas: Double
+    val amount: Double,
+    val unit: QuantityUnit,
+    val calories: Double,
+    val proteins: Double,
+    val carbs: Double,
+    val fats: Double
 )
 
 data class DietaDetailUiState(
@@ -53,9 +53,9 @@ data class DietaDetailUiState(
 
 data class EditQuantityState(
     val mealType: MealType,
-    val alimentoId: Int,
-    val nombre: String,
-    val unidad: QuantityUnit,
+    val foodId: Int,
+    val name: String,
+    val unit: QuantityUnit,
     val quantityText: String,
     val showError: Boolean = false
 )
@@ -67,7 +67,7 @@ class DietaDetailViewModel @Inject constructor(
     private val dietFoodRepository: DietFoodRepository
 ) : ViewModel() {
 
-    private val dietaId: Int = checkNotNull(savedStateHandle["dietaId"])
+    private val dietId: Int = checkNotNull(savedStateHandle["dietId"])
 
     private val _uiState = MutableStateFlow(DietaDetailUiState())
     val uiState: StateFlow<DietaDetailUiState> = _uiState.asStateFlow()
@@ -84,20 +84,20 @@ class DietaDetailViewModel @Inject constructor(
 
     fun getMealData(mealType: MealType): StateFlow<MealData> {
         return mealDataFlows.getOrPut(mealType) {
-            Log.d(TAG, "Obteniendo datos de comida $mealType para dieta $dietaId")
-            dietFoodRepository.getAlimentosForDietaAndMeal(dietaId, mealType)
+            Log.d(TAG, "Obteniendo datos de comida $mealType para dieta $dietId")
+            dietFoodRepository.getAlimentosForDietaAndMeal(dietId, mealType)
                 .map { registros ->
                     val items = registros.map { it.toMealItem() }
-                    val totalCalorias = items.sumOf { it.calorias }
-                    val totalProteinas = items.sumOf { it.proteinas }
-                    val totalCarbos = items.sumOf { it.carbos }
-                    val totalGrasas = items.sumOf { it.grasas }
+                    val totalCalories = items.sumOf { it.calories }
+                    val totalProteins = items.sumOf { it.proteins }
+                    val totalCarbs = items.sumOf { it.carbs }
+                    val totalFats = items.sumOf { it.fats }
                     MealData(
                         items = items,
-                        totalCalorias = totalCalorias,
-                        totalProteinas = totalProteinas,
-                        totalCarbos = totalCarbos,
-                        totalGrasas = totalGrasas
+                        totalCalories = totalCalories,
+                        totalProteins = totalProteins,
+                        totalCarbs = totalCarbs,
+                        totalFats = totalFats
                     )
                 }
                 .stateIn(
@@ -108,28 +108,28 @@ class DietaDetailViewModel @Inject constructor(
         }
     }
 
-    fun addAlimentoToDieta(alimentoId: Int, mealType: MealType, cantidad: Double, unidad: QuantityUnit) {
+    fun addAlimentoToDieta(foodId: Int, mealType: MealType, amount: Double, unit: QuantityUnit) {
         viewModelScope.launch {
-            val dietFood = DietFood(dietaId, alimentoId, mealType, cantidad, unidad)
+            val dietFood = DietFood(dietId, foodId, mealType, amount, unit)
             runCatching {
                 Log.d(
                     TAG,
-                    "Añadiendo alimento $alimentoId a dieta $dietaId para $mealType con cantidad $cantidad $unidad"
+                    "Añadiendo alimento $foodId a dieta $dietId para $mealType con cantidad $amount $unit"
                 )
                 dietFoodRepository.insert(dietFood)
             }.onSuccess {
-                Log.i(TAG, "Alimento $alimentoId añadido a dieta $dietaId para $mealType")
+                Log.i(TAG, "Alimento $foodId añadido a dieta $dietId para $mealType")
             }.onFailure { ex ->
-                Log.e(TAG, "Error al añadir alimento $alimentoId a dieta $dietaId", ex)
+                Log.e(TAG, "Error al añadir alimento $foodId a dieta $dietId", ex)
             }
         }
     }
 
-    fun toggleSelection(mealType: MealType, alimentoId: Int) {
+    fun toggleSelection(mealType: MealType, foodId: Int) {
         _uiState.update { state ->
             val currentSelection = state.selectedItems[mealType].orEmpty().toMutableSet()
-            if (!currentSelection.add(alimentoId)) {
-                currentSelection.remove(alimentoId)
+            if (!currentSelection.add(foodId)) {
+                currentSelection.remove(foodId)
             }
             val newSelection = state.selectedItems.toMutableMap().apply {
                 if (currentSelection.isEmpty()) {
@@ -156,16 +156,16 @@ class DietaDetailViewModel @Inject constructor(
 
         viewModelScope.launch {
             runCatching {
-                selections.forEach { (mealType, alimentoIds) ->
-                    alimentoIds.forEach { alimentoId ->
-                        dietFoodRepository.delete(dietaId, alimentoId, mealType)
+                selections.forEach { (mealType, foodIds) ->
+                    foodIds.forEach { foodId ->
+                        dietFoodRepository.delete(dietId, foodId, mealType)
                     }
                 }
             }.onSuccess {
-                Log.i(TAG, "Eliminados ${currentState.selectedCount} alimentos seleccionados de la dieta $dietaId")
+                Log.i(TAG, "Eliminados ${currentState.selectedCount} alimentos seleccionados de la dieta $dietId")
                 clearSelection()
             }.onFailure { ex ->
-                Log.e(TAG, "Error al eliminar alimentos seleccionados de la dieta $dietaId", ex)
+                Log.e(TAG, "Error al eliminar alimentos seleccionados de la dieta $dietId", ex)
             }
         }
     }
@@ -175,10 +175,10 @@ class DietaDetailViewModel @Inject constructor(
             state.copy(
                 editQuantityState = EditQuantityState(
                     mealType = mealType,
-                    alimentoId = item.food.id,
-                    nombre = item.food.nombre,
-                    unidad = item.unidad,
-                    quantityText = formatQuantity(item.cantidad)
+                    foodId = item.food.id,
+                    name = item.food.name,
+                    unit = item.unit,
+                    quantityText = formatQuantity(item.amount)
                 )
             )
         }
@@ -208,21 +208,21 @@ class DietaDetailViewModel @Inject constructor(
         viewModelScope.launch {
             runCatching {
                 dietFoodRepository.updateCantidad(
-                    dietaId = dietaId,
-                    alimentoId = editState.alimentoId,
+                    dietId = dietId,
+                    foodId = editState.foodId,
                     mealType = editState.mealType,
-                    cantidad = normalized
+                    amount = normalized
                 )
             }.onSuccess {
                 Log.i(
                     TAG,
-                    "Cantidad actualizada para alimento ${editState.alimentoId} en dieta $dietaId (${editState.mealType}) a $normalized"
+                    "Cantidad actualizada para alimento ${editState.foodId} en dieta $dietId (${editState.mealType}) a $normalized"
                 )
                 dismissEditQuantity()
             }.onFailure { ex ->
                 Log.e(
                     TAG,
-                    "Error al actualizar cantidad del alimento ${editState.alimentoId} en dieta $dietaId",
+                    "Error al actualizar cantidad del alimento ${editState.foodId} en dieta $dietId",
                     ex
                 )
                 _uiState.update { state ->
@@ -238,16 +238,16 @@ class DietaDetailViewModel @Inject constructor(
 }
 
 private fun Meal.toMealItem(): MealItem {
-    val baseQuantity = food.cantidadBase.takeIf { it > 0.0 } ?: 100.0
-    val factor = cantidad / baseQuantity
+    val baseQuantity = food.amountBase.takeIf { it > 0.0 } ?: 100.0
+    val factor = amount / baseQuantity
     return MealItem(
         food = food,
-        cantidad = cantidad,
-        unidad = unidad,
-        calorias = food.calorias * factor,
-        proteinas = food.proteinas * factor,
-        carbos = food.carbos * factor,
-        grasas = food.grasas * factor
+        amount = amount,
+        unit = unit,
+        calories = food.calories * factor,
+        proteins = food.proteins * factor,
+        carbs = food.carbs * factor,
+        fats = food.fats * factor
     )
 }
 

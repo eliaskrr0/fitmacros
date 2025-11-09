@@ -6,17 +6,17 @@ import com.eliaskrr.fitmacros.data.entity.nutrition.type.QuantityUnit
 import com.eliaskrr.fitmacros.data.entity.nutrition.type.MealType
 
 @Entity(
-    tableName = "tb_dieta_alimentos",
-    primaryKeys = ["dietaId", "alimentoId", "mealType"],
+    tableName = "tb_diet_food",
+    primaryKeys = ["dietId", "foodId", "mealType"],
     foreignKeys = [
-        ForeignKey(entity = Diet::class, parentColumns = ["id"], childColumns = ["dietaId"], onDelete = ForeignKey.CASCADE),
-        ForeignKey(entity = Food::class, parentColumns = ["id"], childColumns = ["alimentoId"], onDelete = ForeignKey.CASCADE)
+        ForeignKey(entity = Diet::class, parentColumns = ["id"], childColumns = ["dietId"], onDelete = ForeignKey.CASCADE),
+        ForeignKey(entity = Food::class, parentColumns = ["id"], childColumns = ["foodId"], onDelete = ForeignKey.CASCADE)
     ]
 )
 data class DietFood(
-    val dietaId: Int,
-    val alimentoId: Int,
+    val dietId: Int,
+    val foodId: Int,
     val mealType: MealType,
-    val cantidad: Double,
-    val unidad: QuantityUnit = QuantityUnit.GRAMS
+    val amount: Double,
+    val unit: QuantityUnit = QuantityUnit.GRAMS
 )

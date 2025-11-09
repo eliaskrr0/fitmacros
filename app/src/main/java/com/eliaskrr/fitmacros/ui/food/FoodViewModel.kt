@@ -44,39 +44,39 @@ class FoodViewModel @Inject constructor(
 
     fun insert(food: Food) = viewModelScope.launch {
         try {
-            Log.d(TAG, "Solicitando inserción de alimento ${food.nombre}")
+            Log.d(TAG, "Solicitando inserción de alimento ${food.name}")
             repository.insert(food)
         } catch (ex: Exception) {
-            Log.e(TAG, "Error solicitando inserción de ${food.nombre}", ex)
+            Log.e(TAG, "Error solicitando inserción de ${food.name}", ex)
             notifyError(R.string.error_saving_food)
         }
     }
 
     fun update(food: Food) = viewModelScope.launch {
         try {
-            Log.d(TAG, "Solicitando actualización de alimento ${food.nombre} (id=${food.id})")
+            Log.d(TAG, "Solicitando actualización de alimento ${food.name} (id=${food.id})")
             repository.update(food)
         } catch (ex: Exception) {
-            Log.e(TAG, "Error solicitando actualización de ${food.nombre} (id=${food.id})", ex)
+            Log.e(TAG, "Error solicitando actualización de ${food.name} (id=${food.id})", ex)
             notifyError(R.string.error_saving_food)
         }
     }
 
     fun delete(food: Food) = viewModelScope.launch {
         try {
-            Log.d(TAG, "Solicitando eliminación de alimento ${food.nombre} (id=${food.id})")
+            Log.d(TAG, "Solicitando eliminación de alimento ${food.name} (id=${food.id})")
             repository.delete(food)
         } catch (ex: Exception) {
-            Log.e(TAG, "Error solicitando eliminación de ${food.nombre} (id=${food.id})", ex)
+            Log.e(TAG, "Error solicitando eliminación de ${food.name} (id=${food.id})", ex)
             notifyError(R.string.error_deleting_food)
         }
     }
 
-    fun toggleSelection(alimentoId: Int) {
+    fun toggleSelection(foodId: Int) {
         _uiState.update { state ->
             val updatedSelection = state.selectedAlimentos.toMutableSet().also { selection ->
-                if (!selection.add(alimentoId)) {
-                    selection.remove(alimentoId)
+                if (!selection.add(foodId)) {
+                    selection.remove(foodId)
                 }
             }
             state.copy(selectedAlimentos = updatedSelection)
@@ -96,11 +96,11 @@ class FoodViewModel @Inject constructor(
 
         alimentosToDelete.forEach { alimento ->
             try {
-                Log.d(TAG, "Eliminando alimento seleccionado ${alimento.nombre} (id=${alimento.id})")
+                Log.d(TAG, "Eliminando alimento seleccionado ${alimento.name} (id=${alimento.id})")
                 repository.delete(alimento)
             } catch (ex: Exception) {
                 hadError = true
-                Log.e(TAG, "Error eliminando alimento seleccionado ${alimento.nombre} (id=${alimento.id})", ex)
+                Log.e(TAG, "Error eliminando alimento seleccionado ${alimento.name} (id=${alimento.id})", ex)
             }
         }
 

@@ -37,12 +37,12 @@ class ProfileViewModel @Inject constructor(
     fun saveUserData(userData: UserData) {
         viewModelScope.launch {
             runCatching {
-                Log.d(TAG, "Guardando datos de usuario para ${userData.nombre}")
+                Log.d(TAG, "Guardando datos de usuario para ${userData.name}")
                 userDataRepository.saveUserData(userData)
             }.onSuccess {
-                Log.i(TAG, "Datos de usuario guardados para ${userData.nombre}")
+                Log.i(TAG, "Datos de usuario guardados para ${userData.name}")
             }.onFailure { ex ->
-                Log.e(TAG, "Error al guardar datos de usuario para ${userData.nombre}", ex)
+                Log.e(TAG, "Error al guardar datos de usuario para ${userData.name}", ex)
             }
         }
     }

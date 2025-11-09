@@ -16,15 +16,15 @@ sealed class AppScreen(val route: String) {
     data object About : AppScreen("about")
     data object Export : AppScreen("export")
     data object Notifications : AppScreen("notifications")
-    data object AddEditFood : AppScreen("add_edit_food?alimentoId={alimentoId}") {
-        fun createRoute(alimentoId: Int?) = "add_edit_food?alimentoId=$alimentoId"
+    data object AddEditFood : AppScreen("add_edit_food?foodId={foodId}") {
+        fun createRoute(foodId: Int?) = "add_edit_food?foodId=$foodId"
     }
-    data object DietaDetail : AppScreen("dieta_detail/{dietaId}") {
-        fun createRoute(dietaId: Int) = "dieta_detail/$dietaId"
+    data object DietaDetail : AppScreen("dieta_detail/{dietId}") {
+        fun createRoute(dietId: Int) = "dieta_detail/$dietId"
     }
-    data object SelectAlimentoForMeal : AppScreen("select_food/{dietaId}/{mealType}") {
-        fun createRoute(dietaId: Int, mealType: MealType) =
-            "select_food/$dietaId/${mealType.name}"
+    data object SelectAlimentoForMeal : AppScreen("select_food/{dietId}/{mealType}") {
+        fun createRoute(dietId: Int, mealType: MealType) =
+            "select_food/$dietId/${mealType.name}"
     }
 }
 

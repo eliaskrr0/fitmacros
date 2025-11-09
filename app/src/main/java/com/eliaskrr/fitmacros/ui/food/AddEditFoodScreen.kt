@@ -151,8 +151,8 @@ fun AddEditAlimentoScreen(
                 Spacer(modifier = Modifier.height(16.dp))
             }
             OutlinedTextField(
-                value = uiState.nombre,
-                onValueChange = { viewModel.onValueChange(nombre = it) },
+                value = uiState.name,
+                onValueChange = { viewModel.onValueChange(name = it) },
                 label = { Text(stringResource(R.string.user_name)) },
                 modifier = Modifier.fillMaxWidth(),
                 enabled = !uiState.isLoading,
@@ -160,8 +160,8 @@ fun AddEditAlimentoScreen(
             )
             Spacer(modifier = Modifier.height(8.dp))
             OutlinedTextField(
-                value = uiState.marca,
-                onValueChange = { viewModel.onValueChange(marca = it) },
+                value = uiState.brand,
+                onValueChange = { viewModel.onValueChange(brand = it) },
                 label = { Text(stringResource(R.string.brand_optional)) },
                 modifier = Modifier.fillMaxWidth(),
                 enabled = !uiState.isLoading,
@@ -169,8 +169,8 @@ fun AddEditAlimentoScreen(
             )
             Spacer(modifier = Modifier.height(8.dp))
             OutlinedTextField(
-                value = uiState.precio,
-                onValueChange = { viewModel.onValueChange(precio = it) },
+                value = uiState.price,
+                onValueChange = { viewModel.onValueChange(price = it) },
                 label = { Text(stringResource(R.string.price_optional)) },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                 modifier = Modifier.fillMaxWidth(),
@@ -179,8 +179,8 @@ fun AddEditAlimentoScreen(
             )
             Spacer(modifier = Modifier.height(8.dp))
             OutlinedTextField(
-                value = uiState.cantidadBase,
-                onValueChange = { viewModel.onValueChange(cantidadBase = it) },
+                value = uiState.amountBase,
+                onValueChange = { viewModel.onValueChange(amountBase = it) },
                 label = { Text(stringResource(R.string.base_quantity_label)) },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                 modifier = Modifier.fillMaxWidth(),
@@ -189,14 +189,14 @@ fun AddEditAlimentoScreen(
             )
             Spacer(modifier = Modifier.height(8.dp))
             QuantityUnitDropdownField(
-                selectedUnit = uiState.unidadBase,
-                onUnitSelected = { viewModel.onValueChange(unidadBase = it) },
+                selectedUnit = uiState.unitBase,
+                onUnitSelected = { viewModel.onValueChange(unitBase = it) },
                 colors = textFieldColors
             )
             Spacer(modifier = Modifier.height(8.dp))
             OutlinedTextField(
-                value = uiState.proteinas,
-                onValueChange = { viewModel.onValueChange(proteinas = it) },
+                value = uiState.proteins,
+                onValueChange = { viewModel.onValueChange(proteins = it) },
                 label = { Text(stringResource(R.string.proteins)) },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                 modifier = Modifier.fillMaxWidth(),
@@ -205,8 +205,8 @@ fun AddEditAlimentoScreen(
             )
             Spacer(modifier = Modifier.height(8.dp))
             OutlinedTextField(
-                value = uiState.carbos,
-                onValueChange = { viewModel.onValueChange(carbos = it) },
+                value = uiState.carbs,
+                onValueChange = { viewModel.onValueChange(carbs = it) },
                 label = { Text(stringResource(R.string.carbohydrates)) },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                 modifier = Modifier.fillMaxWidth(),
@@ -215,8 +215,8 @@ fun AddEditAlimentoScreen(
             )
             Spacer(modifier = Modifier.height(8.dp))
             OutlinedTextField(
-                value = uiState.grasas,
-                onValueChange = { viewModel.onValueChange(grasas = it) },
+                value = uiState.fats,
+                onValueChange = { viewModel.onValueChange(fats = it) },
                 label = { Text(stringResource(R.string.fats)) },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                 modifier = Modifier.fillMaxWidth(),
@@ -225,7 +225,7 @@ fun AddEditAlimentoScreen(
             )
             Spacer(modifier = Modifier.height(8.dp))
             OutlinedTextField(
-                value = uiState.calorias,
+                value = uiState.calories,
                 onValueChange = {},
                 label = { Text(stringResource(R.string.calories)) },
                 readOnly = true,

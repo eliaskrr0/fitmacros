@@ -27,17 +27,17 @@ import javax.inject.Inject
 
 data class AlimentoUiState(
     val id: Int = 0,
-    val nombre: String = "",
-    val precio: String = "",
-    val marca: String = "",
-    val proteinas: String = "",
-    val carbos: String = "",
-    val grasas: String = "",
-    val cantidadBase: String = "100",
-    val unidadBase: QuantityUnit = QuantityUnit.GRAMS,
-    val calorias: String = "0",
-    val fechaCreacion: Long? = null,
-    val fechaActualizacion: Long? = null,
+    val name: String = "",
+    val price: String = "",
+    val brand: String = "",
+    val proteins: String = "",
+    val carbs: String = "",
+    val fats: String = "",
+    val amountBase: String = "100",
+    val unitBase: QuantityUnit = QuantityUnit.GRAMS,
+    val calories: String = "0",
+    val creationDate: Long? = null,
+    val updateDate: Long? = null,
     val isSaved: Boolean = false,
     val isLoading: Boolean = false,
     val errorMessage: Int? = null
@@ -55,7 +55,7 @@ class AddEditAlimentoViewModel @Inject constructor(
     private val _events = MutableSharedFlow<AddEditAlimentoEvent>()
     val events: SharedFlow<AddEditAlimentoEvent> = _events.asSharedFlow()
 
-    private val alimentoId: Int? = savedStateHandle["alimentoId"]
+    private val foodId: Int? = savedStateHandle["foodId"]
 
     private val decimalSymbols: DecimalFormatSymbols = DecimalFormatSymbols.getInstance(Locale.getDefault())
     private val numberFormat: NumberFormat = NumberFormat.getNumberInstance(Locale.getDefault()).apply {
@@ -63,10 +63,10 @@ class AddEditAlimentoViewModel @Inject constructor(
     }
 
     init {
-        // El valor por defecto de alimentoId es -1, así que solo cargamos si es un ID válido
-        if (alimentoId != null && alimentoId != -1) {
-            Log.d(TAG, "Inicializando edición para alimento con id $alimentoId")
-            loadAlimento(alimentoId)
+        // El valor por defecto de foodId es -1, así que solo cargamos si es un ID válido
+        if (foodId != null && foodId != -1) {
+            Log.d(TAG, "Inicializando edición para alimento con id $foodId")
+            loadAlimento(foodId)
         }
     }
 
@@ -76,22 +76,22 @@ class AddEditAlimentoViewModel @Inject constructor(
             try {
                 val alimento = repository.getById(id).first()
                 if (alimento != null) {
-                    Log.d(TAG, "Alimento cargado para edición: ${alimento.nombre} (id=${alimento.id})")
-                    val caloriasCalculadas = calculateCalories(alimento.proteinas, alimento.carbos, alimento.grasas)
+                    Log.d(TAG, "Alimento cargado para edición: ${alimento.name} (id=${alimento.id})")
+                    val caloriasCalculadas = calculateCalories(alimento.proteins, alimento.carbs, alimento.fats)
                     _uiState.update {
                         it.copy(
                             id = alimento.id,
-                            nombre = alimento.nombre,
-                            precio = alimento.precio?.toString() ?: "",
-                            marca = alimento.marca ?: "",
-                            proteinas = alimento.proteinas.toString(),
-                            carbos = alimento.carbos.toString(),
-                            grasas = alimento.grasas.toString(),
-                            cantidadBase = formatQuantity(alimento.cantidadBase),
-                            unidadBase = alimento.unidadBase,
-                            calorias = formatCalories(caloriasCalculadas),
-                            fechaCreacion = alimento.fechaCreacion,
-                            fechaActualizacion = alimento.fechaActualizacion,
+                            name = alimento.name,
+                            price = alimento.price?.toString() ?: "",
+                            brand = alimento.brand ?: "",
+                            proteins = alimento.proteins.toString(),
+                            carbs = alimento.carbs.toString(),
+                            fats = alimento.fats.toString(),
+                            amountBase = formatQuantity(alimento.amountBase),
+                            unitBase = alimento.unitBase,
+                            calories = formatCalories(caloriasCalculadas),
+                            creationDate = alimento.creationDate,
+                            updateDate = alimento.updateDate,
                             isLoading = false,
                             errorMessage = null
                         )
@@ -110,34 +110,34 @@ class AddEditAlimentoViewModel @Inject constructor(
     }
 
     fun onValueChange(
-        nombre: String? = null,
-        precio: String? = null,
-        marca: String? = null,
-        proteinas: String? = null,
-        carbos: String? = null,
-        grasas: String? = null,
-        cantidadBase: String? = null,
-        unidadBase: QuantityUnit? = null
+        name: String? = null,
+        price: String? = null,
+        brand: String? = null,
+        proteins: String? = null,
+        carbs: String? = null,
+        fats: String? = null,
+        amountBase: String? = null,
+        unitBase: QuantityUnit? = null
     ) {
         _uiState.update { currentState ->
-            val updatedProteinas = proteinas?.let { normalizeDecimalInput(it) } ?: currentState.proteinas
-            val updatedCarbos = carbos?.let { normalizeDecimalInput(it) } ?: currentState.carbos
-            val updatedGrasas = grasas?.let { normalizeDecimalInput(it) } ?: currentState.grasas
-            val updatedPrecio = precio?.let { normalizeDecimalInput(it, allowNegative = false) } ?: currentState.precio
-            val updatedCantidadBase = cantidadBase?.let { normalizeDecimalInput(it) } ?: currentState.cantidadBase
+            val updatedProteinas = proteins?.let { normalizeDecimalInput(it) } ?: currentState.proteins
+            val updatedCarbos = carbs?.let { normalizeDecimalInput(it) } ?: currentState.carbs
+            val updatedGrasas = fats?.let { normalizeDecimalInput(it) } ?: currentState.fats
+            val updatedPrecio = price?.let { normalizeDecimalInput(it, allowNegative = false) } ?: currentState.price
+            val updatedCantidadBase = amountBase?.let { normalizeDecimalInput(it) } ?: currentState.amountBase
 
             val calculatedCalories = calculateCalories(updatedProteinas, updatedCarbos, updatedGrasas)
 
             currentState.copy(
-                nombre = nombre ?: currentState.nombre,
-                precio = updatedPrecio,
-                marca = marca ?: currentState.marca,
-                proteinas = updatedProteinas,
-                carbos = updatedCarbos,
-                grasas = updatedGrasas,
-                cantidadBase = updatedCantidadBase,
-                unidadBase = unidadBase ?: currentState.unidadBase,
-                calorias = formatCalories(calculatedCalories),
+                name = name ?: currentState.name,
+                price = updatedPrecio,
+                brand = brand ?: currentState.brand,
+                proteins = updatedProteinas,
+                carbs = updatedCarbos,
+                fats = updatedGrasas,
+                amountBase = updatedCantidadBase,
+                unitBase = unitBase ?: currentState.unitBase,
+                calories = formatCalories(calculatedCalories),
                 errorMessage = null
             )
         }
@@ -146,62 +146,62 @@ class AddEditAlimentoViewModel @Inject constructor(
     fun saveAlimento() {
         viewModelScope.launch {
             val state = _uiState.value
-            val isNewAlimento = alimentoId == null || alimentoId == -1
+            val isNewAlimento = foodId == null || foodId == -1
 
-            val caloriasCalculadas = calculateCalories(state.proteinas, state.carbos, state.grasas)
+            val caloriasCalculadas = calculateCalories(state.proteins, state.carbs, state.fats)
 
             val food = if (isNewAlimento) {
                 Food(
                     id = 0,
-                    nombre = state.nombre,
-                    precio = parseDecimal(state.precio)?.toDouble(),
-                    marca = state.marca.ifEmpty { null },
-                    proteinas = parseMacroInput(state.proteinas),
-                    carbos = parseMacroInput(state.carbos),
-                    grasas = parseMacroInput(state.grasas),
-                    cantidadBase = parseQuantity(state.cantidadBase),
-                    unidadBase = state.unidadBase,
-                    calorias = caloriasCalculadas
+                    name = state.name,
+                    price = parseDecimal(state.price)?.toDouble(),
+                    brand = state.brand.ifEmpty { null },
+                    proteins = parseMacroInput(state.proteins),
+                    carbs = parseMacroInput(state.carbs),
+                    fats = parseMacroInput(state.fats),
+                    amountBase = parseQuantity(state.amountBase),
+                    unitBase = state.unitBase,
+                    calories = caloriasCalculadas
                 )
             } else {
                 val now = System.currentTimeMillis()
                 Food(
                     id = state.id,
-                    nombre = state.nombre,
-                    precio = parseDecimal(state.precio)?.toDouble(),
-                    marca = state.marca.ifEmpty { null },
-                    proteinas = parseMacroInput(state.proteinas),
-                    carbos = parseMacroInput(state.carbos),
-                    grasas = parseMacroInput(state.grasas),
-                    cantidadBase = parseQuantity(state.cantidadBase),
-                    unidadBase = state.unidadBase,
-                    calorias = caloriasCalculadas,
-                    fechaCreacion = state.fechaCreacion ?: now,
-                    fechaActualizacion = now
+                    name = state.name,
+                    price = parseDecimal(state.price)?.toDouble(),
+                    brand = state.brand.ifEmpty { null },
+                    proteins = parseMacroInput(state.proteins),
+                    carbs = parseMacroInput(state.carbs),
+                    fats = parseMacroInput(state.fats),
+                    amountBase = parseQuantity(state.amountBase),
+                    unitBase = state.unitBase,
+                    calories = caloriasCalculadas,
+                    creationDate = state.creationDate ?: now,
+                    updateDate = now
                 )
             }
 
             _uiState.update { it.copy(isLoading = true, errorMessage = null, isSaved = false) }
             try {
                 if (isNewAlimento) {
-                    Log.d(TAG, "Insertando nuevo alimento ${food.nombre}")
+                    Log.d(TAG, "Insertando nuevo alimento ${food.name}")
                     repository.insert(food)
                 } else {
-                    Log.d(TAG, "Actualizando alimento ${food.nombre} (id=${food.id})")
+                    Log.d(TAG, "Actualizando alimento ${food.name} (id=${food.id})")
                     repository.update(food)
                 }
-                Log.i(TAG, "Alimento guardado correctamente: ${food.nombre}")
+                Log.i(TAG, "Alimento guardado correctamente: ${food.name}")
                 _uiState.update {
                     it.copy(
                         isSaved = true,
                         isLoading = false,
                         errorMessage = null,
-                        fechaCreacion = food.fechaCreacion,
-                        fechaActualizacion = food.fechaActualizacion
+                        creationDate = food.creationDate,
+                        updateDate = food.updateDate
                     )
                 }
             } catch (ex: Exception) {
-                Log.e(TAG, "Error al guardar alimento ${food.nombre}", ex)
+                Log.e(TAG, "Error al guardar alimento ${food.name}", ex)
                 _uiState.update { it.copy(isLoading = false, errorMessage = R.string.error_saving_food) }
                 _events.emit(AddEditAlimentoEvent.ShowMessage(R.string.error_saving_food))
             }
@@ -212,25 +212,25 @@ class AddEditAlimentoViewModel @Inject constructor(
         viewModelScope.launch {
             val state = _uiState.value
             if (state.id != 0) {
-                val cantidadBase = parseQuantity(state.cantidadBase)
+                val amountBase = parseQuantity(state.amountBase)
                 val foodToDelete = Food(
                     id = state.id,
-                    nombre = state.nombre,
-                    proteinas = parseMacroInput(state.proteinas),
-                    carbos = parseMacroInput(state.carbos),
-                    grasas = parseMacroInput(state.grasas),
-                    cantidadBase = cantidadBase,
-                    unidadBase = state.unidadBase,
-                    calorias = calculateCalories(state.proteinas, state.carbos, state.grasas)
+                    name = state.name,
+                    proteins = parseMacroInput(state.proteins),
+                    carbs = parseMacroInput(state.carbs),
+                    fats = parseMacroInput(state.fats),
+                    amountBase = amountBase,
+                    unitBase = state.unitBase,
+                    calories = calculateCalories(state.proteins, state.carbs, state.fats)
                 )
                 _uiState.update { it.copy(isLoading = true, errorMessage = null) }
                 try {
-                    Log.d(TAG, "Eliminando alimento ${foodToDelete.nombre} (id=${foodToDelete.id})")
+                    Log.d(TAG, "Eliminando alimento ${foodToDelete.name} (id=${foodToDelete.id})")
                     repository.delete(foodToDelete)
-                    Log.i(TAG, "Alimento eliminado correctamente: ${foodToDelete.nombre}")
+                    Log.i(TAG, "Alimento eliminado correctamente: ${foodToDelete.name}")
                     _uiState.update { it.copy(isSaved = true, isLoading = false, errorMessage = null) }
                 } catch (ex: Exception) {
-                    Log.e(TAG, "Error al eliminar alimento ${foodToDelete.nombre} (id=${foodToDelete.id})", ex)
+                    Log.e(TAG, "Error al eliminar alimento ${foodToDelete.name} (id=${foodToDelete.id})", ex)
                     _uiState.update { it.copy(isLoading = false, errorMessage = R.string.error_deleting_food) }
                     _events.emit(AddEditAlimentoEvent.ShowMessage(R.string.error_deleting_food))
                 }
@@ -246,26 +246,26 @@ class AddEditAlimentoViewModel @Inject constructor(
         data class ShowMessage(val messageRes: Int) : AddEditAlimentoEvent
     }
 
-    private fun calculateCalories(proteinas: String, carbos: String, grasas: String): Double {
-        val proteinasDouble = parseMacroInput(proteinas)
-        val carbosDouble = parseMacroInput(carbos)
-        val grasasDouble = parseMacroInput(grasas)
+    private fun calculateCalories(proteins: String, carbs: String, fats: String): Double {
+        val proteinasDouble = parseMacroInput(proteins)
+        val carbosDouble = parseMacroInput(carbs)
+        val grasasDouble = parseMacroInput(fats)
         return calculateCalories(proteinasDouble, carbosDouble, grasasDouble)
     }
 
-    private fun calculateCalories(proteinas: Double, carbos: Double, grasas: Double): Double {
-        return (proteinas * 4) + (carbos * 4) + (grasas * 9)
+    private fun calculateCalories(proteins: Double, carbs: Double, fats: Double): Double {
+        return (proteins * 4) + (carbs * 4) + (fats * 9)
     }
 
     private fun parseMacroInput(value: String): Double {
         return parseDecimal(value)?.takeIf { it >= BigDecimal.ZERO }?.toDouble() ?: 0.0
     }
 
-    private fun formatCalories(calorias: Double): String {
-        return if (calorias == 0.0) {
+    private fun formatCalories(calories: Double): String {
+        return if (calories == 0.0) {
             "0"
         } else {
-            BigDecimal.valueOf(calorias)
+            BigDecimal.valueOf(calories)
                 .setScale(2, RoundingMode.HALF_UP)
                 .stripTrailingZeros()
                 .toPlainString()

@@ -42,13 +42,13 @@ abstract class AppDatabase : RoomDatabase() {
 
         private val MIGRATION_1_2 = object : Migration(1, 2) {
             override fun migrate(db: SupportSQLiteDatabase) {
-                db.execSQL("ALTER TABLE tb_food ADD COLUMN precio REAL")
+                db.execSQL("ALTER TABLE tb_food ADD COLUMN price REAL")
             }
         }
 
         private val MIGRATION_2_3 = object : Migration(2, 3) {
             override fun migrate(db: SupportSQLiteDatabase) {
-                db.execSQL("ALTER TABLE tb_food ADD COLUMN marca TEXT")
+                db.execSQL("ALTER TABLE tb_food ADD COLUMN brand TEXT")
             }
         }
 
@@ -58,22 +58,22 @@ abstract class AppDatabase : RoomDatabase() {
                     """
                     CREATE TABLE IF NOT EXISTS tb_diet (
                         id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-                        nombre TEXT NOT NULL
+                        name TEXT NOT NULL
                     )
                     """.trimIndent()
                 )
 
                 db.execSQL(
                     """
-                    CREATE TABLE IF NOT EXISTS tb_dieta_alimentos (
-                        dietaId INTEGER NOT NULL,
-                        alimentoId INTEGER NOT NULL,
+                    CREATE TABLE IF NOT EXISTS tb_diet_food (
+                        dietId INTEGER NOT NULL,
+                        foodId INTEGER NOT NULL,
                         mealType TEXT NOT NULL,
-                        cantidad REAL NOT NULL,
-                        unidad TEXT NOT NULL DEFAULT 'GRAMS',
-                        PRIMARY KEY(dietaId, alimentoId, mealType),
-                        FOREIGN KEY(dietaId) REFERENCES tb_diet(id) ON DELETE CASCADE,
-                        FOREIGN KEY(alimentoId) REFERENCES tb_food(id) ON DELETE CASCADE
+                        amount REAL NOT NULL,
+                        unit TEXT NOT NULL DEFAULT 'GRAMS',
+                        PRIMARY KEY(dietId, foodId, mealType),
+                        FOREIGN KEY(dietId) REFERENCES tb_diet(id) ON DELETE CASCADE,
+                        FOREIGN KEY(foodId) REFERENCES tb_food(id) ON DELETE CASCADE
                     )
                     """.trimIndent()
                 )
@@ -82,30 +82,30 @@ abstract class AppDatabase : RoomDatabase() {
 
         private val MIGRATION_4_5 = object : Migration(4, 5) {
             override fun migrate(db: SupportSQLiteDatabase) {
-                db.execSQL("ALTER TABLE tb_food ADD COLUMN cantidad_base REAL NOT NULL DEFAULT 100.0")
-                db.execSQL("ALTER TABLE tb_food ADD COLUMN unidad_base TEXT NOT NULL DEFAULT 'GRAMS'")
+                db.execSQL("ALTER TABLE tb_food ADD COLUMN amount_base REAL NOT NULL DEFAULT 100.0")
+                db.execSQL("ALTER TABLE tb_food ADD COLUMN unit_base TEXT NOT NULL DEFAULT 'GRAMS'")
             }
         }
 
         private val MIGRATION_5_6 = object : Migration(5, 6) {
             override fun migrate(db: SupportSQLiteDatabase) {
-                db.execSQL("ALTER TABLE tb_food ADD COLUMN fecha_creacion INTEGER NOT NULL DEFAULT 0")
-                db.execSQL("ALTER TABLE tb_food ADD COLUMN fecha_actualizacion INTEGER NOT NULL DEFAULT 0")
+                db.execSQL("ALTER TABLE tb_food ADD COLUMN creation_date INTEGER NOT NULL DEFAULT 0")
+                db.execSQL("ALTER TABLE tb_food ADD COLUMN update_date INTEGER NOT NULL DEFAULT 0")
                 db.execSQL(
                     """
                     UPDATE tb_food
-                    SET fecha_creacion = CASE
-                        WHEN fecha_creacion = 0 THEN CAST(strftime('%s','now') AS INTEGER) * 1000
-                        ELSE fecha_creacion
+                    SET creation_date = CASE
+                        WHEN creation_date = 0 THEN CAST(strftime('%s','now') AS INTEGER) * 1000
+                        ELSE creation_date
                     END
                     """.trimIndent()
                 )
                 db.execSQL(
                     """
                     UPDATE tb_food
-                    SET fecha_actualizacion = CASE
-                        WHEN fecha_actualizacion = 0 THEN CAST(strftime('%s','now') AS INTEGER) * 1000
-                        ELSE fecha_actualizacion
+                    SET update_date = CASE
+                        WHEN update_date = 0 THEN CAST(strftime('%s','now') AS INTEGER) * 1000
+                        ELSE update_date
                     END
                     """.trimIndent()
                 )

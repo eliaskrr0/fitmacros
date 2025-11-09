@@ -37,24 +37,24 @@ class DietViewModel @Inject constructor(
         observeDietas()
     }
 
-    suspend fun getAlimentosOfDieta(dietaId: Int): List<Meal> {
-        return dietFoodRepository.getAlimentosForDieta(dietaId).first()
+    suspend fun getAlimentosOfDieta(dietId: Int): List<Meal> {
+        return dietFoodRepository.getAlimentosForDieta(dietId).first()
     }
 
     fun insert(diet: Diet) = viewModelScope.launch {
         runCatching {
-            Log.d(TAG, "Solicitando inserción de dieta ${diet.nombre}")
+            Log.d(TAG, "Solicitando inserción de dieta ${diet.name}")
             dietRepository.insert(diet)
         }.onFailure { ex ->
-            Log.e(TAG, "Error solicitando inserción de dieta ${diet.nombre}", ex)
+            Log.e(TAG, "Error solicitando inserción de dieta ${diet.name}", ex)
         }
     }
 
-    fun toggleSelection(dietaId: Int) {
+    fun toggleSelection(dietId: Int) {
         _uiState.update { state ->
             val updatedSelection = state.selectedDietas.toMutableSet().also { selection ->
-                if (!selection.add(dietaId)) {
-                    selection.remove(dietaId)
+                if (!selection.add(dietId)) {
+                    selection.remove(dietId)
                 }
             }
             state.copy(selectedDietas = updatedSelection)

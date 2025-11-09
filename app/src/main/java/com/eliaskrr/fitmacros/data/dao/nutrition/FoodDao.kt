@@ -12,13 +12,13 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface FoodDao {
 
-    @Query("SELECT * FROM tb_food ORDER BY nombre ASC")
+    @Query("SELECT * FROM tb_food ORDER BY name ASC")
     fun getAll(): Flow<List<Food>>
 
     @Query("SELECT * FROM tb_food WHERE id = :id")
     fun getById(id: Int): Flow<Food?>
 
-    @Query("SELECT * FROM tb_food WHERE nombre LIKE '%' || :query || '%' ORDER BY nombre ASC")
+    @Query("SELECT * FROM tb_food WHERE name LIKE '%' || :query || '%' ORDER BY name ASC")
     fun getByName(query: String): Flow<List<Food>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)

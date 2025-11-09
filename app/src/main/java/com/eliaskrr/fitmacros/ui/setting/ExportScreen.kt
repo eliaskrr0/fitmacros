@@ -98,7 +98,7 @@ private fun DietaExportItem(diet: Diet, onClick: () -> Unit) {
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
-                text = diet.nombre,
+                text = diet.name,
                 style = MaterialTheme.typography.bodyLarge,
                 fontWeight = FontWeight.SemiBold
             )

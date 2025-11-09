@@ -218,7 +218,7 @@ fun MealSection(
                 modifier = Modifier.weight(1f)
             )
             Text(
-                text = mealData.totalCalorias.roundToInt().toString(),
+                text = mealData.totalCalories.roundToInt().toString(),
                 style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.Bold
             )
@@ -229,9 +229,9 @@ fun MealSection(
         )
 
         MealMacrosSummary(
-            proteinas = mealData.totalProteinas,
-            carbos = mealData.totalCarbos,
-            grasas = mealData.totalGrasas
+            proteinas = mealData.totalProteins,
+            carbos = mealData.totalCarbs,
+            grasas = mealData.totalFats
         )
 
         if (mealData.items.isEmpty()) {
@@ -290,7 +290,7 @@ private fun EditQuantityDialog(
         containerColor = DialogBackgroundColor,
         titleContentColor = DialogTitleColor,
         textContentColor = DialogTextColor,
-        title = { Text(text = stringResource(R.string.edit_quantity_for, state.nombre)) },
+        title = { Text(text = stringResource(R.string.edit_quantity_for, state.name)) },
         text = {
             Column {
                 OutlinedTextField(
@@ -321,7 +321,7 @@ private fun EditQuantityDialog(
                 Text(
                     text = stringResource(
                         R.string.unit_label_with_value,
-                        stringResource(state.unidad.labelRes)
+                        stringResource(state.unit.labelRes)
                     ),
                     style = MaterialTheme.typography.bodyMedium
                 )
@@ -372,13 +372,13 @@ fun AlimentoInDietaItem(
     onClick: () -> Unit,
     onLongPress: () -> Unit
 ) {
-    val unitAbbreviation = stringResource(item.unidad.shortLabelRes)
-    val quantityText = stringResource(R.string.quantity_with_unit, item.cantidad, unitAbbreviation)
+    val unitAbbreviation = stringResource(item.unit.shortLabelRes)
+    val quantityText = stringResource(R.string.quantity_with_unit, item.amount, unitAbbreviation)
     val macrosDetail = stringResource(
         R.string.food_macros_detail,
-        item.proteinas,
-        item.carbos,
-        item.grasas
+        item.proteins,
+        item.carbs,
+        item.fats
     )
     val backgroundColor = if (isSelected) {
         MaterialTheme.colorScheme.primaryContainer
@@ -399,7 +399,7 @@ fun AlimentoInDietaItem(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Column(modifier = Modifier.weight(1f)) {
-                Text(text = item.food.nombre, style = MaterialTheme.typography.bodyLarge)
+                Text(text = item.food.name, style = MaterialTheme.typography.bodyLarge)
                 Text(
                     text = quantityText,
                     style = MaterialTheme.typography.bodySmall,
@@ -408,7 +408,7 @@ fun AlimentoInDietaItem(
             }
             Column(horizontalAlignment = Alignment.End, modifier = Modifier.padding(end = if (selectionMode) 12.dp else 0.dp)) {
                 Text(
-                    text = "${item.calorias.roundToInt()} kcal",
+                    text = "${item.calories.roundToInt()} kcal",
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.SemiBold
                 )

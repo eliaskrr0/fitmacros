@@ -64,7 +64,7 @@ import java.util.Locale
 fun PersonalDataScreen(userData: UserData, onSave: (UserData) -> Unit, onNavigateUp: () -> Unit) {
     val locale = remember { Locale.getDefault() }
     val dateFormatter = remember(locale) { SimpleDateFormat("ddMMyyyy", locale) }
-    var nombre by remember { mutableStateOf(userData.nombre) }
+    var nombre by remember { mutableStateOf(userData.name) }
     var sexo by remember { mutableStateOf(userData.sexo) }
     var fechaNacimiento by remember {
         mutableStateOf(

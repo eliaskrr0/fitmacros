@@ -19,9 +19,9 @@ class FoodRepository(private val foodDao: FoodDao) {
     suspend fun insert(food: Food) {
         try {
             foodDao.insert(food)
-            Log.i(TAG, "Alimento insertado: ${food.nombre} (id=${food.id})")
+            Log.i(TAG, "Alimento insertado: ${food.name} (id=${food.id})")
         } catch (ex: Exception) {
-            Log.e(TAG, "Error al insertar alimento ${food.nombre}", ex)
+            Log.e(TAG, "Error al insertar alimento ${food.name}", ex)
             throw ex
         }
     }
@@ -29,9 +29,9 @@ class FoodRepository(private val foodDao: FoodDao) {
     suspend fun update(food: Food) {
         try {
             foodDao.update(food)
-            Log.i(TAG, "Alimento actualizado: ${food.nombre} (id=${food.id})")
+            Log.i(TAG, "Alimento actualizado: ${food.name} (id=${food.id})")
         } catch (ex: Exception) {
-            Log.e(TAG, "Error al actualizar alimento ${food.nombre} (id=${food.id})", ex)
+            Log.e(TAG, "Error al actualizar alimento ${food.name} (id=${food.id})", ex)
             throw ex
         }
     }
@@ -39,9 +39,9 @@ class FoodRepository(private val foodDao: FoodDao) {
     suspend fun delete(food: Food) {
         try {
             foodDao.delete(food)
-            Log.i(TAG, "Alimento eliminado: ${food.nombre} (id=${food.id})")
+            Log.i(TAG, "Alimento eliminado: ${food.name} (id=${food.id})")
         } catch (ex: Exception) {
-            Log.e(TAG, "Error al eliminar alimento ${food.nombre} (id=${food.id})", ex)
+            Log.e(TAG, "Error al eliminar alimento ${food.name} (id=${food.id})", ex)
             throw ex
         }
     }

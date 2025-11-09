@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.map
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "user_prefs")
 
 data class UserData(
-    val nombre: String,
+    val name: String,
     val sexo: String,
     val fechaNacimiento: String,
     val altura: String,
@@ -28,7 +28,7 @@ class UserDataRepository(context: Context) {
 
     val userData: Flow<UserData> = dataStore.data.map {
         UserData(
-            nombre = it[PreferencesKeys.USER_NAME] ?: "",
+            name = it[PreferencesKeys.USER_NAME] ?: "",
             sexo = it[PreferencesKeys.USER_SEX] ?: "",
             fechaNacimiento = it[PreferencesKeys.USER_BIRTHDATE] ?: "",
             altura = it[PreferencesKeys.USER_HEIGHT] ?: "",
@@ -41,7 +41,7 @@ class UserDataRepository(context: Context) {
     suspend fun saveUserData(userData: UserData) {
         try {
             dataStore.edit {
-                it[PreferencesKeys.USER_NAME] = userData.nombre
+                it[PreferencesKeys.USER_NAME] = userData.name
                 it[PreferencesKeys.USER_SEX] = userData.sexo
                 it[PreferencesKeys.USER_BIRTHDATE] = userData.fechaNacimiento
                 it[PreferencesKeys.USER_HEIGHT] = userData.altura
@@ -49,9 +49,9 @@ class UserDataRepository(context: Context) {
                 it[PreferencesKeys.USER_TARGET] = userData.objetivo
                 it[PreferencesKeys.USER_ACTIVITY_RATE] = userData.activityRate
             }
-            Log.i(TAG, "Datos de usuario guardados para ${userData.nombre}")
+            Log.i(TAG, "Datos de usuario guardados para ${userData.name}")
         } catch (ex: Exception) {
-            Log.e(TAG, "Error al guardar datos de usuario para ${userData.nombre}", ex)
+            Log.e(TAG, "Error al guardar datos de usuario para ${userData.name}", ex)
             throw ex
         }
     }

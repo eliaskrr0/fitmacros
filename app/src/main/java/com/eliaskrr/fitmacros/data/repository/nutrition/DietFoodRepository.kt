@@ -14,63 +14,63 @@ class DietFoodRepository(private val dietFoodDao: DietFoodDao) {
             dietFoodDao.insert(dietFood)
             Log.i(
                 TAG,
-                "Alimento ${dietFood.alimentoId} añadido a dieta ${dietFood.dietaId} en ${dietFood.mealType} (${dietFood.cantidad} ${dietFood.unidad})"
+                "Alimento ${dietFood.foodId} añadido a dieta ${dietFood.dietId} en ${dietFood.mealType} (${dietFood.amount} ${dietFood.unit})"
             )
         } catch (ex: Exception) {
             Log.e(
                 TAG,
-                "Error al añadir alimento ${dietFood.alimentoId} a dieta ${dietFood.dietaId} en ${dietFood.mealType}",
+                "Error al añadir alimento ${dietFood.foodId} a dieta ${dietFood.dietId} en ${dietFood.mealType}",
                 ex
             )
             throw ex
         }
     }
 
-    fun getAlimentosForDieta(dietaId: Int): Flow<List<Meal>> {
-        Log.d(TAG, "Cargando todos los alimentos para la dieta $dietaId")
-        return dietFoodDao.getAlimentosForDieta(dietaId)
+    fun getAlimentosForDieta(dietId: Int): Flow<List<Meal>> {
+        Log.d(TAG, "Cargando todos los alimentos para la dieta $dietId")
+        return dietFoodDao.getAlimentosForDieta(dietId)
     }
 
     fun getAlimentosForDietaAndMeal(
-        dietaId: Int,
+        dietId: Int,
         mealType: MealType
     ): Flow<List<Meal>> {
-        Log.d(TAG, "Cargando alimentos para dieta $dietaId y comida $mealType")
-        return dietFoodDao.getAlimentosForDietaAndMeal(dietaId, mealType)
+        Log.d(TAG, "Cargando alimentos para dieta $dietId y comida $mealType")
+        return dietFoodDao.getAlimentosForDietaAndMeal(dietId, mealType)
     }
 
-    fun getTotalCaloriasForMeal(dietaId: Int, mealType: MealType): Flow<Double?> {
-        return dietFoodDao.getTotalCaloriasForMeal(dietaId, mealType)
+    fun gettotalCaloriesForMeal(dietId: Int, mealType: MealType): Flow<Double?> {
+        return dietFoodDao.gettotalCaloriesForMeal(dietId, mealType)
     }
 
-    suspend fun delete(dietaId: Int, alimentoId: Int, mealType: MealType) {
+    suspend fun delete(dietId: Int, foodId: Int, mealType: MealType) {
         try {
-            dietFoodDao.delete(dietaId, alimentoId, mealType)
+            dietFoodDao.delete(dietId, foodId, mealType)
             Log.i(
                 TAG,
-                "Alimento $alimentoId eliminado de la dieta $dietaId en $mealType"
+                "Alimento $foodId eliminado de la dieta $dietId en $mealType"
             )
         } catch (ex: Exception) {
             Log.e(
                 TAG,
-                "Error al eliminar alimento $alimentoId de la dieta $dietaId en $mealType",
+                "Error al eliminar alimento $foodId de la dieta $dietId en $mealType",
                 ex
             )
             throw ex
         }
     }
 
-    suspend fun updateCantidad(dietaId: Int, alimentoId: Int, mealType: MealType, cantidad: Double) {
+    suspend fun updateCantidad(dietId: Int, foodId: Int, mealType: MealType, amount: Double) {
         try {
-            dietFoodDao.updateCantidad(dietaId, alimentoId, mealType, cantidad)
+            dietFoodDao.updateCantidad(dietId, foodId, mealType, amount)
             Log.i(
                 TAG,
-                "Actualizada cantidad de alimento $alimentoId en dieta $dietaId ($mealType) a $cantidad"
+                "Actualizada cantidad de alimento $foodId en dieta $dietId ($mealType) a $amount"
             )
         } catch (ex: Exception) {
             Log.e(
                 TAG,
-                "Error al actualizar cantidad de alimento $alimentoId en dieta $dietaId ($mealType)",
+                "Error al actualizar cantidad de alimento $foodId en dieta $dietId ($mealType)",
                 ex
             )
             throw ex

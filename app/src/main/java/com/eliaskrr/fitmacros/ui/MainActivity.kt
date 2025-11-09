@@ -120,14 +120,14 @@ class MainActivity : ComponentActivity() {
                 alimentosDeLaDieta.forEach { dietaAlimento ->
                     val alimento = dietaAlimento.food
                     writer.write(
-                        "${alimento.nombre}," +
-                                "${alimento.marca ?: ""}," +
-                                "${dietaAlimento.cantidad}," +
-                                "${dietaAlimento.unidad}," +
-                                "${alimento.calorias}," +
-                                "${alimento.proteinas}," +
-                                "${alimento.carbos}," +
-                                "${alimento.grasas}\n"
+                        "${alimento.name}," +
+                                "${alimento.brand ?: ""}," +
+                                "${dietaAlimento.amount}," +
+                                "${dietaAlimento.unit}," +
+                                "${alimento.calories}," +
+                                "${alimento.proteins}," +
+                                "${alimento.carbs}," +
+                                "${alimento.fats}\n"
                     )
                 }
                 writer.flush()
@@ -135,7 +135,7 @@ class MainActivity : ComponentActivity() {
                     Toast.makeText(this@MainActivity, "Dieta exportada con éxito", Toast.LENGTH_SHORT).show()
                 }
             }
-            fileSaverLauncher.launch("${diet.nombre}.csv")
+            fileSaverLauncher.launch("${diet.name}.csv")
         }
     }
 
@@ -229,8 +229,8 @@ fun MainScreen(
             composable(AppScreen.Diet.route) {
                 DietasScreen(
                     viewModel = dietViewModel,
-                    onDietaClick = { dietaId ->
-                        navController.navigate(AppScreen.DietaDetail.createRoute(dietaId))
+                    onDietaClick = { dietId ->
+                        navController.navigate(AppScreen.DietaDetail.createRoute(dietId))
                     }
                 ) 
             }
@@ -248,7 +248,7 @@ fun MainScreen(
             }
             composable(
                 route = AppScreen.AddEditFood.route,
-                arguments = listOf(navArgument("alimentoId") { type = NavType.IntType; defaultValue = -1 })
+                arguments = listOf(navArgument("foodId") { type = NavType.IntType; defaultValue = -1 })
             ) {
                 val addEditViewModel: AddEditAlimentoViewModel = hiltViewModel()
                 AddEditAlimentoScreen(
@@ -269,14 +269,14 @@ fun MainScreen(
             }
             composable(
                 route = AppScreen.DietaDetail.route,
-                arguments = listOf(navArgument("dietaId") { type = NavType.IntType })
+                arguments = listOf(navArgument("dietId") { type = NavType.IntType })
             ) { backStackEntry ->
-                val dietaId = backStackEntry.arguments?.getInt("dietaId") ?: return@composable
+                val dietId = backStackEntry.arguments?.getInt("dietId") ?: return@composable
                 val detailViewModel: DietaDetailViewModel = hiltViewModel()
                 DietaDetailScreen(
                     viewModel = detailViewModel,
                     onAddAlimentoClick = { mealType ->
-                        navController.navigate(AppScreen.SelectAlimentoForMeal.createRoute(dietaId, mealType))
+                        navController.navigate(AppScreen.SelectAlimentoForMeal.createRoute(dietId, mealType))
                     },
                     onNavigateUp = { navController.navigateUp() }
                 )
@@ -284,7 +284,7 @@ fun MainScreen(
             composable(
                 route = AppScreen.SelectAlimentoForMeal.route,
                 arguments = listOf(
-                    navArgument("dietaId") { type = NavType.IntType },
+                    navArgument("dietId") { type = NavType.IntType },
                     navArgument("mealType") { type = NavType.StringType }
                 )
             ) { backStackEntry ->
@@ -444,11 +444,11 @@ fun AlimentoItem(
         ) {
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = food.nombre,
+                    text = food.name,
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold
                 )
-                food.marca?.let {
+                food.brand?.let {
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
                         text = it,
@@ -459,15 +459,15 @@ fun AlimentoItem(
             }
             Column(horizontalAlignment = Alignment.End) {
                 Text(
-                    text = "${String.format("%.1f", food.calorias)} kcal",
+                    text = "${String.format("%.1f", food.calories)} kcal",
                     style = MaterialTheme.typography.bodyLarge,
                     fontWeight = FontWeight.SemiBold
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Text(text = "P: ${String.format("%.1f", food.proteinas)}g", fontSize = 12.sp)
-                    Text(text = "C: ${String.format("%.1f", food.carbos)}g", fontSize = 12.sp)
-                    Text(text = "G: ${String.format("%.1f", food.grasas)}g", fontSize = 12.sp)
+                    Text(text = "P: ${String.format("%.1f", food.proteins)}g", fontSize = 12.sp)
+                    Text(text = "C: ${String.format("%.1f", food.carbs)}g", fontSize = 12.sp)
+                    Text(text = "G: ${String.format("%.1f", food.fats)}g", fontSize = 12.sp)
                 }
             }
             if (selectionMode) {

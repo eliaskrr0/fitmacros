@@ -80,7 +80,7 @@ fun ProfileScreen(viewModel: ProfileViewModel, onEditClick: () -> Unit) {
                 Column(modifier = Modifier.padding(Dimens.Large)) {
                     Text(stringResource(R.string.personal_data), style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
                     Spacer(modifier = Modifier.height(Dimens.Large))
-                    ProfileDataRow(label = stringResource(R.string.user_name), value = userData.nombre.ifBlank { stringResource(R.string.placeholder_nodata) })
+                    ProfileDataRow(label = stringResource(R.string.user_name), value = userData.name.ifBlank { stringResource(R.string.placeholder_nodata) })
                     ProfileDataRow(label = stringResource(R.string.user_sex), value = userData.sexo.ifBlank { stringResource(R.string.placeholder_nodata) })
                     ProfileDataRow(
                         label = stringResource(R.string.user_age),

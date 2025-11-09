@@ -110,7 +110,7 @@ fun DietasScreen(viewModel: DietViewModel, onDietaClick: (Int) -> Unit) {
                 Button(
                     onClick = {
                         if (newDietaName.isNotBlank()) {
-                            viewModel.insert(Diet(nombre = newDietaName))
+                            viewModel.insert(Diet(name = newDietaName))
                             newDietaName = ""
                             showDialog = false
                         }
@@ -228,7 +228,7 @@ fun DietaItem(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = diet.nombre,
+                text = diet.name,
                 modifier = Modifier.weight(1f),
                 color = contentColor
             )

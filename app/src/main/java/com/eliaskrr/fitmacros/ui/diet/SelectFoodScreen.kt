@@ -53,7 +53,7 @@ fun SelectAlimentoScreen(
     if (selectedFood != null) {
         AlertDialog(
             onDismissRequest = { selectedFood = null },
-            title = { Text("Añadir ${selectedFood?.nombre}") },
+            title = { Text("Añadir ${selectedFood?.name}") },
             text = {
                 OutlinedTextField(
                     value = cantidad,
@@ -109,6 +109,6 @@ fun AlimentoSelectItem(food: Food, onClick: () -> Unit) {
             contentColor = TextCardColor
         )
     ) {
-        Text(text = food.nombre, modifier = Modifier.padding(16.dp))
+        Text(text = food.name, modifier = Modifier.padding(16.dp))
     }
 }

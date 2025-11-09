@@ -12,7 +12,7 @@ interface DietDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(diet: Diet)
 
-    @Query("SELECT * FROM tb_diet ORDER BY nombre ASC")
+    @Query("SELECT * FROM tb_diet ORDER BY name ASC")
     fun getAll(): Flow<List<Diet>>
 
     @Query("DELETE FROM tb_diet WHERE id IN (:ids)")
