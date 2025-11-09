@@ -6,14 +6,14 @@ import com.eliaskrr.fitmacros.data.entity.nutrition.type.QuantityUnit
 
 class Converter {
     @TypeConverter
-    fun fromMealType(value: MealType): String = value.name
+    fun fromMealType(value: MealType): Int = value.ordinal
 
     @TypeConverter
-    fun toMealType(value: String): MealType = MealType.valueOf(value)
+    fun toMealType(value: Int): MealType = MealType.values()[value]
 
     @TypeConverter
-    fun fromQuantityUnit(value: QuantityUnit): String = value.name
+    fun fromQuantityUnit(value: QuantityUnit): Int = value.ordinal
 
     @TypeConverter
-    fun toQuantityUnit(value: String): QuantityUnit = QuantityUnit.valueOf(value)
+    fun toQuantityUnit(value: Int): QuantityUnit = QuantityUnit.values()[value]
 }
