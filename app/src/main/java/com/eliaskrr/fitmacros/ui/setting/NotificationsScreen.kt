@@ -140,7 +140,7 @@ fun NotificationsScreen(
                     Column {
                         ReminderTimeSelector(
                             label = "Día",
-                            time = viewModel.weighInDay.getDisplayName(TextStyle.FULL, Locale("es"))
+                            time = viewModel.weighInDay.getDisplayName(TextStyle.FULL, Locale.getDefault())
                         ) {
                             viewModel.onDayPickerRequested()
                         }

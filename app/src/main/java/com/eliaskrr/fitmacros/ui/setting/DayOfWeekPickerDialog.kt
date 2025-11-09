@@ -47,7 +47,7 @@ fun DayOfWeekPickerDialog(
                 )
                 DayOfWeek.entries.forEach { day ->
                     Text(
-                        text = day.getDisplayName(TextStyle.FULL, Locale("es")),
+                        text = day.getDisplayName(TextStyle.FULL, Locale.getDefault()),
                         modifier = Modifier
                             .fillMaxWidth()
                             .clickable { onConfirm(day) }

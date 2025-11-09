@@ -36,7 +36,6 @@ data class AlimentoUiState(
     val cantidadBase: String = "100",
     val unidadBase: QuantityUnit = QuantityUnit.GRAMS,
     val calorias: String = "0",
-    val detalles: String = "",
     val fechaCreacion: Long? = null,
     val fechaActualizacion: Long? = null,
     val isSaved: Boolean = false,
@@ -58,8 +57,8 @@ class AddEditAlimentoViewModel @Inject constructor(
 
     private val alimentoId: Int? = savedStateHandle["alimentoId"]
 
-    private val decimalSymbols: DecimalFormatSymbols = DecimalFormatSymbols.getInstance(Locale("es"))
-    private val numberFormat: NumberFormat = NumberFormat.getNumberInstance(Locale("es")).apply {
+    private val decimalSymbols: DecimalFormatSymbols = DecimalFormatSymbols.getInstance(Locale.getDefault())
+    private val numberFormat: NumberFormat = NumberFormat.getNumberInstance(Locale.getDefault()).apply {
         isGroupingUsed = false
     }
 
@@ -91,7 +90,6 @@ class AddEditAlimentoViewModel @Inject constructor(
                             cantidadBase = formatQuantity(alimento.cantidadBase),
                             unidadBase = alimento.unidadBase,
                             calorias = formatCalories(caloriasCalculadas),
-                            detalles = alimento.detalles ?: "",
                             fechaCreacion = alimento.fechaCreacion,
                             fechaActualizacion = alimento.fechaActualizacion,
                             isLoading = false,
@@ -119,8 +117,7 @@ class AddEditAlimentoViewModel @Inject constructor(
         carbos: String? = null,
         grasas: String? = null,
         cantidadBase: String? = null,
-        unidadBase: QuantityUnit? = null,
-        detalles: String? = null
+        unidadBase: QuantityUnit? = null
     ) {
         _uiState.update { currentState ->
             val updatedProteinas = proteinas?.let { normalizeDecimalInput(it) } ?: currentState.proteinas
@@ -141,7 +138,6 @@ class AddEditAlimentoViewModel @Inject constructor(
                 cantidadBase = updatedCantidadBase,
                 unidadBase = unidadBase ?: currentState.unidadBase,
                 calorias = formatCalories(calculatedCalories),
-                detalles = detalles ?: currentState.detalles,
                 errorMessage = null
             )
         }
@@ -165,8 +161,7 @@ class AddEditAlimentoViewModel @Inject constructor(
                     grasas = parseMacroInput(state.grasas),
                     cantidadBase = parseQuantity(state.cantidadBase),
                     unidadBase = state.unidadBase,
-                    calorias = caloriasCalculadas,
-                    detalles = state.detalles.ifEmpty { null }
+                    calorias = caloriasCalculadas
                 )
             } else {
                 val now = System.currentTimeMillis()
@@ -182,8 +177,7 @@ class AddEditAlimentoViewModel @Inject constructor(
                     unidadBase = state.unidadBase,
                     calorias = caloriasCalculadas,
                     fechaCreacion = state.fechaCreacion ?: now,
-                    fechaActualizacion = now,
-                    detalles = state.detalles.ifEmpty { null }
+                    fechaActualizacion = now
                 )
             }
 

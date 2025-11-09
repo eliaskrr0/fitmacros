@@ -232,16 +232,6 @@ fun AddEditAlimentoScreen(
                 modifier = Modifier.fillMaxWidth(),
                 colors = textFieldColors
             )
-            Spacer(modifier = Modifier.height(8.dp))
-            OutlinedTextField(
-                value = uiState.detalles,
-                onValueChange = { viewModel.onValueChange(detalles = it) },
-                label = { Text(stringResource(R.string.details_optional)) },
-                modifier = Modifier.fillMaxWidth(),
-                minLines = 3,
-                enabled = !uiState.isLoading,
-                colors = textFieldColors
-            )
             Spacer(modifier = Modifier.height(16.dp))
             Button(
                 onClick = { viewModel.saveAlimento() },

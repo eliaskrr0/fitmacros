@@ -58,7 +58,7 @@ import java.util.Locale
 fun ProfileScreen(viewModel: ProfileViewModel, onEditClick: () -> Unit) {
     val userData by viewModel.userData.collectAsState()
     val calculationResult by viewModel.calculationResult.collectAsState()
-    val locale = remember { Locale("es") }
+    val locale = remember { Locale.getDefault() }
     val dateFormatter = remember(locale) { SimpleDateFormat("ddMMyyyy", locale) }
     val userAge = userData.fechaNacimiento.toMillis(dateFormatter)?.let { ageInYears(it) }?.takeIf { it in 0..100 }
 

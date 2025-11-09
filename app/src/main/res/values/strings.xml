@@ -81,7 +81,6 @@
     <!-- Datos del alimento -->
     <string name="brand_optional">Marca (Opcional)</string>
     <string name="price_optional">Precio (Opcional)</string>
-    <string name="details_optional">Detalles (Opcional)</string>
     <string name="base_quantity_label">Cantidad (gr/ml)</string>
     <string name="base_unit_label">Unidad</string>
     <string name="quantity_with_unit">%1$.1f %2$s</string>

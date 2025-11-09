@@ -62,7 +62,7 @@ import java.util.Locale
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PersonalDataScreen(userData: UserData, onSave: (UserData) -> Unit, onNavigateUp: () -> Unit) {
-    val locale = remember { Locale("es") }
+    val locale = remember { Locale.getDefault() }
     val dateFormatter = remember(locale) { SimpleDateFormat("ddMMyyyy", locale) }
     var nombre by remember { mutableStateOf(userData.nombre) }
     var sexo by remember { mutableStateOf(userData.sexo) }

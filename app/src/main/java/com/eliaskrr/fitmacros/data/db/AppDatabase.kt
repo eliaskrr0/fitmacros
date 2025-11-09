@@ -91,7 +91,6 @@ abstract class AppDatabase : RoomDatabase() {
             override fun migrate(db: SupportSQLiteDatabase) {
                 db.execSQL("ALTER TABLE tb_food ADD COLUMN fecha_creacion INTEGER NOT NULL DEFAULT 0")
                 db.execSQL("ALTER TABLE tb_food ADD COLUMN fecha_actualizacion INTEGER NOT NULL DEFAULT 0")
-                db.execSQL("ALTER TABLE tb_food ADD COLUMN detalles TEXT")
                 db.execSQL(
                     """
                     UPDATE tb_food

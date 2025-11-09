@@ -24,5 +24,4 @@ data class Food(
     val fechaCreacion: Long = System.currentTimeMillis(),
     @ColumnInfo(name = "fecha_actualizacion")
     val fechaActualizacion: Long = System.currentTimeMillis(),
-    val detalles: String? = null
 )
