@@ -161,10 +161,6 @@ fun PersonalDataScreen(userData: UserData, onSave: (UserData) -> Unit, onNavigat
         }
     }
 
-    val userAge = fechaNacimiento.toMillis(dateFormatter)?.let { birthMillis ->
-        ageInYears(birthMillis)?.takeIf { it in 0..100 }
-    }
-
     val textFieldColors = OutlinedTextFieldDefaults.colors(
         focusedContainerColor = TextFieldContainerColor,
         unfocusedContainerColor = TextFieldContainerColor,
@@ -260,13 +256,6 @@ fun PersonalDataScreen(userData: UserData, onSave: (UserData) -> Unit, onNavigat
                     .clickable { showDatePicker = true },
                 colors = textFieldColors
             )
-            if (userAge != null) {
-                Spacer(modifier = Modifier.height(Dimens.Small))
-                Text(
-                    text = stringResource(R.string.user_age_years, userAge),
-                    color = TextPrimaryColor
-                )
-            }
             Spacer(modifier = Modifier.height(Dimens.Medium))
 
             OutlinedTextField(
