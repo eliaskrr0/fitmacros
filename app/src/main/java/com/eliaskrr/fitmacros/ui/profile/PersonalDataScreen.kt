@@ -123,7 +123,10 @@ fun PersonalDataScreen(userData: UserData, onSave: (UserData) -> Unit, onNavigat
         ) {
             OutlinedTextField(
                 value = nombre,
-                onValueChange = { nombre = it },
+                onValueChange = {
+                    val filtered = it.filter { char -> char.isLetter() || char.isWhitespace() }
+                    nombre = filtered.take(50)
+                },
                 label = { Text(stringResource(R.string.user_name)) },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
@@ -186,7 +189,7 @@ fun PersonalDataScreen(userData: UserData, onSave: (UserData) -> Unit, onNavigat
 
             OutlinedTextField(
                 value = altura,
-                onValueChange = { altura = it },
+                onValueChange = { altura = it.filter { char -> char.isDigit() }.take(3) },
                 label = { Text(stringResource(R.string.height_cm)) },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
@@ -197,7 +200,7 @@ fun PersonalDataScreen(userData: UserData, onSave: (UserData) -> Unit, onNavigat
 
             OutlinedTextField(
                 value = peso,
-                onValueChange = { peso = it },
+                onValueChange = { peso = it.filter { char -> char.isDigit() }.take(3) },
                 label = { Text(stringResource(R.string.weight_kg)) },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
