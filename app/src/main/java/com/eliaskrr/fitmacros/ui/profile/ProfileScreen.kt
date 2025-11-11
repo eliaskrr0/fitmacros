@@ -109,14 +109,6 @@ fun ProfileScreen(viewModel: ProfileViewModel, onEditClick: () -> Unit) {
 
         when (val result = calculationResult) {
             is MacroCalculationResult.Success -> {
-                MacronutrientsCard(
-                    carbGoal = result.data.carbGoal,
-                    fatGoal = result.data.fatGoal,
-                    proteinGoal = result.data.proteinGoal
-                )
-
-                Spacer(modifier = Modifier.height(Dimens.Large))
-
                 CaloriesCard(
                     calorieGoal = result.data.calorieGoal,
                     tdee = result.data.tdee
@@ -146,30 +138,6 @@ fun ProfileDataRow(label: String, value: String) {
 }
 
 @Composable
-fun MacronutrientsCard(carbGoal: Int, fatGoal: Int, proteinGoal: Int) {
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(
-            containerColor = BackgroundCard,
-            contentColor = TextCardColor
-        )
-    ) {
-        Column(modifier = Modifier.padding(Dimens.Large)) {
-            Text(stringResource(R.string.macronutrients), style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
-            Spacer(modifier = Modifier.height(Dimens.Large))
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceAround
-            ) {
-                NutrientProgressIndicator(label = stringResource(R.string.carbohydrates), consumed = 0, goal = carbGoal, color = NutrientColors.Carbs)
-                NutrientProgressIndicator(label = stringResource(R.string.fats), consumed = 0, goal = fatGoal, color = NutrientColors.Fat)
-                NutrientProgressIndicator(label = stringResource(R.string.proteins), consumed = 0, goal = proteinGoal, color = NutrientColors.Protein)
-            }
-        }
-    }
-}
-
-@Composable
 fun CaloriesCard(calorieGoal: Int, tdee: Int) {
     val remainingCalories = calorieGoal // Asumimos 0 consumido por ahora
 
@@ -190,7 +158,7 @@ fun CaloriesCard(calorieGoal: Int, tdee: Int) {
             ) {
                 Box(contentAlignment = Alignment.Center) {
                     val progress = if (calorieGoal > 0) remainingCalories.toFloat() / calorieGoal.toFloat() else 0f
-                    CircularProgress(progress = progress, color = MaterialTheme.colorScheme.primary, size = 120.dp)
+                    CircularProgress(progress = progress, color = NutrientColors.Calories, size = 120.dp)
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         Text("$remainingCalories", fontSize = 24.sp, fontWeight = FontWeight.Bold)
                         Text(stringResource(R.string.calories_remaining), fontSize = 12.sp)

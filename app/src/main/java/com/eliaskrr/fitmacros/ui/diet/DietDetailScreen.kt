@@ -42,19 +42,20 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.annotation.StringRes
 import com.eliaskrr.fitmacros.R
 import com.eliaskrr.fitmacros.data.entity.nutrition.type.MealType
 import com.eliaskrr.fitmacros.domain.MacroCalculationResult
 import com.eliaskrr.fitmacros.domain.MissingField
 import com.eliaskrr.fitmacros.ui.components.SelectionActionBar
+import com.eliaskrr.fitmacros.ui.profile.NutrientProgressIndicator
 import com.eliaskrr.fitmacros.ui.theme.BackgroundCard
 import com.eliaskrr.fitmacros.ui.theme.ButtonCancelColor
 import com.eliaskrr.fitmacros.ui.theme.ButtonConfirmColor
 import com.eliaskrr.fitmacros.ui.theme.DialogBackgroundColor
 import com.eliaskrr.fitmacros.ui.theme.DialogTextColor
 import com.eliaskrr.fitmacros.ui.theme.DialogTitleColor
+import com.eliaskrr.fitmacros.ui.theme.NutrientColors
 import com.eliaskrr.fitmacros.ui.theme.TextCardColor
 import kotlin.math.roundToInt
 
@@ -145,11 +146,14 @@ fun RemainingNutrients(result: MacroCalculationResult) {
         when (result) {
             is MacroCalculationResult.Success -> {
                 val data = result.data
-                Row(horizontalArrangement = Arrangement.SpaceAround, modifier = Modifier.fillMaxWidth()) {
-                    NutrientColumn(value = data.carbGoal.toString(), label = stringResource(R.string.carbohydrates))
-                    NutrientColumn(value = data.fatGoal.toString(), label = stringResource(R.string.fats))
-                    NutrientColumn(value = data.proteinGoal.toString(), label = stringResource(R.string.proteins))
-                    NutrientColumn(value = data.calorieGoal.toString(), label = stringResource(R.string.calories))
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceAround
+                ) {
+                    NutrientProgressIndicator(label = stringResource(R.string.calories), consumed = 0, goal = data.calorieGoal, color = NutrientColors.Calories)
+                    NutrientProgressIndicator(label = stringResource(R.string.carbohydrates), consumed = 0, goal = data.carbGoal, color = NutrientColors.Carbs)
+                    NutrientProgressIndicator(label = stringResource(R.string.fats), consumed = 0, goal = data.fatGoal, color = NutrientColors.Fat)
+                    NutrientProgressIndicator(label = stringResource(R.string.proteins), consumed = 0, goal = data.proteinGoal, color = NutrientColors.Protein)
                 }
             }
 
@@ -159,14 +163,6 @@ fun RemainingNutrients(result: MacroCalculationResult) {
 
             MacroCalculationResult.Idle -> MissingDataNotice(emptyList())
         }
-    }
-}
-
-@Composable
-fun NutrientColumn(value: String, label: String) {
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(text = value, style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
-        Text(text = label, fontSize = 12.sp)
     }
 }
 

@@ -39,4 +39,5 @@ object NutrientColors {
     val Carbs = Color(0xFF2AA9A6)
     val Fat = Color(0xFFC6A230)
     val Protein = Color(0xFFD2546A)
+    val Calories = Color(0xFF339C2F)
 }
