@@ -74,6 +74,10 @@ class DietViewModel @Inject constructor(
         }
     }
 
+    fun updateSearchQuery(query: String) {
+        _uiState.update { it.copy(searchQuery = query) }
+    }
+
     fun clearSelection() {
         _uiState.update { it.copy(selectedDietas = emptySet()) }
     }
@@ -137,10 +141,20 @@ class DietViewModel @Inject constructor(
         val isLoading: Boolean = false,
         val errorMessage: Int? = null,
         val selectedDietas: Set<Int> = emptySet(),
-        val hasReachedMaxDietas: Boolean = false
+        val hasReachedMaxDietas: Boolean = false,
+        val searchQuery: String = ""
     ) {
         val isSelectionMode: Boolean
             get() = selectedDietas.isNotEmpty()
+
+        val filteredDiets: List<Diet>
+            get() = if (searchQuery.isBlank()) {
+                diets
+            } else {
+                diets.filter { diet ->
+                    diet.name.contains(searchQuery, ignoreCase = true)
+                }
+            }
     }
 
     sealed interface DietaEvent {

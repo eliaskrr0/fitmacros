@@ -14,6 +14,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.outlined.RadioButtonUnchecked
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -155,6 +156,28 @@ fun DietasScreen(viewModel: DietViewModel, onDietaClick: (Int) -> Unit) {
                     onDeleteSelected = viewModel::deleteSelected
                 )
             }
+            OutlinedTextField(
+                value = uiState.searchQuery,
+                onValueChange = viewModel::updateSearchQuery,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 8.dp),
+                placeholder = { Text(stringResource(R.string.search_diets)) },
+                singleLine = true,
+                leadingIcon = { Icon(Icons.Filled.Search, contentDescription = null) },
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedContainerColor = BackgroundCard,
+                    unfocusedContainerColor = BackgroundCard,
+                    disabledContainerColor = BackgroundCard,
+                    cursorColor = TextCardColor,
+                    focusedBorderColor = TextCardColor.copy(alpha = 0.8f),
+                    unfocusedBorderColor = TextCardColor.copy(alpha = 0.5f),
+                    focusedLabelColor = TextCardColor.copy(alpha = 0.8f),
+                    unfocusedLabelColor = TextCardColor.copy(alpha = 0.5f),
+                    focusedTextColor = TextCardColor,
+                    unfocusedTextColor = TextCardColor
+                )
+            )
             if (uiState.isLoading) {
                 LinearProgressIndicator(
                     modifier = Modifier
@@ -185,24 +208,44 @@ fun DietasScreen(viewModel: DietViewModel, onDietaClick: (Int) -> Unit) {
                     .fillMaxWidth()
                     .padding(16.dp)
             ) {
-                items(
-                    items = uiState.diets,
-                    key = { it.id }
-                ) { dieta ->
-                    val isSelected = uiState.selectedDietas.contains(dieta.id)
-                    DietaItem(
-                        diet = dieta,
-                        isSelected = isSelected,
-                        selectionMode = uiState.isSelectionMode,
-                        onClick = {
-                            if (uiState.isSelectionMode) {
-                                viewModel.toggleSelection(dieta.id)
+                if (uiState.filteredDiets.isEmpty()) {
+                    if (!uiState.isLoading) {
+                        item {
+                            val messageRes = if (uiState.searchQuery.isBlank()) {
+                                R.string.no_diets_available
                             } else {
-                                onDietaClick(dieta.id)
+                                R.string.no_diets_found
                             }
-                        },
-                        onLongClick = { viewModel.toggleSelection(dieta.id) }
-                    )
+                            Text(
+                                text = stringResource(messageRes),
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = 24.dp)
+                            )
+                        }
+                    }
+                } else {
+                    items(
+                        items = uiState.filteredDiets,
+                        key = { it.id }
+                    ) { dieta ->
+                        val isSelected = uiState.selectedDietas.contains(dieta.id)
+                        DietaItem(
+                            diet = dieta,
+                            isSelected = isSelected,
+                            selectionMode = uiState.isSelectionMode,
+                            onClick = {
+                                if (uiState.isSelectionMode) {
+                                    viewModel.toggleSelection(dieta.id)
+                                } else {
+                                    onDietaClick(dieta.id)
+                                }
+                            },
+                            onLongClick = { viewModel.toggleSelection(dieta.id) }
+                        )
+                    }
                 }
             }
         }

@@ -99,6 +99,9 @@
     <string name="meal_macros_summary">P: %1$.1f g   C: %2$.1f g   G: %3$.1f g</string>
     <string name="food_macros_detail">P: %1$.1f g · C: %2$.1f g · G: %3$.1f g</string>
     <string name="search_food">Buscar alimento…</string>
+    <string name="search_diets">Buscar dieta…</string>
+    <string name="no_diets_found">No hay dietas que coincidan con tu búsqueda.</string>
+    <string name="no_diets_available">Aún no has creado ninguna dieta.</string>
     <string name="selected_count">%1$d seleccionados</string>
     <string name="clear_selection">Cancelar selección</string>
 
