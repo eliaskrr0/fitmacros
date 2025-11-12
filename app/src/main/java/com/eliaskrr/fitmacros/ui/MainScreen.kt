@@ -30,7 +30,7 @@ sealed class AppScreen(val route: String) {
 
 sealed class NavItem(val route: String, val label: String, val icon: ImageVector) {
     data object Profile : NavItem(AppScreen.Profile.route, "Perfil", Icons.Sharp.Person)
-    data object Food : NavItem(AppScreen.Food.route, "Food", Icons.Outlined.Flatware)
+    data object Food : NavItem(AppScreen.Food.route, "Alimentos", Icons.Outlined.Flatware)
     data object Diet : NavItem(AppScreen.Diet.route, "Dietas", Icons.Default.Book)
     data object Setting : NavItem(AppScreen.Setting.route, "Opciones", Icons.Default.Settings)
 }

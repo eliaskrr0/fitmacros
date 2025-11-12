@@ -44,7 +44,7 @@ fun OptionsScreen(navController: NavController) {
             onClick = { navController.navigate(AppScreen.Profile.route) }
         ),
         Option(
-            title = "Notificaciones y Recordatorios",
+            title = "Notificaciones",
             icon = Icons.Default.Notifications,
             onClick = { navController.navigate(AppScreen.Notifications.route) }
         ),

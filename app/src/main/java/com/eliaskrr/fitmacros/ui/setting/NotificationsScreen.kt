@@ -80,7 +80,7 @@ fun NotificationsScreen(
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
-                title = { Text("Notificaciones y Recordatorios") },
+                title = { Text("Notificaciones") },
                 navigationIcon = {
                     IconButton(onClick = onNavigateUp) {
                         Icon(

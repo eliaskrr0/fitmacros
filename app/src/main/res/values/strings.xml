@@ -45,7 +45,7 @@
     <string name="error_deleting_diet">No se pudieron eliminar las dietas seleccionadas. Inténtalo de nuevo.</string>
 
     <!-- Mensajes de avisos -->
-    <string name="meal_without_foods">¡Agrega alimentos para poder empezar!</string>
+    <string name="meal_without_foods">Agrega alimentos para poder empezar</string>
     <string name="missing_user_data_generic">Completa tus datos para ver tus objetivos nutricionales.</string>
     <string name="missing_user_data">Completa los campos: %1$s para ver tus objetivos nutricionales.</string>
     <string name="dietas_deleted_message">Dietas eliminadas</string>
