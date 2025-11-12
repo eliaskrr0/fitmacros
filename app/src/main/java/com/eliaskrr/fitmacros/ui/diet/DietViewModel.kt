@@ -42,12 +42,25 @@ class DietViewModel @Inject constructor(
     }
 
     fun insert(diet: Diet) = viewModelScope.launch {
+        if (_uiState.value.hasReachedMaxDietas) {
+            emitMaxDietLimitMessage()
+            return@launch
+        }
+
         runCatching {
             Log.d(TAG, "Solicitando inserción de dieta ${diet.name}")
             dietRepository.insert(diet)
         }.onFailure { ex ->
             Log.e(TAG, "Error solicitando inserción de dieta ${diet.name}", ex)
         }
+    }
+
+    fun notifyMaxDietLimitReached() = viewModelScope.launch {
+        emitMaxDietLimitMessage()
+    }
+
+    private suspend fun emitMaxDietLimitMessage() {
+        _events.emit(DietaEvent.ShowMessage(R.string.max_diets_reached_message))
     }
 
     fun toggleSelection(dietId: Int) {
@@ -91,7 +104,8 @@ class DietViewModel @Inject constructor(
                         it.copy(
                             isLoading = false,
                             diets = emptyList(),
-                            errorMessage = R.string.error_loading_diets
+                            errorMessage = R.string.error_loading_diets,
+                            hasReachedMaxDietas = false
                         )
                     }
                     _events.emit(DietaEvent.ShowMessage(R.string.error_loading_diets))
@@ -105,7 +119,8 @@ class DietViewModel @Inject constructor(
                             diets = dietas,
                             isLoading = false,
                             errorMessage = null,
-                            selectedDietas = filteredSelection
+                            selectedDietas = filteredSelection,
+                            hasReachedMaxDietas = dietas.size >= MAX_DIETS
                         )
                     }
                 }
@@ -114,13 +129,15 @@ class DietViewModel @Inject constructor(
 
     companion object {
         private const val TAG = "DietaViewModel"
+        private const val MAX_DIETS = 10
     }
 
     data class DietasUiState(
         val diets: List<Diet> = emptyList(),
         val isLoading: Boolean = false,
         val errorMessage: Int? = null,
-        val selectedDietas: Set<Int> = emptySet()
+        val selectedDietas: Set<Int> = emptySet(),
+        val hasReachedMaxDietas: Boolean = false
     ) {
         val isSelectionMode: Boolean
             get() = selectedDietas.isNotEmpty()

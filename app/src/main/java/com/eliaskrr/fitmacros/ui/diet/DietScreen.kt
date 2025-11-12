@@ -84,6 +84,7 @@ fun DietasScreen(viewModel: DietViewModel, onDietaClick: (Int) -> Unit) {
                     onValueChange = { newDietaName = it },
                     label = { Text(stringResource(R.string.dieta_name)) },
                     modifier = Modifier.fillMaxWidth(),
+                    enabled = !uiState.hasReachedMaxDietas,
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedContainerColor = BackgroundCard,
                         unfocusedContainerColor = BackgroundCard,
@@ -115,6 +116,7 @@ fun DietasScreen(viewModel: DietViewModel, onDietaClick: (Int) -> Unit) {
                             showDialog = false
                         }
                     },
+                    enabled = !uiState.hasReachedMaxDietas && newDietaName.isNotBlank(),
                     colors = ButtonDefaults.buttonColors(containerColor = ButtonConfirmColor)
                 ) {
                     Text(stringResource(R.string.create))
@@ -127,7 +129,15 @@ fun DietasScreen(viewModel: DietViewModel, onDietaClick: (Int) -> Unit) {
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         floatingActionButton = {
             if (!uiState.isSelectionMode) {
-                FloatingActionButton(onClick = { showDialog = true }) {
+                FloatingActionButton(
+                    onClick = {
+                        if (uiState.hasReachedMaxDietas) {
+                            viewModel.notifyMaxDietLimitReached()
+                        } else {
+                            showDialog = true
+                        }
+                    }
+                ) {
                     Icon(Icons.Filled.Add, contentDescription = stringResource(R.string.new_diet_title))
                 }
             }
@@ -156,6 +166,15 @@ fun DietasScreen(viewModel: DietViewModel, onDietaClick: (Int) -> Unit) {
                 Text(
                     text = stringResource(messageRes),
                     color = MaterialTheme.colorScheme.error,
+                    modifier = Modifier
+                        .padding(horizontal = 16.dp, vertical = 8.dp)
+                )
+            }
+            if (uiState.hasReachedMaxDietas) {
+                Text(
+                    text = stringResource(R.string.max_diets_limit_info),
+                    color = MaterialTheme.colorScheme.secondary,
+                    style = MaterialTheme.typography.bodyMedium,
                     modifier = Modifier
                         .padding(horizontal = 16.dp, vertical = 8.dp)
                 )

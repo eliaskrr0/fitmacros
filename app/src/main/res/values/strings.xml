@@ -52,6 +52,8 @@
     <string name="food_deleted_message">Alimentos eliminados</string>
     <string name="delete_confirmation_message">¿Estás seguro de que quieres borrar este alimento?</string>
     <string name="invalid_quantity">Introduce una cantidad válida mayor que cero</string>
+    <string name="max_diets_reached_message">Has alcanzado el máximo de 10 dietas.</string>
+    <string name="max_diets_limit_info">Has alcanzado el máximo de 10 dietas. Elimina alguna para crear nuevas.</string>
 
     <!-- Datos del usuario -->
     <string name="personal_data">Datos Personales</string>
