@@ -14,6 +14,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.outlined.RadioButtonUnchecked
 import androidx.compose.material3.AlertDialog
@@ -23,6 +24,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -68,6 +70,13 @@ fun DietasScreen(viewModel: DietViewModel, onDietaClick: (Int) -> Unit) {
             when (event) {
                 is DietViewModel.DietaEvent.ShowMessage ->
                     snackbarHostState.showSnackbar(context.getString(event.messageRes))
+                is DietViewModel.DietaEvent.ShowDietLimitInfo ->
+                    snackbarHostState.showSnackbar(
+                        context.getString(
+                            R.string.max_diets_info_template,
+                            event.limit
+                        )
+                    )
             }
         }
     }
@@ -156,28 +165,42 @@ fun DietasScreen(viewModel: DietViewModel, onDietaClick: (Int) -> Unit) {
                     onDeleteSelected = viewModel::deleteSelected
                 )
             }
-            OutlinedTextField(
-                value = uiState.searchQuery,
-                onValueChange = viewModel::updateSearchQuery,
+            Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp, vertical = 8.dp),
-                placeholder = { Text(stringResource(R.string.search_diets)) },
-                singleLine = true,
-                leadingIcon = { Icon(Icons.Filled.Search, contentDescription = null) },
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedContainerColor = BackgroundCard,
-                    unfocusedContainerColor = BackgroundCard,
-                    disabledContainerColor = BackgroundCard,
-                    cursorColor = TextCardColor,
-                    focusedBorderColor = TextCardColor.copy(alpha = 0.8f),
-                    unfocusedBorderColor = TextCardColor.copy(alpha = 0.5f),
-                    focusedLabelColor = TextCardColor.copy(alpha = 0.8f),
-                    unfocusedLabelColor = TextCardColor.copy(alpha = 0.5f),
-                    focusedTextColor = TextCardColor,
-                    unfocusedTextColor = TextCardColor
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                OutlinedTextField(
+                    value = uiState.searchQuery,
+                    onValueChange = viewModel::updateSearchQuery,
+                    modifier = Modifier.weight(1f),
+                    placeholder = { Text(stringResource(R.string.search_diets)) },
+                    singleLine = true,
+                    leadingIcon = { Icon(Icons.Filled.Search, contentDescription = null) },
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedContainerColor = BackgroundCard,
+                        unfocusedContainerColor = BackgroundCard,
+                        disabledContainerColor = BackgroundCard,
+                        cursorColor = TextCardColor,
+                        focusedBorderColor = TextCardColor.copy(alpha = 0.8f),
+                        unfocusedBorderColor = TextCardColor.copy(alpha = 0.5f),
+                        focusedLabelColor = TextCardColor.copy(alpha = 0.8f),
+                        unfocusedLabelColor = TextCardColor.copy(alpha = 0.5f),
+                        focusedTextColor = TextCardColor,
+                        unfocusedTextColor = TextCardColor
+                    )
                 )
-            )
+                IconButton(
+                    onClick = viewModel::notifyDietLimitInfo,
+                    modifier = Modifier.padding(start = 8.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.Info,
+                        contentDescription = stringResource(R.string.diet_limit_info_content_description)
+                    )
+                }
+            }
             if (uiState.isLoading) {
                 LinearProgressIndicator(
                     modifier = Modifier

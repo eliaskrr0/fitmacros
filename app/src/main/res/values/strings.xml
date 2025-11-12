@@ -54,6 +54,8 @@
     <string name="invalid_quantity">Introduce una cantidad válida mayor que cero</string>
     <string name="max_diets_reached_message">Has alcanzado el máximo de 10 dietas.</string>
     <string name="max_diets_limit_info">Has alcanzado el máximo de 10 dietas. Elimina alguna para crear nuevas.</string>
+    <string name="max_diets_info_template">Puedes crear hasta %1$d dietas.</string>
+    <string name="diet_limit_info_content_description">Información sobre el límite de dietas</string>
 
     <!-- Datos del usuario -->
     <string name="personal_data">Datos Personales</string>

@@ -59,6 +59,10 @@ class DietViewModel @Inject constructor(
         emitMaxDietLimitMessage()
     }
 
+    fun notifyDietLimitInfo() = viewModelScope.launch {
+        _events.emit(DietaEvent.ShowDietLimitInfo(MAX_DIETS))
+    }
+
     private suspend fun emitMaxDietLimitMessage() {
         _events.emit(DietaEvent.ShowMessage(R.string.max_diets_reached_message))
     }
@@ -159,5 +163,6 @@ class DietViewModel @Inject constructor(
 
     sealed interface DietaEvent {
         data class ShowMessage(val messageRes: Int) : DietaEvent
+        data class ShowDietLimitInfo(val limit: Int) : DietaEvent
     }
 }
