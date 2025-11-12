@@ -10,6 +10,7 @@ import com.eliaskrr.fitmacros.domain.MacroCalculationResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -20,18 +21,21 @@ class ProfileViewModel @Inject constructor(
     private val userDataRepository: UserDataRepository
 ) : ViewModel() {
 
-    val userData: StateFlow<UserData> = userDataRepository.userData.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5000),
-        initialValue = UserData("", "", "", "", "", "", "")
-    )
+    val userData: StateFlow<UserData> = userDataRepository.userData
+        .distinctUntilChanged()
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = UserData("", "", "", "", "", "", "")
+        )
 
-    val calculationResult: StateFlow<MacroCalculationResult> = userData.map {
-        MacroCalculator.calculate(it)
-    }.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5000),
-        initialValue = MacroCalculationResult.Idle
+    val calculationResult: StateFlow<MacroCalculationResult> = userData
+        .map {
+            MacroCalculator.calculate(it)
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = MacroCalculationResult.Idle
     )
 
     fun saveUserData(userData: UserData) {

@@ -30,6 +30,8 @@ enum class MissingField {
     GOAL
 }
 
+private val BIRTHDATE_FORMATTER: DateTimeFormatter = DateTimeFormatter.ofPattern("ddMMyyyy")
+
 object MacroCalculator {
 
     fun calculate(userData: UserData): MacroCalculationResult {
@@ -46,8 +48,7 @@ object MacroCalculator {
         }
 
         val birthDate = runCatching {
-            val formatter = DateTimeFormatter.ofPattern("ddMMyyyy")
-            LocalDate.parse(userData.fechaNacimiento, formatter)
+            LocalDate.parse(userData.fechaNacimiento, BIRTHDATE_FORMATTER)
         }.getOrNull()
         if (birthDate == null) {
             missingFields += MissingField.BIRTH_DATE

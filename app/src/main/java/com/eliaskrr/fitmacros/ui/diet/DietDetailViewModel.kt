@@ -18,6 +18,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -72,7 +73,9 @@ class DietaDetailViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(DietaDetailUiState())
     val uiState: StateFlow<DietaDetailUiState> = _uiState.asStateFlow()
 
-    val nutrientGoals: StateFlow<MacroCalculationResult> = userDataRepository.userData.map {
+    val nutrientGoals: StateFlow<MacroCalculationResult> = userDataRepository.userData
+        .distinctUntilChanged()
+        .map {
         MacroCalculator.calculate(it)
     }.stateIn(
         scope = viewModelScope,
