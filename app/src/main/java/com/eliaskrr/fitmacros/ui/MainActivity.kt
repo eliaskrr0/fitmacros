@@ -381,24 +381,42 @@ fun AlimentosScreen(
             )
         }
         LazyColumn {
-            items(
-                items = uiState.foods,
-                key = { it.id }
-            ) { alimento ->
-                val isSelected = uiState.selectedAlimentos.contains(alimento.id)
-                AlimentoItem(
-                    food = alimento,
-                    isSelected = isSelected,
-                    selectionMode = uiState.isSelectionMode,
-                    onClick = {
-                        if (uiState.isSelectionMode) {
-                            viewModel.toggleSelection(alimento.id)
-                        } else {
-                            onAlimentoClick(alimento)
-                        }
-                    },
-                    onLongClick = { viewModel.toggleSelection(alimento.id) }
-                )
+            if (uiState.foods.isEmpty() && !uiState.isLoading) {
+                item {
+                    val messageRes = if (searchQuery.isBlank()) {
+                        R.string.no_foods_available
+                    } else {
+                        R.string.no_foods_found
+                    }
+                    Text(
+                        text = stringResource(messageRes),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 24.dp)
+                    )
+                }
+            } else {
+                items(
+                    items = uiState.foods,
+                    key = { it.id }
+                ) { alimento ->
+                    val isSelected = uiState.selectedAlimentos.contains(alimento.id)
+                    AlimentoItem(
+                        food = alimento,
+                        isSelected = isSelected,
+                        selectionMode = uiState.isSelectionMode,
+                        onClick = {
+                            if (uiState.isSelectionMode) {
+                                viewModel.toggleSelection(alimento.id)
+                            } else {
+                                onAlimentoClick(alimento)
+                            }
+                        },
+                        onLongClick = { viewModel.toggleSelection(alimento.id) }
+                    )
+                }
             }
         }
     }

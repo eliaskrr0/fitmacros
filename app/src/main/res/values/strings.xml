@@ -41,6 +41,8 @@
     <string name="error_saving_food">No se pudo guardar el alimento. Revisa la información e inténtalo otra vez.</string>
     <string name="error_deleting_food">No se pudo eliminar el alimento. Inténtalo de nuevo.</string>
     <string name="error_loading_foods">No se pudieron cargar los alimentos. Inténtalo de nuevo.</string>
+    <string name="no_foods_found">No hay alimentos que coincidan con tu búsqueda.</string>
+    <string name="no_foods_available">Aún no has creado ningún alimento.</string>
     <string name="error_loading_diets">No se pudieron cargar las dietas. Inténtalo de nuevo.</string>
     <string name="error_deleting_diet">No se pudieron eliminar las dietas seleccionadas. Inténtalo de nuevo.</string>
 
