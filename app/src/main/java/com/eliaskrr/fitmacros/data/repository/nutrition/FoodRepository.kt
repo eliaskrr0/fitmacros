@@ -22,8 +22,9 @@ class FoodRepository(private val foodDao: FoodDao) {
     }
 
     suspend fun update(food: Food) {
-        foodDao.update(food)
-        Log.i(TAG, "Alimento actualizado: ${food.name} (id=${food.id})")
+        val updatedFood = food.copy(updateDate = System.currentTimeMillis())
+        foodDao.update(updatedFood)
+        Log.i(TAG, "Alimento actualizado: ${updatedFood.name} (id=${updatedFood.id})")
     }
 
     suspend fun delete(food: Food) {
