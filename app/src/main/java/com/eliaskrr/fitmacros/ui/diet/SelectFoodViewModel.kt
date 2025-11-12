@@ -15,6 +15,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -35,6 +36,7 @@ class SelectFoodViewModel @Inject constructor(
     val searchQuery = _searchQuery.asStateFlow()
 
     val alimentos: StateFlow<List<Food>> = _searchQuery
+        .debounce(300)
         .flatMapLatest { query ->
             if (query.isBlank()) {
                 Log.d(TAG, "Cargando todos los alimentos para selección")
