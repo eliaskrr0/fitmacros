@@ -195,7 +195,7 @@ fun PersonalDataScreen(userData: UserData, onSave: (UserData) -> Unit, onNavigat
         ) {
             OutlinedTextField(
                 value = nombre,
-                onValueChange = { nombre = it },
+                onValueChange = { nombre = sanitizeNameInput(it) },
                 label = { Text(stringResource(R.string.user_name)) },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
@@ -260,7 +260,7 @@ fun PersonalDataScreen(userData: UserData, onSave: (UserData) -> Unit, onNavigat
 
             OutlinedTextField(
                 value = altura,
-                onValueChange = { altura = it },
+                onValueChange = { altura = sanitizeHeightInput(it) },
                 label = { Text(stringResource(R.string.height_cm)) },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
@@ -271,11 +271,11 @@ fun PersonalDataScreen(userData: UserData, onSave: (UserData) -> Unit, onNavigat
 
             OutlinedTextField(
                 value = peso,
-                onValueChange = { peso = sanitizeDecimalInput(it) },
+                onValueChange = { peso = sanitizeWeightInput(it) },
                 label = { Text(stringResource(R.string.weight_kg)) },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 colors = textFieldColors
             )
             Spacer(modifier = Modifier.height(Dimens.Medium))
@@ -399,21 +399,13 @@ class DateVisualTransformation : VisualTransformation {
     }
 }
 
-private fun sanitizeDecimalInput(rawInput: String): String {
-    if (rawInput.isEmpty()) return ""
-    val normalized = rawInput.replace(',', '.')
-    val builder = StringBuilder(normalized.length)
-    var dotUsed = false
+private fun sanitizeNameInput(rawInput: String): String =
+    rawInput
+        .filter { it.isLetter() || it.isWhitespace() }
+        .take(50)
 
-    normalized.forEach { char ->
-        when {
-            char.isDigit() -> builder.append(char)
-            char == '.' && !dotUsed -> {
-                builder.append(char)
-                dotUsed = true
-            }
-        }
-    }
+private fun sanitizeHeightInput(rawInput: String): String =
+    rawInput.filter { it.isDigit() }.take(3)
 
-    return builder.toString()
-}
+private fun sanitizeWeightInput(rawInput: String): String =
+    rawInput.filter { it.isDigit() }.take(3)
