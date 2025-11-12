@@ -8,6 +8,7 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "user_prefs")
@@ -40,6 +41,22 @@ class UserDataRepository(context: Context) {
 
     suspend fun saveUserData(userData: UserData) {
         try {
+            val current = dataStore.data.first()
+            val existingUserData = UserData(
+                name = current[PreferencesKeys.USER_NAME] ?: "",
+                sexo = current[PreferencesKeys.USER_SEX] ?: "",
+                fechaNacimiento = current[PreferencesKeys.USER_BIRTHDATE] ?: "",
+                altura = current[PreferencesKeys.USER_HEIGHT] ?: "",
+                peso = current[PreferencesKeys.USER_WEIGHT] ?: "",
+                objetivo = current[PreferencesKeys.USER_TARGET] ?: "",
+                activityRate = current[PreferencesKeys.USER_ACTIVITY_RATE] ?: ""
+            )
+
+            if (existingUserData == userData) {
+                Log.d(TAG, "Datos de usuario sin cambios, omitiendo guardado")
+                return
+            }
+
             dataStore.edit {
                 it[PreferencesKeys.USER_NAME] = userData.name
                 it[PreferencesKeys.USER_SEX] = userData.sexo
