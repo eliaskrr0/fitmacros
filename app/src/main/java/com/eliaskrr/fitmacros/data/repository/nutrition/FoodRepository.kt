@@ -32,6 +32,12 @@ class FoodRepository(private val foodDao: FoodDao) {
         Log.i(TAG, "Alimento eliminado: ${food.name} (id=${food.id})")
     }
 
+    suspend fun deleteByIds(ids: Set<Int>) {
+        if (ids.isEmpty()) return
+        foodDao.deleteByIds(ids.toList())
+        Log.i(TAG, "Alimentos eliminados: ${ids.joinToString()}")
+    }
+
     companion object {
         private const val TAG = "AlimentoRepository"
     }

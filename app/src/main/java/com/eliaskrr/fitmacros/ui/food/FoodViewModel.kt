@@ -92,17 +92,14 @@ class FoodViewModel @Inject constructor(
         val selectedIds = _uiState.value.selectedAlimentos
         if (selectedIds.isEmpty()) return@launch
 
-        val alimentosToDelete = _uiState.value.foods.filter { it.id in selectedIds }
         var hadError = false
 
-        alimentosToDelete.forEach { alimento ->
-            try {
-                Log.d(TAG, "Eliminando alimento seleccionado ${alimento.name} (id=${alimento.id})")
-                repository.delete(alimento)
-            } catch (ex: Exception) {
-                hadError = true
-                Log.e(TAG, "Error eliminando alimento seleccionado ${alimento.name} (id=${alimento.id})", ex)
-            }
+        try {
+            Log.d(TAG, "Eliminando alimentos seleccionados: ${selectedIds.joinToString()}")
+            repository.deleteByIds(selectedIds)
+        } catch (ex: Exception) {
+            hadError = true
+            Log.e(TAG, "Error eliminando alimentos seleccionados: ${selectedIds.joinToString()}", ex)
         }
 
         _uiState.update {
@@ -114,7 +111,7 @@ class FoodViewModel @Inject constructor(
 
         if (hadError) {
             _events.emit(AlimentoEvent.ShowMessage(R.string.error_deleting_food))
-        } else if (alimentosToDelete.isNotEmpty()) {
+        } else {
             _events.emit(AlimentoEvent.ShowMessage(R.string.food_deleted_message))
         }
     }
