@@ -59,6 +59,10 @@ class DietViewModel @Inject constructor(
         emitMaxDietLimitMessage()
     }
 
+    fun showDietLimitInfo() = viewModelScope.launch {
+        _events.emit(DietaEvent.ShowMessage(R.string.max_diets_information_message))
+    }
+
     private suspend fun emitMaxDietLimitMessage() {
         _events.emit(DietaEvent.ShowMessage(R.string.max_diets_reached_message))
     }
@@ -72,6 +76,10 @@ class DietViewModel @Inject constructor(
             }
             state.copy(selectedDietas = updatedSelection)
         }
+    }
+
+    fun updateSearchQuery(query: String) {
+        _uiState.update { it.copy(searchQuery = query) }
     }
 
     fun clearSelection() {
@@ -137,10 +145,20 @@ class DietViewModel @Inject constructor(
         val isLoading: Boolean = false,
         val errorMessage: Int? = null,
         val selectedDietas: Set<Int> = emptySet(),
-        val hasReachedMaxDietas: Boolean = false
+        val hasReachedMaxDietas: Boolean = false,
+        val searchQuery: String = ""
     ) {
         val isSelectionMode: Boolean
             get() = selectedDietas.isNotEmpty()
+
+        val filteredDiets: List<Diet>
+            get() = if (searchQuery.isBlank()) {
+                diets
+            } else {
+                diets.filter { diet ->
+                    diet.name.contains(searchQuery, ignoreCase = true)
+                }
+            }
     }
 
     sealed interface DietaEvent {
