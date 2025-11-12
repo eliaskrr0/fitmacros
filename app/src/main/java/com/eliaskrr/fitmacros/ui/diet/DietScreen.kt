@@ -166,7 +166,10 @@ fun DietasScreen(viewModel: DietViewModel, onDietaClick: (Int) -> Unit) {
                     .fillMaxWidth()
                     .padding(16.dp)
             ) {
-                items(uiState.diets) { dieta ->
+                items(
+                    items = uiState.diets,
+                    key = { it.id }
+                ) { dieta ->
                     val isSelected = uiState.selectedDietas.contains(dieta.id)
                     DietaItem(
                         diet = dieta,

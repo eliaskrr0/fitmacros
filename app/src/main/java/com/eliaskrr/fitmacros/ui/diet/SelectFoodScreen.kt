@@ -89,7 +89,10 @@ fun SelectAlimentoScreen(
                 modifier = Modifier.fillMaxWidth()
             )
             LazyColumn(modifier = Modifier.padding(top = 16.dp)) {
-                items(alimentos) { alimento ->
+                items(
+                    items = alimentos,
+                    key = { it.id }
+                ) { alimento ->
                     AlimentoSelectItem(food = alimento, onClick = { selectedFood = alimento })
                 }
             }

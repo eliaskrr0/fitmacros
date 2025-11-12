@@ -381,7 +381,10 @@ fun AlimentosScreen(
             )
         }
         LazyColumn {
-            items(uiState.foods) { alimento ->
+            items(
+                items = uiState.foods,
+                key = { it.id }
+            ) { alimento ->
                 val isSelected = uiState.selectedAlimentos.contains(alimento.id)
                 AlimentoItem(
                     food = alimento,

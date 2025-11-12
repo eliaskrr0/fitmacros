@@ -179,7 +179,10 @@ fun SelectAlimentoForMealScreen(
                 )
             }
             LazyColumn {
-                items(alimentosUiState.foods) { alimento ->
+                items(
+                    items = alimentosUiState.foods,
+                    key = { it.id }
+                ) { alimento ->
                     com.eliaskrr.fitmacros.ui.AlimentoItem(
                         food = alimento,
                         onClick = {
