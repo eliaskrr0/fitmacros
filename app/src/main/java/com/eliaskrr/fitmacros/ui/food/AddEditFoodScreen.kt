@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
@@ -25,7 +26,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -47,11 +47,11 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.eliaskrr.fitmacros.R
 import com.eliaskrr.fitmacros.data.entity.nutrition.type.QuantityUnit
+import com.eliaskrr.fitmacros.ui.components.FitMacrosTextFieldDefaults
 import com.eliaskrr.fitmacros.ui.theme.ButtonConfirmColor
 import com.eliaskrr.fitmacros.ui.theme.DialogBackgroundColor
 import com.eliaskrr.fitmacros.ui.theme.DialogTextColor
 import com.eliaskrr.fitmacros.ui.theme.DialogTitleColor
-import com.eliaskrr.fitmacros.ui.theme.TextFieldContainerColor
 import com.eliaskrr.fitmacros.ui.theme.TextPrimaryColor
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -64,19 +64,9 @@ fun AddEditAlimentoScreen(
     var showDeleteDialog by remember { mutableStateOf(false) }
     val snackbarHostState = remember { SnackbarHostState() }
     val context = LocalContext.current
-    val textFieldColors = OutlinedTextFieldDefaults.colors(
-        focusedContainerColor = TextFieldContainerColor,
-        unfocusedContainerColor = TextFieldContainerColor,
-        disabledContainerColor = TextFieldContainerColor.copy(alpha = 0.6f),
-        focusedBorderColor = TextPrimaryColor.copy(alpha = 0.6f),
-        unfocusedBorderColor = TextPrimaryColor.copy(alpha = 0.3f),
-        focusedLabelColor = TextPrimaryColor.copy(alpha = 0.9f),
-        unfocusedLabelColor = TextPrimaryColor.copy(alpha = 0.7f),
-        focusedTextColor = TextPrimaryColor,
-        unfocusedTextColor = TextPrimaryColor,
-        disabledTextColor = TextPrimaryColor.copy(alpha = 0.6f),
-        cursorColor = TextPrimaryColor
-    )
+    val textFieldColors = FitMacrosTextFieldDefaults.colors()
+    val textFieldShape = FitMacrosTextFieldDefaults.Shape
+    val textFieldMinHeight = FitMacrosTextFieldDefaults.MinHeight
 
     LaunchedEffect(uiState.isSaved) {
         if (uiState.isSaved) {
@@ -154,18 +144,24 @@ fun AddEditAlimentoScreen(
                 value = uiState.name,
                 onValueChange = { viewModel.onValueChange(name = it) },
                 label = { Text(stringResource(R.string.user_name)) },
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .heightIn(min = textFieldMinHeight),
                 enabled = !uiState.isLoading,
-                colors = textFieldColors
+                colors = textFieldColors,
+                shape = textFieldShape
             )
             Spacer(modifier = Modifier.height(8.dp))
             OutlinedTextField(
                 value = uiState.brand,
                 onValueChange = { viewModel.onValueChange(brand = it) },
                 label = { Text(stringResource(R.string.brand_optional)) },
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .heightIn(min = textFieldMinHeight),
                 enabled = !uiState.isLoading,
-                colors = textFieldColors
+                colors = textFieldColors,
+                shape = textFieldShape
             )
             Spacer(modifier = Modifier.height(8.dp))
             OutlinedTextField(
@@ -173,9 +169,12 @@ fun AddEditAlimentoScreen(
                 onValueChange = { viewModel.onValueChange(price = it) },
                 label = { Text(stringResource(R.string.price_optional)) },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .heightIn(min = textFieldMinHeight),
                 enabled = !uiState.isLoading,
-                colors = textFieldColors
+                colors = textFieldColors,
+                shape = textFieldShape
             )
             Spacer(modifier = Modifier.height(8.dp))
             OutlinedTextField(
@@ -183,9 +182,12 @@ fun AddEditAlimentoScreen(
                 onValueChange = { viewModel.onValueChange(amountBase = it) },
                 label = { Text(stringResource(R.string.base_quantity_label)) },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .heightIn(min = textFieldMinHeight),
                 enabled = !uiState.isLoading,
-                colors = textFieldColors
+                colors = textFieldColors,
+                shape = textFieldShape
             )
             Spacer(modifier = Modifier.height(8.dp))
             QuantityUnitDropdownField(
@@ -199,9 +201,12 @@ fun AddEditAlimentoScreen(
                 onValueChange = { viewModel.onValueChange(proteins = it) },
                 label = { Text(stringResource(R.string.proteins)) },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .heightIn(min = textFieldMinHeight),
                 enabled = !uiState.isLoading,
-                colors = textFieldColors
+                colors = textFieldColors,
+                shape = textFieldShape
             )
             Spacer(modifier = Modifier.height(8.dp))
             OutlinedTextField(
@@ -209,9 +214,12 @@ fun AddEditAlimentoScreen(
                 onValueChange = { viewModel.onValueChange(carbs = it) },
                 label = { Text(stringResource(R.string.carbohydrates)) },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .heightIn(min = textFieldMinHeight),
                 enabled = !uiState.isLoading,
-                colors = textFieldColors
+                colors = textFieldColors,
+                shape = textFieldShape
             )
             Spacer(modifier = Modifier.height(8.dp))
             OutlinedTextField(
@@ -219,9 +227,12 @@ fun AddEditAlimentoScreen(
                 onValueChange = { viewModel.onValueChange(fats = it) },
                 label = { Text(stringResource(R.string.fats)) },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .heightIn(min = textFieldMinHeight),
                 enabled = !uiState.isLoading,
-                colors = textFieldColors
+                colors = textFieldColors,
+                shape = textFieldShape
             )
             Spacer(modifier = Modifier.height(8.dp))
             OutlinedTextField(
@@ -229,8 +240,11 @@ fun AddEditAlimentoScreen(
                 onValueChange = {},
                 label = { Text(stringResource(R.string.calories)) },
                 readOnly = true,
-                modifier = Modifier.fillMaxWidth(),
-                colors = textFieldColors
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .heightIn(min = textFieldMinHeight),
+                colors = textFieldColors,
+                shape = textFieldShape
             )
             Spacer(modifier = Modifier.height(16.dp))
             Button(
@@ -281,9 +295,11 @@ private fun QuantityUnitDropdownField(
             label = { Text(stringResource(R.string.base_unit_label)) },
             modifier = Modifier
                 .menuAnchor()
-                .fillMaxWidth(),
+                .fillMaxWidth()
+                .heightIn(min = FitMacrosTextFieldDefaults.MinHeight),
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
-            colors = colors
+            colors = colors,
+            shape = FitMacrosTextFieldDefaults.Shape
         )
         ExposedDropdownMenu(
             expanded = expanded,

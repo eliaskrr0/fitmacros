@@ -3,6 +3,7 @@ package com.eliaskrr.fitmacros.ui.diet
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -33,6 +34,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.eliaskrr.fitmacros.R
 import com.eliaskrr.fitmacros.data.entity.nutrition.Food
+import com.eliaskrr.fitmacros.ui.components.FitMacrosTextFieldDefaults
 import com.eliaskrr.fitmacros.ui.theme.BackgroundCard
 import com.eliaskrr.fitmacros.ui.theme.TextCardColor
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -65,7 +67,12 @@ fun SelectAlimentoScreen(
                     value = cantidad,
                     onValueChange = { cantidad = it },
                     label = { Text("Cantidad (gramos)") },
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .heightIn(min = FitMacrosTextFieldDefaults.MinHeight),
+                    colors = FitMacrosTextFieldDefaults.colors(),
+                    shape = FitMacrosTextFieldDefaults.Shape
                 )
             },
             confirmButton = {

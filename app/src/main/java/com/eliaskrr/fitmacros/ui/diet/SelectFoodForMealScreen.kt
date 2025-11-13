@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -45,6 +46,7 @@ import com.eliaskrr.fitmacros.R
 import com.eliaskrr.fitmacros.data.entity.nutrition.Food
 import com.eliaskrr.fitmacros.data.entity.nutrition.type.MealType
 import com.eliaskrr.fitmacros.data.entity.nutrition.type.QuantityUnit
+import com.eliaskrr.fitmacros.ui.components.FitMacrosTextFieldDefaults
 import com.eliaskrr.fitmacros.ui.food.FoodViewModel
 import java.math.BigDecimal
 import java.math.RoundingMode
@@ -213,14 +215,18 @@ private fun QuantityDialog(
                 OutlinedTextField(
                     value = quantityText,
                     onValueChange = onQuantityChange,
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .heightIn(min = FitMacrosTextFieldDefaults.MinHeight),
                     label = { Text(stringResource(R.string.quantity)) },
                     singleLine = true,
                     keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Decimal),
                     isError = showError,
                     supportingText = if (showError) {
                         { Text(stringResource(R.string.invalid_quantity)) }
-                    } else null
+                    } else null,
+                    colors = FitMacrosTextFieldDefaults.colors(),
+                    shape = FitMacrosTextFieldDefaults.Shape
                 )
                 Spacer(modifier = Modifier.height(12.dp))
                 Text(

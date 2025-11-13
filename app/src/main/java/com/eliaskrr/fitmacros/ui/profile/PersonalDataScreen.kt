@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
@@ -26,7 +25,6 @@ import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SelectableDates
 import androidx.compose.material3.Text
@@ -51,12 +49,11 @@ import com.eliaskrr.fitmacros.R
 import com.eliaskrr.fitmacros.data.entity.user.type.ActivityRate
 import com.eliaskrr.fitmacros.data.entity.user.type.TypeTarget
 import com.eliaskrr.fitmacros.data.repository.user.UserData
+import com.eliaskrr.fitmacros.ui.components.FitMacrosTextFieldDefaults
 import com.eliaskrr.fitmacros.ui.theme.ButtonConfirmColor
 import com.eliaskrr.fitmacros.ui.theme.ButtonCancelColor
 import com.eliaskrr.fitmacros.ui.theme.Dimens
 import com.eliaskrr.fitmacros.ui.theme.DialogBackgroundColor
-import com.eliaskrr.fitmacros.ui.theme.TextFieldContainerColor
-import com.eliaskrr.fitmacros.ui.theme.TextPrimaryColor
 import com.eliaskrr.fitmacros.ui.theme.TextCardColor
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -164,21 +161,9 @@ fun PersonalDataScreen(userData: UserData, onSave: (UserData) -> Unit, onNavigat
         }
     }
 
-    val textFieldColors = OutlinedTextFieldDefaults.colors(
-        focusedContainerColor = TextFieldContainerColor,
-        unfocusedContainerColor = TextFieldContainerColor,
-        disabledContainerColor = TextFieldContainerColor.copy(alpha = 0.6f),
-        focusedBorderColor = TextPrimaryColor.copy(alpha = 0.6f),
-        unfocusedBorderColor = TextPrimaryColor.copy(alpha = 0.3f),
-        focusedLabelColor = TextPrimaryColor.copy(alpha = 0.9f),
-        unfocusedLabelColor = TextPrimaryColor.copy(alpha = 0.7f),
-        focusedTextColor = TextPrimaryColor,
-        unfocusedTextColor = TextPrimaryColor,
-        disabledTextColor = TextPrimaryColor.copy(alpha = 0.6f),
-        cursorColor = TextPrimaryColor
-    )
-    val textFieldShape = RoundedCornerShape(Dimens.Large)
-    val textFieldMinHeight = 48.dp
+    val textFieldColors = FitMacrosTextFieldDefaults.colors()
+    val textFieldShape = FitMacrosTextFieldDefaults.Shape
+    val textFieldMinHeight = FitMacrosTextFieldDefaults.MinHeight
 
     Scaffold(
         topBar = {

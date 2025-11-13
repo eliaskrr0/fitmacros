@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -26,7 +27,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -49,7 +49,7 @@ import com.eliaskrr.fitmacros.domain.MacroCalculationResult
 import com.eliaskrr.fitmacros.domain.MissingField
 import com.eliaskrr.fitmacros.ui.components.SelectionActionBar
 import com.eliaskrr.fitmacros.ui.profile.NutrientProgressIndicator
-import com.eliaskrr.fitmacros.ui.theme.BackgroundCard
+import com.eliaskrr.fitmacros.ui.components.FitMacrosTextFieldDefaults
 import com.eliaskrr.fitmacros.ui.theme.ButtonCancelColor
 import com.eliaskrr.fitmacros.ui.theme.ButtonConfirmColor
 import com.eliaskrr.fitmacros.ui.theme.DialogBackgroundColor
@@ -292,7 +292,9 @@ private fun EditQuantityDialog(
                 OutlinedTextField(
                     value = state.quantityText,
                     onValueChange = onQuantityChange,
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .heightIn(min = FitMacrosTextFieldDefaults.MinHeight),
                     label = { Text(stringResource(R.string.quantity)) },
                     singleLine = true,
                     keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Decimal),
@@ -300,18 +302,8 @@ private fun EditQuantityDialog(
                     supportingText = if (state.showError) {
                         { Text(stringResource(R.string.invalid_quantity)) }
                     } else null,
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedContainerColor = BackgroundCard,
-                        unfocusedContainerColor = BackgroundCard,
-                        disabledContainerColor = BackgroundCard,
-                        cursorColor = TextCardColor,
-                        focusedBorderColor = TextCardColor.copy(alpha = 0.8f),
-                        unfocusedBorderColor = TextCardColor.copy(alpha = 0.5f),
-                        focusedLabelColor = TextCardColor.copy(alpha = 0.8f),
-                        unfocusedLabelColor = TextCardColor.copy(alpha = 0.5f),
-                        focusedTextColor = TextCardColor,
-                        unfocusedTextColor = TextCardColor
-                    )
+                    colors = FitMacrosTextFieldDefaults.colors(),
+                    shape = FitMacrosTextFieldDefaults.Shape
                 )
                 Spacer(modifier = Modifier.height(12.dp))
                 Text(
