@@ -14,9 +14,13 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.emitAll
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -120,42 +124,47 @@ class FoodViewModel @Inject constructor(
         viewModelScope.launch {
             _searchQuery
                 .debounce(300)
-                .collectLatest { query ->
-                _uiState.update { it.copy(isLoading = true, errorMessage = null) }
-                val alimentosFlow = if (query.isBlank()) {
-                    Log.d(TAG, "Buscando todos los alimentos")
-                    repository.getAllAlimentos()
-                } else {
-                    Log.d(TAG, "Buscando alimentos por nombre: $query")
-                    repository.getAlimentosByName(query)
-                }
+                .distinctUntilChanged()
+                .flatMapLatest { query ->
+                    val trimmedQuery = query.trim()
+                    val alimentosFlow = if (trimmedQuery.isBlank()) {
+                        Log.d(TAG, "Buscando todos los alimentos")
+                        repository.getAllAlimentos()
+                    } else {
+                        Log.d(TAG, "Buscando alimentos por nombre: $trimmedQuery")
+                        repository.getAlimentosByName(trimmedQuery)
+                    }
 
-                alimentosFlow
-                    .catch { ex ->
-                        Log.e(TAG, "Error cargando alimentos para la búsqueda '$query'", ex)
-                        _uiState.update {
-                            it.copy(
-                                isLoading = false,
-                                foods = emptyList(),
-                                errorMessage = R.string.error_loading_foods
-                            )
+                    alimentosFlow
+                        .onStart {
+                            _uiState.update { it.copy(isLoading = true, errorMessage = null) }
                         }
-                        _events.emit(AlimentoEvent.ShowMessage(R.string.error_loading_foods))
-                    }
-                    .collect { alimentos ->
-                        _uiState.update { state ->
-                            val filteredSelection = state.selectedAlimentos.filter { id ->
-                                alimentos.any { alimento -> alimento.id == id }
-                            }.toSet()
-                            state.copy(
-                                foods = alimentos,
-                                isLoading = false,
-                                errorMessage = null,
-                                selectedAlimentos = filteredSelection
-                            )
+                        .catch { ex ->
+                            Log.e(TAG, "Error cargando alimentos para la búsqueda '$trimmedQuery'", ex)
+                            _uiState.update {
+                                it.copy(
+                                    isLoading = false,
+                                    foods = emptyList(),
+                                    errorMessage = R.string.error_loading_foods
+                                )
+                            }
+                            _events.emit(AlimentoEvent.ShowMessage(R.string.error_loading_foods))
+                            emitAll(emptyFlow())
                         }
+                }
+                .collect { alimentos ->
+                    _uiState.update { state ->
+                        val filteredSelection = state.selectedAlimentos.filter { id ->
+                            alimentos.any { alimento -> alimento.id == id }
+                        }.toSet()
+                        state.copy(
+                            foods = alimentos,
+                            isLoading = false,
+                            errorMessage = null,
+                            selectedAlimentos = filteredSelection
+                        )
                     }
-            }
+                }
         }
     }
 
