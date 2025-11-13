@@ -5,7 +5,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
@@ -44,6 +46,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.OffsetMapping
 import androidx.compose.ui.text.input.TransformedText
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.unit.dp
 import com.eliaskrr.fitmacros.R
 import com.eliaskrr.fitmacros.data.entity.user.type.ActivityRate
 import com.eliaskrr.fitmacros.data.entity.user.type.TypeTarget
@@ -174,6 +177,8 @@ fun PersonalDataScreen(userData: UserData, onSave: (UserData) -> Unit, onNavigat
         disabledTextColor = TextPrimaryColor.copy(alpha = 0.6f),
         cursorColor = TextPrimaryColor
     )
+    val textFieldShape = RoundedCornerShape(Dimens.Large)
+    val textFieldMinHeight = 48.dp
 
     Scaffold(
         topBar = {
@@ -197,9 +202,12 @@ fun PersonalDataScreen(userData: UserData, onSave: (UserData) -> Unit, onNavigat
                 value = nombre,
                 onValueChange = { nombre = sanitizeNameInput(it) },
                 label = { Text(stringResource(R.string.user_name)) },
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .heightIn(min = textFieldMinHeight),
                 singleLine = true,
-                colors = textFieldColors
+                colors = textFieldColors,
+                shape = textFieldShape
             )
             Spacer(modifier = Modifier.height(Dimens.Medium))
 
@@ -218,8 +226,10 @@ fun PersonalDataScreen(userData: UserData, onSave: (UserData) -> Unit, onNavigat
                     trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedSex) },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .menuAnchor(),
-                    colors = textFieldColors
+                        .menuAnchor()
+                        .heightIn(min = textFieldMinHeight),
+                    colors = textFieldColors,
+                    shape = textFieldShape
                 )
                 ExposedDropdownMenu(
                     expanded = expandedSex,
@@ -253,8 +263,10 @@ fun PersonalDataScreen(userData: UserData, onSave: (UserData) -> Unit, onNavigat
                 },
                 modifier = Modifier
                     .fillMaxWidth()
+                    .heightIn(min = textFieldMinHeight)
                     .clickable { showDatePicker = true },
-                colors = textFieldColors
+                colors = textFieldColors,
+                shape = textFieldShape
             )
             Spacer(modifier = Modifier.height(Dimens.Medium))
 
@@ -262,10 +274,13 @@ fun PersonalDataScreen(userData: UserData, onSave: (UserData) -> Unit, onNavigat
                 value = altura,
                 onValueChange = { altura = sanitizeHeightInput(it) },
                 label = { Text(stringResource(R.string.height_cm)) },
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .heightIn(min = textFieldMinHeight),
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                colors = textFieldColors
+                colors = textFieldColors,
+                shape = textFieldShape
             )
             Spacer(modifier = Modifier.height(Dimens.Medium))
 
@@ -273,10 +288,13 @@ fun PersonalDataScreen(userData: UserData, onSave: (UserData) -> Unit, onNavigat
                 value = peso,
                 onValueChange = { peso = sanitizeWeightInput(it) },
                 label = { Text(stringResource(R.string.weight_kg)) },
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .heightIn(min = textFieldMinHeight),
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                colors = textFieldColors
+                colors = textFieldColors,
+                shape = textFieldShape
             )
             Spacer(modifier = Modifier.height(Dimens.Medium))
 
@@ -295,8 +313,10 @@ fun PersonalDataScreen(userData: UserData, onSave: (UserData) -> Unit, onNavigat
                     trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedTarget) },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .menuAnchor(),
-                    colors = textFieldColors
+                        .menuAnchor()
+                        .heightIn(min = textFieldMinHeight),
+                    colors = textFieldColors,
+                    shape = textFieldShape
                 )
                 ExposedDropdownMenu(
                     expanded = expandedTarget,
@@ -331,8 +351,10 @@ fun PersonalDataScreen(userData: UserData, onSave: (UserData) -> Unit, onNavigat
                     trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedActivity) },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .menuAnchor(),
-                    colors = textFieldColors
+                        .menuAnchor()
+                        .heightIn(min = textFieldMinHeight),
+                    colors = textFieldColors,
+                    shape = textFieldShape
                 )
                 ExposedDropdownMenu(
                     expanded = expandedActivity,
