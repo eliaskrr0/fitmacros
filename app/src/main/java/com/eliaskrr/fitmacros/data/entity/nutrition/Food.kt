@@ -2,10 +2,14 @@ package com.eliaskrr.fitmacros.data.entity.nutrition
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
+import androidx.room.Index
 import androidx.room.PrimaryKey
 import com.eliaskrr.fitmacros.data.entity.nutrition.type.QuantityUnit
 
-@Entity(tableName = "tb_food")
+@Entity(
+    tableName = "tb_food",
+    indices = [Index(value = ["name"])]
+)
 data class Food(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
