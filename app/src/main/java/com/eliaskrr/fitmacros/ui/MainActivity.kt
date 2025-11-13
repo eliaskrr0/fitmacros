@@ -34,8 +34,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.DockedSearchBar
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.SnackbarHost
@@ -47,7 +46,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -343,29 +344,21 @@ fun AlimentosScreen(
                 onDeleteSelected = viewModel::deleteSelected
             )
         }
-        OutlinedTextField(
-            value = searchQuery,
-            onValueChange = viewModel::onSearchQueryChange,
+        var isSearchActive by rememberSaveable { mutableStateOf(false) }
+
+        DockedSearchBar(
+            query = searchQuery,
+            onQueryChange = viewModel::onSearchQueryChange,
+            onSearch = { isSearchActive = false },
+            active = isSearchActive,
+            onActiveChange = { isSearchActive = it },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp),
-            label = { Text(stringResource(R.string.search_food)) },
-            leadingIcon = { Icon(Icons.Filled.Search, contentDescription = stringResource(R.string.search_food)) },
-            singleLine = true,
-            enabled = !uiState.isLoading,
-            colors = OutlinedTextFieldDefaults.colors(
-                focusedContainerColor = BackgroundCard,
-                unfocusedContainerColor = BackgroundCard,
-                disabledContainerColor = BackgroundCard,
-                cursorColor = TextCardColor,
-                focusedBorderColor = TextCardColor.copy(alpha = 0.8f),
-                unfocusedBorderColor = TextCardColor.copy(alpha = 0.5f),
-                focusedLabelColor = TextCardColor.copy(alpha = 0.8f),
-                unfocusedLabelColor = TextCardColor.copy(alpha = 0.5f),
-                focusedLeadingIconColor = TextCardColor.copy(alpha = 0.8f),
-                unfocusedLeadingIconColor = TextCardColor.copy(alpha = 0.5f)
-            )
-        )
+            placeholder = { Text(stringResource(R.string.search_food)) },
+            leadingIcon = { Icon(Icons.Filled.Search, contentDescription = stringResource(R.string.search_food)) }
+        ) {
+        }
         if (uiState.isLoading) {
             LinearProgressIndicator(
                 modifier = Modifier

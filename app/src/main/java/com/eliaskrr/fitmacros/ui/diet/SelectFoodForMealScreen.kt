@@ -18,9 +18,9 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.DockedSearchBar
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -34,6 +34,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -45,8 +46,6 @@ import com.eliaskrr.fitmacros.data.entity.nutrition.Food
 import com.eliaskrr.fitmacros.data.entity.nutrition.type.MealType
 import com.eliaskrr.fitmacros.data.entity.nutrition.type.QuantityUnit
 import com.eliaskrr.fitmacros.ui.food.FoodViewModel
-import com.eliaskrr.fitmacros.ui.theme.BackgroundCard
-import com.eliaskrr.fitmacros.ui.theme.TextCardColor
 import java.math.BigDecimal
 import java.math.RoundingMode
 
@@ -66,6 +65,7 @@ fun SelectAlimentoForMealScreen(
     var selectedFood by remember { mutableStateOf<Food?>(null) }
     var quantityText by remember { mutableStateOf("100") }
     var showError by remember { mutableStateOf(false) }
+    var isSearchActive by rememberSaveable { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         foodViewModel.onSearchQueryChange("")
@@ -140,29 +140,19 @@ fun SelectAlimentoForMealScreen(
                 modifier = Modifier
                     .padding(horizontal = 16.dp, vertical = 8.dp)
             )
-            OutlinedTextField(
-                value = searchQuery,
-                onValueChange = foodViewModel::onSearchQueryChange,
+            DockedSearchBar(
+                query = searchQuery,
+                onQueryChange = foodViewModel::onSearchQueryChange,
+                onSearch = { isSearchActive = false },
+                active = isSearchActive,
+                onActiveChange = { isSearchActive = it },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp),
-                label = { Text(stringResource(R.string.search_food)) },
-                leadingIcon = { Icon(imageVector = Icons.Filled.Search, contentDescription = null) },
-                singleLine = true,
-                enabled = !alimentosUiState.isLoading,
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedContainerColor = BackgroundCard,
-                    unfocusedContainerColor = BackgroundCard,
-                    disabledContainerColor = BackgroundCard,
-                    cursorColor = TextCardColor,
-                    focusedBorderColor = TextCardColor.copy(alpha = 0.8f),
-                    unfocusedBorderColor = TextCardColor.copy(alpha = 0.5f),
-                    focusedLabelColor = TextCardColor.copy(alpha = 0.8f),
-                    unfocusedLabelColor = TextCardColor.copy(alpha = 0.5f),
-                    focusedLeadingIconColor = TextCardColor.copy(alpha = 0.8f),
-                    unfocusedLeadingIconColor = TextCardColor.copy(alpha = 0.5f)
-                )
-            )
+                placeholder = { Text(stringResource(R.string.search_food)) },
+                leadingIcon = { Icon(imageVector = Icons.Filled.Search, contentDescription = stringResource(R.string.search_food)) }
+            ) {
+            }
             if (alimentosUiState.isLoading) {
                 LinearProgressIndicator(
                     modifier = Modifier
