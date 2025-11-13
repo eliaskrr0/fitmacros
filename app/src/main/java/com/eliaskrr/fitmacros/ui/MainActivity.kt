@@ -48,7 +48,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -344,21 +343,19 @@ fun AlimentosScreen(
                 onDeleteSelected = viewModel::deleteSelected
             )
         }
-        var isSearchActive by rememberSaveable { mutableStateOf(false) }
-
         DockedSearchBar(
             query = searchQuery,
             onQueryChange = viewModel::onSearchQueryChange,
-            onSearch = { isSearchActive = false },
-            active = isSearchActive,
-            onActiveChange = { isSearchActive = it },
+            onSearch = {},
+            active = false,
+            onActiveChange = {},
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp),
             placeholder = { Text(stringResource(R.string.search_food)) },
-            leadingIcon = { Icon(Icons.Filled.Search, contentDescription = stringResource(R.string.search_food)) }
-        ) {
-        }
+            leadingIcon = { Icon(Icons.Filled.Search, contentDescription = stringResource(R.string.search_food)) },
+            content = {}
+        )
         if (uiState.isLoading) {
             LinearProgressIndicator(
                 modifier = Modifier

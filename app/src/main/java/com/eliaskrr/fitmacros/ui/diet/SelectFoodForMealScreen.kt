@@ -34,7 +34,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -65,7 +64,6 @@ fun SelectAlimentoForMealScreen(
     var selectedFood by remember { mutableStateOf<Food?>(null) }
     var quantityText by remember { mutableStateOf("100") }
     var showError by remember { mutableStateOf(false) }
-    var isSearchActive by rememberSaveable { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         foodViewModel.onSearchQueryChange("")
@@ -143,16 +141,16 @@ fun SelectAlimentoForMealScreen(
             DockedSearchBar(
                 query = searchQuery,
                 onQueryChange = foodViewModel::onSearchQueryChange,
-                onSearch = { isSearchActive = false },
-                active = isSearchActive,
-                onActiveChange = { isSearchActive = it },
+                onSearch = {},
+                active = false,
+                onActiveChange = {},
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp),
                 placeholder = { Text(stringResource(R.string.search_food)) },
-                leadingIcon = { Icon(imageVector = Icons.Filled.Search, contentDescription = stringResource(R.string.search_food)) }
-            ) {
-            }
+                leadingIcon = { Icon(imageVector = Icons.Filled.Search, contentDescription = stringResource(R.string.search_food)) },
+                content = {}
+            )
             if (alimentosUiState.isLoading) {
                 LinearProgressIndicator(
                     modifier = Modifier

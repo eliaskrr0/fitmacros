@@ -41,7 +41,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -66,7 +65,6 @@ fun DietasScreen(viewModel: DietViewModel, onDietaClick: (Int) -> Unit) {
     val uiState by viewModel.uiState.collectAsState()
     var showDialog by remember { mutableStateOf(false) }
     var newDietaName by remember { mutableStateOf("") }
-    var isSearchActive by rememberSaveable { mutableStateOf(false) }
     val snackbarHostState = remember { SnackbarHostState() }
     val context = LocalContext.current
 
@@ -179,14 +177,14 @@ fun DietasScreen(viewModel: DietViewModel, onDietaClick: (Int) -> Unit) {
                 DockedSearchBar(
                     query = uiState.searchQuery,
                     onQueryChange = viewModel::updateSearchQuery,
-                    onSearch = { isSearchActive = false },
-                    active = isSearchActive,
-                    onActiveChange = { isSearchActive = it },
+                    onSearch = {},
+                    active = false,
+                    onActiveChange = {},
                     modifier = Modifier.weight(1f),
                     placeholder = { Text(stringResource(R.string.search_diets)) },
-                    leadingIcon = { Icon(Icons.Filled.Search, contentDescription = stringResource(R.string.search_diets)) }
-                ) {
-                }
+                    leadingIcon = { Icon(Icons.Filled.Search, contentDescription = stringResource(R.string.search_diets)) },
+                    content = {}
+                )
                 IconButton(
                     onClick = viewModel::notifyDietLimitInfo,
                     modifier = Modifier.padding(start = 8.dp)

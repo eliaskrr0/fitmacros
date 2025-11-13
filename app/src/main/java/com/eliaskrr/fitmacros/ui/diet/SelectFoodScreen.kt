@@ -26,7 +26,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -50,7 +49,6 @@ fun SelectAlimentoScreen(
 
     var selectedFood by remember { mutableStateOf<Food?>(null) }
     var cantidad by remember { mutableStateOf("") }
-    var isSearchActive by rememberSaveable { mutableStateOf(false) }
 
     LaunchedEffect(isSaved) {
         if (isSaved) {
@@ -93,14 +91,14 @@ fun SelectAlimentoScreen(
             DockedSearchBar(
                 query = searchQuery,
                 onQueryChange = { query -> viewModel.onSearchQueryChange(query) },
-                onSearch = { isSearchActive = false },
-                active = isSearchActive,
-                onActiveChange = { isSearchActive = it },
+                onSearch = {},
+                active = false,
+                onActiveChange = {},
                 modifier = Modifier.fillMaxWidth(),
                 placeholder = { Text(stringResource(R.string.search_food)) },
-                leadingIcon = { Icon(Icons.Filled.Search, contentDescription = stringResource(R.string.search_food)) }
-            ) {
-            }
+                leadingIcon = { Icon(Icons.Filled.Search, contentDescription = stringResource(R.string.search_food)) },
+                content = {}
+            )
             LazyColumn(modifier = Modifier.padding(top = 16.dp)) {
                 items(
                     items = alimentos,
