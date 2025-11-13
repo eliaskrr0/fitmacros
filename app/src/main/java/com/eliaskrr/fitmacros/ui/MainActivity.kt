@@ -94,6 +94,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import java.io.OutputStream
+import java.util.Locale
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -380,7 +381,12 @@ fun AlimentosScreen(
                     .padding(horizontal = 16.dp, vertical = 8.dp)
             )
         }
-        LazyColumn {
+        LazyColumn (
+			modifier = Modifier
+				.weight(1f)
+				.fillMaxWidth()
+				.padding(16.dp)
+		) {
             if (uiState.foods.isEmpty() && !uiState.isLoading) {
                 item {
                     val messageRes = if (searchQuery.isBlank()) {
@@ -480,15 +486,15 @@ fun AlimentoItem(
             }
             Column(horizontalAlignment = Alignment.End) {
                 Text(
-                    text = "${String.format("%.1f", food.calories)} kcal",
+                    text = "${String.format(Locale.getDefault(), "%.1f", food.calories)} kcal",
                     style = MaterialTheme.typography.bodyLarge,
                     fontWeight = FontWeight.SemiBold
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Text(text = "P: ${String.format("%.1f", food.proteins)}g", fontSize = 12.sp)
-                    Text(text = "C: ${String.format("%.1f", food.carbs)}g", fontSize = 12.sp)
-                    Text(text = "G: ${String.format("%.1f", food.fats)}g", fontSize = 12.sp)
+                    Text(text = "P: ${String.format(Locale.getDefault(), "%.1f", food.proteins)}g", fontSize = 12.sp)
+                    Text(text = "C: ${String.format(Locale.getDefault(),"%.1f", food.carbs)}g", fontSize = 12.sp)
+                    Text(text = "G: ${String.format(Locale.getDefault(),"%.1f", food.fats)}g", fontSize = 12.sp)
                 }
             }
             if (selectionMode) {

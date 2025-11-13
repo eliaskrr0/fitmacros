@@ -42,7 +42,6 @@
     <string name="error_deleting_food">No se pudo eliminar el alimento. Inténtalo de nuevo.</string>
     <string name="error_loading_foods">No se pudieron cargar los alimentos. Inténtalo de nuevo.</string>
     <string name="no_foods_found">No hay alimentos que coincidan con tu búsqueda.</string>
-    <string name="no_foods_available">Aún no has creado ningún alimento.</string>
     <string name="error_loading_diets">No se pudieron cargar las dietas. Inténtalo de nuevo.</string>
     <string name="error_deleting_diet">No se pudieron eliminar las dietas seleccionadas. Inténtalo de nuevo.</string>
 
@@ -58,6 +57,9 @@
     <string name="max_diets_limit_info">Has alcanzado el máximo de 10 dietas. Elimina alguna para crear nuevas.</string>
     <string name="max_diets_info_template">Puedes crear hasta %1$d dietas.</string>
     <string name="diet_limit_info_content_description">Información sobre el límite de dietas</string>
+    <string name="no_diets_found">No hay dietas que coincidan con tu búsqueda.</string>
+    <string name="no_diets_available">Aún no has creado ninguna dieta.</string>
+    <string name="no_foods_available">Aún no has creado ningún alimento.</string>
 
     <!-- Datos del usuario -->
     <string name="personal_data">Datos Personales</string>
@@ -102,10 +104,8 @@
     <string name="add_to_meal">Añadir a %1$s</string>
     <string name="meal_macros_summary">P: %1$.1f g   C: %2$.1f g   G: %3$.1f g</string>
     <string name="food_macros_detail">P: %1$.1f g · C: %2$.1f g · G: %3$.1f g</string>
-    <string name="search_food">Buscar alimento…</string>
-    <string name="search_diets">Buscar dieta…</string>
-    <string name="no_diets_found">No hay dietas que coincidan con tu búsqueda.</string>
-    <string name="no_diets_available">Aún no has creado ninguna dieta.</string>
+    <string name="search_food">Buscar alimento</string>
+    <string name="search_diets">Buscar dieta</string>
     <string name="selected_count">%1$d seleccionados</string>
     <string name="clear_selection">Cancelar selección</string>
 
