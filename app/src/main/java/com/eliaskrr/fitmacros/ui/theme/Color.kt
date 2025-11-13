@@ -13,16 +13,22 @@ val BackgroundCard = SecondaryColor
 val DialogBackgroundColor = SecondaryColor
 val TextFieldContainerColor = SecondaryColor // Cuadro de texto
 
-// Colores del textp
+// Textp
 val TextCardColor = TextPrimaryColor
 val DialogTitleColor = TextCardColor
 val DialogTextColor = TextPrimaryColor
 
-
-// Color de los botones
+// Botones
 val ButtonConfirmColor = Color(0xFF33D17A) // Azul para botones de confirmación.
 val ButtonCancelColor = Color(0xFF9A9A9A) // Rojo para botones de cancelación.
 
+// Iconos opciones del menú principal
+val SelectedMenuIcon = Color(0xFFF6F6F6);
+val UnselectedMenuIcon = Color(0xFF2A2A2A);
+val SelectedTextMenuOptionColor = SelectedMenuIcon
+val SelectedIconMenuOptionColor = SelectedMenuIcon
+val UnselectedTextMenuOptionColor = UnselectedMenuIcon
+val UnselectedIconMenuOptionColor = UnselectedMenuIcon
 
 // Tema del proyecto
 val md_theme_light_primary = PrimaryColor // Borde superior e inferior

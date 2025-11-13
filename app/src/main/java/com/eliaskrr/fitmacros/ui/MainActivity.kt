@@ -25,6 +25,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.outlined.RadioButtonUnchecked
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -37,6 +38,7 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.DockedSearchBar
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
@@ -46,10 +48,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -91,6 +93,11 @@ import com.eliaskrr.fitmacros.ui.theme.BackgroundCard
 import com.eliaskrr.fitmacros.ui.theme.FitMacrosTheme
 import com.eliaskrr.fitmacros.ui.theme.TextCardColor
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.eliaskrr.fitmacros.ui.theme.ButtonCancelColor
+import com.eliaskrr.fitmacros.ui.theme.SelectedIconMenuOptionColor
+import com.eliaskrr.fitmacros.ui.theme.SelectedTextMenuOptionColor
+import com.eliaskrr.fitmacros.ui.theme.UnselectedIconMenuOptionColor
+import com.eliaskrr.fitmacros.ui.theme.UnselectedTextMenuOptionColor
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import java.io.OutputStream
@@ -195,7 +202,14 @@ fun MainScreen(
                             label = { Text(screen.label) },
                             icon = { Icon(screen.icon, contentDescription = screen.label) },
                             selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true,
-                            onClick = { navigateToScreen(navController, screen.route) }
+                            onClick = { navigateToScreen(navController, screen.route) },
+							colors = NavigationBarItemDefaults.colors(
+								indicatorColor = Color.Transparent,
+								selectedIconColor =SelectedIconMenuOptionColor,
+								selectedTextColor = SelectedTextMenuOptionColor,
+								unselectedIconColor = UnselectedIconMenuOptionColor,
+								unselectedTextColor = UnselectedTextMenuOptionColor
+							)
                         )
                     }
                 }
@@ -316,6 +330,7 @@ fun navigateToScreen(navController: NavHostController, route: String) {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AlimentosScreen(
     viewModel: FoodViewModel,
